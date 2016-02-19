@@ -1295,6 +1295,9 @@ case "${target}" in
   tilepro*-*-* | tilegx*-*-*)
     noconfigdirs="$noconfigdirs sim"
     ;;
+  ubi32-*-*)
+    nocinfigdirs="$noconfigdirs sim binutils gas opcodes target-newlib target-libgloss"
+    ;;
   v810-*-*)
     noconfigdirs="$noconfigdirs bfd binutils gas gdb ld opcodes target-libgloss"
     ;;

@@ -705,6 +705,7 @@ ALL_TARGET_OBS = \
 	spu-tdep.o spu-multiarch.o solib-spu.o \
 	tic6x-tdep.o tic6x-linux-tdep.o \
 	tilegx-tdep.o tilegx-linux-tdep.o \
+	ubi32-tdep.o \
 	v850-tdep.o \
 	vaxnbsd-tdep.o vaxobsd-tdep.o vax-tdep.o \
 	xstormy16-tdep.o \
@@ -1744,6 +1745,7 @@ ALLDEPFILES = \
 	sparc-ravenscar-thread.c \
 	spu-linux-nat.c spu-tdep.c spu-multiarch.c solib-spu.c \
 	tilegx-linux-nat.c tilegx-tdep.c tilegx-linux-tdep.c \
+	ubi32-tdep.c \
 	v850-tdep.c \
 	vax-tdep.c vaxbsd-nat.c vaxnbsd-tdep.c \
 	windows-nat.c windows-tdep.c \
