@@ -997,6 +997,8 @@ do
     tilegx_elf64_be_vec)	 tb="$tb elf64-tilegx.lo elfxx-tilegx.lo elf64.lo $elf" ; target_size=64 ;;
     tilegx_elf64_le_vec)	 tb="$tb elf64-tilegx.lo elfxx-tilegx.lo elf64.lo $elf" ; target_size=64 ;;
     tilepro_elf32_vec)		 tb="$tb elf32-tilepro.lo elf32.lo $elf" ;;
+    bfd_elf32_bigubi32_vec)	 tb="$tb elf32.lo $elf" ;;
+    bfd_elf32_littleubi32_vec)	 tb="$tb elf32.lo $elf" ;;
     v800_elf32_vec)		 tb="$tb elf32-v850.lo elf32.lo $elf" ;;
     v850_elf32_vec)		 tb="$tb elf32-v850.lo elf32.lo $elf" ;;
     vax_aout_1knbsd_vec)	 tb="$tb vax1knetbsd.lo aout32.lo" ;;
