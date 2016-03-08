@@ -83,6 +83,7 @@ HFILES = \
 	sh-opc.h \
 	sh64-opc.h \
 	sysdep.h \
+	ubicom32-desc.h ubicom32-opc.h \
 	w65-opc.h \
 	xc16x-desc.h xc16x-opc.h \
 	xstormy16-desc.h xstormy16-opc.h \
@@ -249,6 +250,11 @@ TARGET_LIBOPCODES_CFILES = \
 	tilegx-opc.c \
 	tilepro-dis.c \
 	tilepro-opc.c \
+	ubi32-asm.c \
+	ubi32-desc.c \
+	ubi32-dis.c \
+	ubi32-ibld.c \
+	ubi32-opc.c \
 	v850-dis.c \
 	v850-opc.c \
 	vax-dis.c \
@@ -355,7 +361,7 @@ po/POTFILES.in: @MAINT@ Makefile
 CLEANFILES = \
 	stamp-epiphany stamp-fr30 stamp-frv stamp-ip2k stamp-iq2000 stamp-lm32 \
 	stamp-m32c stamp-m32r stamp-mep stamp-mt \
-	stamp-or1k stamp-xc16x stamp-xstormy16 \
+	stamp-or1k stamp-ubi32 stamp-xc16x stamp-xstormy16 \
 	libopcodes.a stamp-lib
 
 
@@ -371,7 +377,7 @@ CGENDEPS = \
 	$(CGENDIR)/opc-opinst.scm \
 	cgen-asm.in cgen-dis.in cgen-ibld.in
 
-CGEN_CPUS = epiphany fr30 frv ip2k iq2000 lm32 m32c m32r mep mt or1k xc16x xstormy16
+CGEN_CPUS = epiphany fr30 frv ip2k iq2000 lm32 m32c m32r mep mt or1k ubi32 xc16x xstormy16
 
 if CGEN_MAINT
 EPIPHANY_DEPS = stamp-epiphany
@@ -385,6 +391,7 @@ M32R_DEPS = stamp-m32r
 MEP_DEPS = stamp-mep
 MT_DEPS = stamp-mt
 OR1K_DEPS = stamp-or1k
+UBI32_DEPS = stamp-ubi32
 XC16X_DEPS = stamp-xc16x
 XSTORMY16_DEPS = stamp-xstormy16
 else
@@ -497,6 +504,14 @@ $(srcdir)/or1k-desc.h $(srcdir)/or1k-desc.c $(srcdir)/or1k-opc.h $(srcdir)/or1k-
 stamp-or1k: $(CGENDEPS) $(CPUDIR)/or1k.cpu $(CPUDIR)/or1k.opc $(CPUDIR)/or1kcommon.cpu $(CPUDIR)/or1korbis.cpu $(CPUDIR)/or1korfpx.cpu
 	$(MAKE) run-cgen arch=or1k prefix=or1k options=opinst \
 		archfile=$(CPUDIR)/or1k.cpu opcfile=$(CPUDIR)/or1k.opc extrafiles=opinst
+
+$(srcdir)/ubi32-desc.h $(srcdir)/ubi32-desc.c $(srcdir)/ubi32-opc.h $(srcdir)/ubi32-opc.c $(srcdir)/ubi32-ibld.c $(srcdir)/ubi32-asm.c $(srcdir)/ubi32-dis.c: $(UBI32_DEPS)
+#	@true
+stamp-ubi32: $(CGENDEPS) $(CPUDIR)/ubi32.cpu $(CPUDIR)/ubi32.opc
+	$(MAKE) run-cgen arch=ubi32 prefix=ubi32 \
+		archfile=$(CPUDIR)/ubi32.cpu \
+		opcfile=$(CPUDIR)/ubi32.opc \
+		options= extrafiles=
 
 $(srcdir)/xc16x-desc.h $(srcdir)/xc16x-desc.c $(srcdir)/xc16x-opc.h $(srcdir)/xc16x-opc.c $(srcdir)/xc16x-ibld.c $(srcdir)/xc16x-asm.c $(srcdir)/xc16x-dis.c: $(XC16X_DEPS)
 	@true
