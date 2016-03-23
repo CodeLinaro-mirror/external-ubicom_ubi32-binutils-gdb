@@ -1656,8 +1656,8 @@ case "${targ}" in
     ;;
 
   ubi32-*-*)
-    targ_defvec=bfd_elf32_littleubi32_vec
-    targ_selvecs=bfd_elf32_bigubi32_vec
+    targ_defvec=ubi32_elf32_be_vec
+    targ_selvecs=ubi32_elf32_le_vec
     ;;
 
   v850*-*-*)
