@@ -29,21 +29,6 @@ This file is part of the GNU Binutils and/or GDB, the GNU debugger.
 
 #include <assert.h>
 
-/* TEMPORARY -- FIXME */
-#define BFD_RELOC_UBI32_LO7_S BFD_RELOC_NONE
-#define BFD_RELOC_UBI32_LO7_4_S BFD_RELOC_NONE
-#define BFD_RELOC_UBI32_LO7_2_S BFD_RELOC_NONE
-#define BFD_RELOC_UBI32_LO7_D BFD_RELOC_NONE
-#define BFD_RELOC_UBI32_LO7_2_D BFD_RELOC_NONE
-#define BFD_RELOC_UBI32_LO7_4_D BFD_RELOC_NONE
-#define BFD_RELOC_UBI32_HI24 BFD_RELOC_NONE
-#define BFD_RELOC_UBI32_21_PCREL BFD_RELOC_NONE
-#define BFD_RELOC_UBI32_LO7_CALLI BFD_RELOC_NONE
-#define BFD_RELOC_UBI32_LO16_CALLI BFD_RELOC_NONE
-#define BFD_RELOC_UBI32_LO7_LEAI BFD_RELOC_NONE
-#define BFD_RELOC_UBI32_LO16_LEAI BFD_RELOC_NONE
-
-
 /* Check applicability of instructions against machines.  */
 #define CGEN_VALIDATE_INSN_SUPPORTED
 extern int ubi32_cgen_insn_supported (CGEN_CPU_DESC, const CGEN_INSN *);
@@ -74,10 +59,7 @@ struct ubi32_cgen_data_space_map {
         int  type;
 };
 
-extern struct ubi32_cgen_data_space_map ubi32_cgen_data_space_map_mars[];
-extern struct ubi32_cgen_data_space_map ubi32_cgen_data_space_map_mercury[];
-extern struct ubi32_cgen_data_space_map ubi32_cgen_data_space_map_jupiter[];
-extern struct ubi32_cgen_data_space_map ubi32_cgen_data_space_map_akronite[];
+extern struct ubi32_cgen_data_space_map ubi32_cgen_data_space_map_IPQ806x[];
 
 #define A0_ADDRESS 0x80
 #define A1_ADDRESS (A0_ADDRESS + 4)

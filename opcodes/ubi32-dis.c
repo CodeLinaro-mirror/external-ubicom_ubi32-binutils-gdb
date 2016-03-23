@@ -129,12 +129,12 @@ print_direct_addr (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
 		   int length ATTRIBUTE_UNUSED)
 {
   disassemble_info *info = (disassemble_info *) dis_info;
-  struct ubi32_cgen_data_space_map *cur;
+  struct ubi32_cgen_data_space_map *cur = NULL;
 
-  if (cd->machs & (1<<MACH_UBI32_VER6))
+  if ((cd->machs & (1<<MACH_UBI32_VER6)) || (cd->machs & (1<<MACH_UBI32_VER61)))
     {
-      /* cpu is akronite */
-      cur = ubi32_cgen_data_space_map_akronite;
+      /* Cpu is IPQ806x or IPQ807x.  */
+      cur = ubi32_cgen_data_space_map_IPQ806x;
     }
 
   assert (cur);
