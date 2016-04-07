@@ -61,4 +61,28 @@ enum ubicom32v6_gdb_regnum {
   UBI32_MT_EN_REGNUM = 57,			/* threads enabled */
   UBI32_MT_PRI_REGNUM = 58,			/* thread priorities */
   UBI32_MT_SCHED_REGNUM = 59,			/* thread scheduling policies */
+  UBI32_NUM_REGS = 134,				/* Total number of registers */
+};
+
+/* FIXME:  Are all of these values needed?  */
+struct ubi32_frame_cache
+{
+  /* Base address.  */
+  CORE_ADDR base;
+  CORE_ADDR pc;
+
+  /* Do we have a frame?  */
+  int frameless_p;
+
+  /* Frame size.  */
+  int framesize;
+
+  /* Frame register.  */
+  int fp_regnum;
+
+  /* Offsets to saved registers.  */
+  int register_offsets[UBI32_NUM_REGS];
+
+  /* Table of saved registers.  */
+  struct trad_frame_saved_reg *saved_regs;
 };

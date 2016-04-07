@@ -24,6 +24,9 @@
 #include "ubi32-tdep.h"
 #include "dis-asm.h"
 #include "opcodes/ubi32-dis.h"
+#include "frame-base.h"
+#include "frame-unwind.h"
+#include "trad-frame.h"
 
 /* Register names of the Qualcomm UBI32 V6/V6.1 processor.  */
 static const char *ubi32_register_names[] =
@@ -109,6 +112,7 @@ static const char *ubi32_register_names[] =
 };
 #define UBI32_NUM_REGS ARRAY_SIZE (ubi32_register_names)
 
+
 /* Return the name of register regnum.  */
 static const char *
 ubi32_register_name (struct gdbarch *gdbarch, int regnum ATTRIBUTE_UNUSED)
@@ -132,6 +136,37 @@ ubi32_skip_prologue (struct gdbarch *gdbarch, CORE_ADDR start_pc)
   return 0;
 }
 
+static struct ubi32_frame_cache *
+ubi32_frame_cache (struct frame_info *next_frame, void **this_cache)
+{
+  struct ubi32_frame_cache *cache;
+  struct gdbarch *gdbarch = get_frame_arch (next_frame);
+  CORE_ADDR func;
+  int rn;
+
+  if (*this_cache)
+    return (struct ubi32_frame_cache *) *this_cache;
+
+  cache = FRAME_OBSTACK_ZALLOC (struct ubi32_frame_cache);
+  *this_cache = cache;
+
+  cache->base = 0;
+  cache->pc = 0;
+  cache->frameless_p = 0;
+
+  cache->saved_regs = trad_frame_alloc_saved_regs (next_frame);
+
+  /* Clear offsets to saved regs in frame.  */
+  for (rn = 0; rn < gdbarch_num_regs (gdbarch); rn++)
+    cache->register_offsets[rn] = -1;
+
+  func = get_frame_func (next_frame);
+
+  cache->pc = get_frame_address_in_block (next_frame);
+
+  return cache;
+}
+
 /* Return an instruction to set a breakpoint at PCPTR, adjusting PCPTR if
    necessary, and store in LENPTR the size of the returned instruction.  */
 
@@ -145,6 +180,66 @@ ubi32_breakpoint_from_pc (struct gdbarch *gdbarch, CORE_ADDR *pc,
   *len = sizeof (break_insn);
   return break_insn;
 }
+
+/* Given THIS_FRAME, find the previous frame's resume PC (which will
+   be used to construct the previous frame's ID, after looking up the
+   containing function).  */
+
+static CORE_ADDR
+ubi32_unwind_pc (struct gdbarch *gdbarch, struct frame_info *this_frame)
+{
+  CORE_ADDR pc;
+  pc = frame_unwind_register_unsigned (this_frame, UBI32_PC_REGNUM);
+  return pc;
+}
+
+/* Given a GDB frame, determine the address of the calling function's
+   frame.  This will be used to create a new GDB frame struct.  */
+static void
+ubi32_frame_this_id (struct frame_info *this_frame, void **this_cache,
+		     struct frame_id *this_id)
+{
+  struct ubi32_frame_cache *cache = 
+    ubi32_frame_cache (this_frame, this_cache);
+
+  /* This marks the outermost frame.  */
+  if (cache->base == 0)
+    return;
+
+  (*this_id) = frame_id_build (cache->base, cache->pc);
+}
+
+static struct value *
+ubi32_frame_prev_register (struct frame_info *this_frame,
+				 void **this_cache, int regnum)
+{
+  struct ubi32_frame_cache *cache =
+    ubi32_frame_cache (this_frame, this_cache);
+
+  if (cache->frameless_p)
+    {
+/* FIXME: Do we need to do something different for frameless?  */
+      return trad_frame_get_prev_register (this_frame,
+					   cache->saved_regs, regnum);
+    }
+  else
+    return trad_frame_get_prev_register (this_frame, cache->saved_regs,
+					 regnum);
+
+}
+
+
+
+static const struct frame_unwind ubi32_frame_unwind = {
+  NORMAL_FRAME,
+  default_frame_unwind_stop_reason,
+  ubi32_frame_this_id,
+  ubi32_frame_prev_register,
+  NULL,
+  default_frame_sniffer
+};
+
+
 
 static struct gdbarch *
 ubi32_gdbarch_init (struct gdbarch_info info, struct gdbarch_list *arches)
@@ -214,6 +309,7 @@ ubi32_gdbarch_init (struct gdbarch_info info, struct gdbarch_list *arches)
   set_gdbarch_skip_prologue (gdbarch, ubi32_skip_prologue);
   set_gdbarch_inner_than (gdbarch, core_addr_lessthan);
   set_gdbarch_breakpoint_from_pc (gdbarch, ubi32_breakpoint_from_pc);
+  set_gdbarch_unwind_pc(gdbarch, ubi32_unwind_pc);
 
   set_gdbarch_print_insn (gdbarch, print_insn_ubi32);
 
