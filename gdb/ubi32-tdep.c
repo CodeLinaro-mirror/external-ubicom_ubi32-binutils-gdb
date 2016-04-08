@@ -27,6 +27,7 @@
 #include "frame-base.h"
 #include "frame-unwind.h"
 #include "trad-frame.h"
+#include "dwarf2-frame.h"
 
 /* Register names of the Qualcomm UBI32 V6/V6.1 processor.  */
 static const char *ubi32_register_names[] =
@@ -131,6 +132,19 @@ ubi32_register_type (struct gdbarch *gdbarch, int num )
 static CORE_ADDR
 ubi32_skip_prologue (struct gdbarch *gdbarch, CORE_ADDR start_pc)
 {
+  CORE_ADDR limit_pc, func_addr, func_end_addr = 0;
+
+  /* See if we can determine the end of the prologue via the symbol table.
+     If so, then return either PC, or the PC after the prologue, whichever
+     is greater.  */
+  if (find_pc_partial_function (start_pc, NULL, &func_addr, &func_end_addr))
+    {
+      CORE_ADDR post_prologue_pc
+	= skip_prologue_using_sal (gdbarch, func_addr);
+      if (post_prologue_pc != 0)
+	return max (start_pc, post_prologue_pc);
+    }
+
   printf ("ubi32_skip_prologue() not implemented\n");
   gdb_assert (0);
   return 0;
@@ -229,7 +243,6 @@ ubi32_frame_prev_register (struct frame_info *this_frame,
 }
 
 
-
 static const struct frame_unwind ubi32_frame_unwind = {
   NORMAL_FRAME,
   default_frame_unwind_stop_reason,
@@ -238,7 +251,6 @@ static const struct frame_unwind ubi32_frame_unwind = {
   NULL,
   default_frame_sniffer
 };
-
 
 
 static struct gdbarch *
@@ -310,6 +322,11 @@ ubi32_gdbarch_init (struct gdbarch_info info, struct gdbarch_list *arches)
   set_gdbarch_inner_than (gdbarch, core_addr_lessthan);
   set_gdbarch_breakpoint_from_pc (gdbarch, ubi32_breakpoint_from_pc);
   set_gdbarch_unwind_pc(gdbarch, ubi32_unwind_pc);
+
+  /* Unwind the frame.  */
+  dwarf2_append_unwinders (gdbarch);
+  frame_unwind_append_unwinder (gdbarch, &ubi32_frame_unwind);
+  frame_base_append_sniffer (gdbarch, dwarf2_frame_base_sniffer);
 
   set_gdbarch_print_insn (gdbarch, print_insn_ubi32);
 
