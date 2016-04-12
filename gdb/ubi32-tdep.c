@@ -232,16 +232,23 @@ extract_general_register (unsigned int field)
 
 /* Extract address register number from address field.  */
 static int
-extract_addr_register (unsigned int field)
+extract_addr_register (unsigned int opnd)
 {
-  return (((field & 0x0e0) >> 5) + UBI32_A0_REGNUM);
+  return (((opnd & UBI32_OPND_ADDR_REG) >> 5) + UBI32_A0_REGNUM);
+}
+
+/* Extract offset register number from address field.  */
+static int
+extract_offset_register (unsigned int opnd)
+{
+  return (opnd & UBI32_OPND_OFFSET_REG);
 }
 
 /* Is instruction a branch (jump, call, ret, bkpt, suspend)?  */
 static int
-is_insn_branch (union ubi32_instruction instruction)
+is_branch_insn (union ubi32_instruction insn)
 {
-  int opcode = ubi32_extract_opcode (instruction);
+  int opcode = ubi32_extract_opcode (insn);
 
   switch (opcode)
   {
@@ -266,7 +273,7 @@ ubi32_analyze_prologue (struct gdbarch *gdbarch, const CORE_ADDR start_pc,
 			struct frame_info *this_frame)
 {
   int num_insn = 0;
-  int max_insns = 10;
+  int max_insns = 100;
   union ubi32_instruction insn;
   CORE_ADDR pc = start_pc;
   enum bfd_endian byte_order = gdbarch_byte_order (gdbarch);
@@ -302,6 +309,7 @@ ubi32_analyze_prologue (struct gdbarch *gdbarch, const CORE_ADDR start_pc,
 /*MJE printf ("\tmovei\n"); */
 	  reg = extract_general_register (insn.format6.dest);
 
+/* FIXME:  incomplete.  */  gdb_assert (0);
 	  /* Check that the code sequence really did compute ``SP = SP -
 	     SP_OFFSET''.  If it didn't bail out returning a PC pointing to
 	     the first instruction before this entire mess started.  */
@@ -313,13 +321,12 @@ ubi32_analyze_prologue (struct gdbarch *gdbarch, const CORE_ADDR start_pc,
 	  if (opcode == UBI32_INST_LEA1
 	      && is_operand_direct (insn.format1.dest)
 	      && is_operand_indirect (insn.format1.source1)
-	      && extract_addr_register (insn.format1.dest) == UBI32_SP_REGNUM
+	      && extract_general_register (insn.format1.dest) == UBI32_SP_REGNUM
 	      && extract_addr_register (insn.format1.source1) == UBI32_SP_REGNUM
-	      && extract_general_register (insn.format1.source1) == reg)
+	      && extract_offset_register (insn.format1.source1) == reg)
 	    {
 /*MJE printf ("\tmovei\n"); */
 	    }
-/* FIXME:  incomplete.  */  gdb_assert (0);
 	}
       /* move.4	-32(sp)++,a5 */
       else if (opcode == UBI32_INST_MOVE4
@@ -337,11 +344,12 @@ ubi32_analyze_prologue (struct gdbarch *gdbarch, const CORE_ADDR start_pc,
       /* pdec sp, 48(sp) */
       else if (opcode == UBI32_INST_PDEC
 	       && is_operand_direct (insn.format1.dest)
-	       && extract_addr_register (insn.format1.dest) == UBI32_SP_REGNUM
-	       && is_operand_indirect (insn.format1.source1))
+	       && extract_general_register (insn.format1.dest) == UBI32_SP_REGNUM
+	       && is_operand_indirect (insn.format1.source1)
+	       && extract_addr_register (insn.format1.source1) == UBI32_SP_REGNUM)
 	{
 /*MJE printf ("\tpdec\n"); */
-/* FIXME:  incomplete.  */  gdb_assert (0);
+	  end_prologue = pc;
 	}
       /* move.4 +4(sp),a6  Save call-preserved registers.  */
       else if (opcode == UBI32_INST_MOVE4
@@ -364,7 +372,11 @@ ubi32_analyze_prologue (struct gdbarch *gdbarch, const CORE_ADDR start_pc,
 	       && is_operand_direct (insn.format1.source1))
 	{
 /*MJE printf ("\tmove.4 - save a6, leaf\n"); */
-/* FIXME:  incomplete.  */ gdb_assert (0);
+	  reg = extract_general_register (insn.format1.source1);
+	  if (reg > UBI32_D9_REGNUM)
+	    {
+	       end_prologue = pc;
+	    }
 	}
       /* move.4 -4(sp)++,d9 */
       else if (opcode == UBI32_INST_MOVE4
@@ -388,9 +400,7 @@ ubi32_analyze_prologue (struct gdbarch *gdbarch, const CORE_ADDR start_pc,
       else
 	{
 /*MJE printf ("\tother instruction\n"); */
-	  insn.word = read_memory_unsigned_integer (pc, 4, byte_order);
-	  pc += 4;
-	  if (is_insn_branch(insn))
+	  if (is_branch_insn (insn))
 	    return end_prologue;
 	}
     }
@@ -416,6 +426,7 @@ ubi32_skip_prologue (struct gdbarch *gdbarch, CORE_ADDR start_pc)
 	return max (start_pc, post_prologue_pc);
     }
 
+#if 0
   /* Can't determine prologue from the symbol table, need to examine
      instructions.  */
 
@@ -425,6 +436,14 @@ ubi32_skip_prologue (struct gdbarch *gdbarch, CORE_ADDR start_pc)
   limit_pc = skip_prologue_using_sal (gdbarch, start_pc);
   if (limit_pc == 0)
     limit_pc = start_pc + 100;          /* Magic.  */
+#else
+  /* If we found the end of the function, use that as the limit, 
+     otherwise pick an arbitrary limit.  */
+  if (func_end_addr)
+    limit_pc = func_end_addr;
+  else
+    limit_pc = start_pc + 100;          /* Magic.  */
+#endif
 
   return ubi32_analyze_prologue (gdbarch, start_pc, limit_pc, &cache, NULL);
 }
