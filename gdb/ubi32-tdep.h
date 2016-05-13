@@ -171,7 +171,7 @@ union ubi32_instruction
   {
     unsigned int offset_low:5;
     unsigned int am:3;
-    unsigned int offset_mid:5;
+    unsigned int offset_mid:3;
     unsigned int opcode_ex:5;
     unsigned int offset_hi:5;
     unsigned int an:3;
@@ -235,3 +235,4 @@ union ubi32_instruction
 #define UBI32_INST_CALL		0x1b00
 #define UBI32_INST_CALLI	0x1e00
 #define UBI32_INST_JMP		0x1a00
+#define UBI32_INST_ADD4		0x0f00

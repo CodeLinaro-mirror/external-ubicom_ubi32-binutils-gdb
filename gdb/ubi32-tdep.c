@@ -144,6 +144,7 @@ ubi32_register_type (struct gdbarch *gdbarch, int num)
 static int
 ubi32_extract_opcode (union ubi32_instruction instruction)
 {
+  /* Major opcode is in same location for each instruction format.  */
   unsigned opcode = instruction.format1.opcode;
 
   switch (opcode)
@@ -162,7 +163,7 @@ ubi32_extract_opcode (union ubi32_instruction instruction)
     case 0x1e:
     case 0x1f:
       opcode = instruction.format9.opcode << 8
-	       |instruction.format9.opcode_ex;
+	       | instruction.format9.opcode_ex;
       break;
 
     case 0x06:
@@ -278,68 +279,107 @@ ubi32_analyze_prologue (struct gdbarch *gdbarch, const CORE_ADDR start_pc,
   CORE_ADDR pc = start_pc;
   enum bfd_endian byte_order = gdbarch_byte_order (gdbarch);
   int opcode;
-  CORE_ADDR end_prologue = pc;
+  CORE_ADDR end_prologue = start_pc;
   int reg;
 
-/*MJE printf ("ubi32_analyze_prologue (start_pc = 0x%8.8x, current_pc = 0x%8.8x)\n",
+/* printf ("ubi32_analyze_prologue (start_pc = 0x%8.8x, current_pc = 0x%8.8x)\n",
 (int)start_pc, (int)current_pc); */
 
   if (current_pc < start_pc)
     return current_pc;
 
-  while (pc < current_pc)
-    {
-      if (num_insn++ > max_insns)
-        break;
 
-      insn.word = read_memory_unsigned_integer (pc, 4, byte_order);
-      pc += 4;
-      opcode = ubi32_extract_opcode (insn);
-
-/*MJE printf ("insn %d: 0x%8.8x: %8.8x --  opcode = %04x\n", num_insn, (int)pc,
+  insn.word = read_memory_unsigned_integer (pc, 4, byte_order);
+  num_insn++;
+  opcode = ubi32_extract_opcode (insn);
+/* printf ("insn %d: 0x%8.8x: %8.8x --  opcode = %04x\n", num_insn, (int)pc,
 		insn.word, opcode); */
 
-/* FIXME:  Handle varargs.  */
+  /* Handle varargs only at start of prologue.  */
+  /* move.4 -4(sp)++,d9  Copy 1st varargs argument to stack.  */
+  if (opcode == UBI32_INST_MOVE4
+      && is_operand_preincrement (insn.format1.dest)
+      && extract_addr_register (insn.format1.dest) == UBI32_SP_REGNUM
+      && is_operand_direct (insn.format1.source1)
+      && extract_general_register (insn.format1.source1) == UBI32_D9_REGNUM)
+    {
+      pc += 4;
+      insn.word = read_memory_unsigned_integer (pc, 4, byte_order);
+      num_insn++;
+      opcode = ubi32_extract_opcode (insn);
+      /* printf ("insn %d: 0x%8.8x: %8.8x --  opcode = %04x\n", num_insn, (int)pc,
+	       insn.word, opcode); */
 
+      for (reg = 8; reg >= 0; reg--)
+        {
+	  /* move.4 -4(sp)++,d8  Copy 2nd - 13th varargs arguments to stack.  */
+	  if (num_insn > max_insns || pc > current_pc)
+	    break;
+
+	  if (!(opcode == UBI32_INST_MOVE4
+	      && is_operand_preincrement (insn.format1.dest)
+	      && extract_addr_register (insn.format1.dest) == UBI32_SP_REGNUM
+	      && is_operand_direct (insn.format1.source1)
+	      && extract_general_register (insn.format1.source1) == UBI32_D0_REGNUM + reg))
+	    {
+	      break;
+	    }
+
+	  pc += 4;
+	  insn.word = read_memory_unsigned_integer (pc, 4, byte_order);
+	  num_insn++;
+	  opcode = ubi32_extract_opcode (insn);
+	  /* printf ("insn %d: 0x%8.8x: %8.8x --  opcode = %04x\n", num_insn, (int)pc,
+		  insn.word, opcode); */
+        }
+    }
+
+/* FIXME:  Check for leai sp,-num(sp) to allocate array in stack.  */
+
+  while (pc < current_pc && num_insn < max_insns)
+    {
       /* movei d15,#-96  Copy negative frame size to a register.  */
       if (opcode == UBI32_INST_MOVEI
 	  && is_operand_direct (insn.format6.dest)
 	  && insn.format6.imm < 0)
 	{
-/*MJE printf ("\tmovei\n"); */
 	  reg = extract_general_register (insn.format6.dest);
 
-/* FIXME:  incomplete.  */  gdb_assert (0);
 	  /* Check that the code sequence really did compute ``SP = SP -
 	     SP_OFFSET''.  If it didn't bail out returning a PC pointing to
 	     the first instruction before this entire mess started.  */
 	  insn.word = read_memory_unsigned_integer (pc, 4, byte_order);
 	  pc += 4;
 	  opcode = ubi32_extract_opcode (insn);
+/* printf ("insn %d: 0x%8.8x: %8.8x --  opcode = %04x\n", num_insn, (int)pc,
+		insn.word, opcode); */
 
 	  /* lea.1 sp,(sp,d15)  Subtract frame size from sp.  */
-	  if (opcode == UBI32_INST_LEA1
-	      && is_operand_direct (insn.format1.dest)
-	      && is_operand_indirect (insn.format1.source1)
-	      && extract_general_register (insn.format1.dest) == UBI32_SP_REGNUM
-	      && extract_addr_register (insn.format1.source1) == UBI32_SP_REGNUM
-	      && extract_offset_register (insn.format1.source1) == reg)
+	  if ((opcode == UBI32_INST_LEA1
+	       && is_operand_direct (insn.format1.dest)
+	       && is_operand_indirect (insn.format1.source1)
+	       && extract_general_register (insn.format1.dest) == UBI32_SP_REGNUM
+	       && extract_addr_register (insn.format1.source1) == UBI32_SP_REGNUM
+	       && extract_offset_register (insn.format1.source1) == reg)
+              ||
+	      /* add.4 sp, sp, d15  Alternative insn.  */
+	      (opcode == UBI32_INST_ADD4
+	       && is_operand_direct (insn.format3.dest)
+	       && is_operand_direct (insn.format3.source1)
+	       && extract_general_register (insn.format3.dest) == UBI32_SP_REGNUM
+	       && extract_general_register (insn.format3.source2) == reg))
 	    {
-/*MJE printf ("\tmovei\n"); */
+	      end_prologue = pc + 4;
 	    }
 	}
       /* move.4	-32(sp)++,a5 */
       else if (opcode == UBI32_INST_MOVE4
 	       && is_operand_preincrement (insn.format1.dest)
 	       && extract_addr_register (insn.format1.dest) == UBI32_SP_REGNUM
-	       && is_operand_direct (insn.format1.source1))
+	       && is_operand_direct (insn.format1.source1)
+	       && extract_general_register (insn.format1.source1) > UBI32_D9_REGNUM)
 	{
-/*MJE printf ("\tmove.4 - save a5\n"); */
-	  reg = extract_general_register (insn.format1.source1);
-	  if (reg > UBI32_D9_REGNUM)
-	    {
-	       end_prologue = pc;
-	    }
+	  end_prologue = pc + 4;
 	}
       /* pdec sp, 48(sp) */
       else if (opcode == UBI32_INST_PDEC
@@ -348,44 +388,26 @@ ubi32_analyze_prologue (struct gdbarch *gdbarch, const CORE_ADDR start_pc,
 	       && is_operand_indirect (insn.format1.source1)
 	       && extract_addr_register (insn.format1.source1) == UBI32_SP_REGNUM)
 	{
-/*MJE printf ("\tpdec\n"); */
-	  end_prologue = pc;
+	  end_prologue = pc + 4;
 	}
       /* move.4 +4(sp),a6  Save call-preserved registers.  */
       else if (opcode == UBI32_INST_MOVE4
 	       && is_operand_indirect (insn.format1.dest)
 	       && extract_addr_register (insn.format1.dest) == UBI32_SP_REGNUM
 	       && extract_operand_offset (insn.format1.dest) > 0
-	       && is_operand_direct (insn.format1.source1))
+	       && is_operand_direct (insn.format1.source1)
+	       && extract_general_register (insn.format1.source1) > UBI32_D9_REGNUM)
 	{
-/*MJE printf ("\tmove.4 - save a6\n"); */
-	  reg = extract_general_register (insn.format1.source1);
-	  if (reg > UBI32_D9_REGNUM)
-	    {
-	       end_prologue = pc;
-	    }
+	  end_prologue = pc + 4;
 	}
       /* move.4 (sp),a6  Likewise, in leaf frame.  */
       else if (opcode == UBI32_INST_MOVE4
 	       && is_operand_indirect (insn.format1.dest)
 	       && extract_addr_register (insn.format1.dest) == UBI32_SP_REGNUM
-	       && is_operand_direct (insn.format1.source1))
+	       && is_operand_direct (insn.format1.source1)
+	       && extract_general_register (insn.format1.source1) > UBI32_D9_REGNUM)
 	{
-/*MJE printf ("\tmove.4 - save a6, leaf\n"); */
-	  reg = extract_general_register (insn.format1.source1);
-	  if (reg > UBI32_D9_REGNUM)
-	    {
-	       end_prologue = pc;
-	    }
-	}
-      /* move.4 -4(sp)++,d9 */
-      else if (opcode == UBI32_INST_MOVE4
-	       && is_operand_preincrement (insn.format1.dest)
-	       && extract_addr_register (insn.format1.dest) == UBI32_SP_REGNUM
-	       && is_operand_direct (insn.format1.source1))
-	{
-/*MJE printf ("\tmove.4 - save a6, leaf\n"); */
-/* FIXME:  incomplete.  */ gdb_assert (0);
+	  end_prologue = pc + 4;
 	}
       /* lea.4 a6, offset(sp)  Setup frame pointer.  */
       else if (opcode == UBI32_INST_LEA4
@@ -394,19 +416,21 @@ ubi32_analyze_prologue (struct gdbarch *gdbarch, const CORE_ADDR start_pc,
 	       && is_operand_indirect (insn.format1.source1)
 	       && extract_addr_register (insn.format1.source1) == UBI32_SP_REGNUM)
 	{
-/*MJE printf ("\tlea4\n"); */
-/* FIXME:  incomplete.  */   gdb_assert (0);
+	  end_prologue = pc + 4;
 	}
-      else
-	{
-/*MJE printf ("\tother instruction\n"); */
-	  if (is_branch_insn (insn))
-	    return end_prologue;
-	}
+      else if (is_branch_insn (insn))
+	    break;
+
+      /* Read next instruction. */
+      pc += 4;
+      insn.word = read_memory_unsigned_integer (pc, 4, byte_order);
+      num_insn++;
+      opcode = ubi32_extract_opcode (insn);
+/* printf ("insn %d: 0x%8.8x: %8.8x --  opcode = %04x\n", num_insn, (int)pc,
+		insn.word, opcode); */
     }
 
-/*MJE printf ("  return pc = 0x%8.8x\n", (int) pc); */
-  return start_pc;
+  return end_prologue;
 }
 
 static CORE_ADDR
