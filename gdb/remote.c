@@ -5299,6 +5299,14 @@ remote_vcont_resume (ptid_t ptid, int step, enum gdb_signal siggnal)
   return 1;
 }
 
+static enum exec_direction_kind remote_execution_dir = EXEC_FORWARD;
+
+static enum exec_direction_kind
+remote_execution_direction (struct target_ops *self)
+{
+  return remote_execution_dir;
+}
+
 /* Tell the remote machine to resume.  */
 
 static void
@@ -5307,7 +5315,7 @@ remote_resume (struct target_ops *ops,
 {
   struct remote_state *rs = get_remote_state ();
   char *buf;
-
+  remote_execution_dir = execution_direction;
   /* In all-stop, we can't mark REMOTE_ASYNC_GET_PENDING_EVENTS_TOKEN
      (explained in remote-notif.c:handle_notification) so
      remote_notif_process is not called.  We need find a place where
@@ -12828,6 +12836,7 @@ Specify the serial device it is connected to\n\
   remote_ops.to_btrace_conf = remote_btrace_conf;
   remote_ops.to_augmented_libraries_svr4_read =
     remote_augmented_libraries_svr4_read;
+  remote_ops.to_execution_direction = remote_execution_direction;
 }
 
 /* Set up the extended remote vector by making a copy of the standard
