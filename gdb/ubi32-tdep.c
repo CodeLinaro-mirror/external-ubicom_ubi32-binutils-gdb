@@ -565,6 +565,158 @@ ubi32_frame_prev_register (struct frame_info *this_frame,
 }
 
 
+/*  Store val in buf in big-endian order.  */
+static void
+put_big_endian (int val, gdb_byte *buf)
+{
+  buf[3] = val & 0xFF;
+  buf[2] = (val >> 8) & 0xFF;
+  buf[1] = (val >> 16) & 0xFF;
+  buf[0] = (val >> 24) & 0xFF;
+}
+
+/* Stack of arguments to be pushed onto the stack in reverse order.  */
+struct saved_stack_item 
+{
+  struct saved_stack_item *prev;
+  gdb_byte *val;
+  int len;
+};
+
+static struct saved_stack_item *
+push_stack_item (struct saved_stack_item *prev, const gdb_byte *val, int len)
+{
+  struct saved_stack_item *si;
+  si = xmalloc (sizeof (struct saved_stack_item));
+  si->val = xmalloc (len);
+  si->len = len;
+  si->prev = prev;
+  memcpy (si->val, val, len);
+  return si;
+}
+
+static struct saved_stack_item *
+pop_stack_item (struct saved_stack_item *si)
+{
+  struct saved_stack_item *dead = si;
+  si = si->prev;
+  xfree (dead->val);
+  xfree (dead);
+  return si;
+}
+
+/* Save function argument in reg or on stack.  */
+#define PUT_ARG(val) 					\
+  if (argreg <= UBI32_LAST_ARG_REGNUM)			\
+    /* Put argument piece in register.  */		\
+    regcache_cooked_write (regcache, argreg++, val);	\
+  else							\
+    /* Push arguments on stack.  */			\
+    si = push_stack_item (si, val, UBI32_REGISTER_SIZE);
+
+
+/* Pass arguments to target function. 
+   The first 10 words of the argument list are passed in D0-D9.  8-, 16-, 
+   and 32-bit values are passed in single registers, 64-bit values are passed 
+   in register pairs.  This includes struct values, which are passed in registers
+   if they are 64-bits or less.
+
+   Additional parameters are passsed on the stack.  */
+
+static CORE_ADDR
+ubi32_push_dummy_call (struct gdbarch *gdbarch, struct value *function,
+		       struct regcache *regcache, CORE_ADDR bp_addr,
+		       int nargs, struct value **args, CORE_ADDR sp,
+		       int struct_return, CORE_ADDR struct_addr)
+{
+  int argreg = UBI32_FIRST_ARG_REGNUM;
+  int argnum;
+  struct saved_stack_item *si = NULL;
+  struct gdbarch_tdep *tdep = gdbarch_tdep (gdbarch);
+  gdb_byte word[UBI32_REGISTER_SIZE];
+  CORE_ADDR got;
+
+  /* Point function return to dummy breakpoint.  */
+  regcache_cooked_write_unsigned (regcache, UBI32_LR_REGNUM, bp_addr);
+
+  /* Struct return address passed in first argument register.  */
+  if (struct_return) 
+    {
+      put_big_endian (struct_addr, word);
+      regcache_cooked_write (regcache, argreg++, word);
+    }
+    
+  /* Align stack if necessary.  */
+  sp = align_down (sp, 4); 
+
+  for (argnum = 0; argnum < nargs; argnum++)
+    {
+      struct value *arg = args[argnum];
+      struct type *arg_type = check_typedef (value_type (arg));
+      int len = TYPE_LENGTH (arg_type);
+      enum type_code typecode = TYPE_CODE (arg_type);
+      const gdb_byte *val = value_contents (arg);
+      int argbytes;
+  
+      if (!(typecode == TYPE_CODE_STRUCT || typecode == TYPE_CODE_UNION)) 
+        {
+	  if (len == UBI32_REGISTER_SIZE)
+	    { 
+	      /* Argument fits in one register.  */
+	      /* Promotions should already have been handled.  */
+	      PUT_ARG (val);
+	    } 
+	  else if (len == 2 * UBI32_REGISTER_SIZE)
+	    {
+	      /* Argument fits in register pair.  */
+	      PUT_ARG (val);
+	      PUT_ARG (val + UBI32_REGISTER_SIZE);
+	    }
+        }
+      else /* (typecode == TYPE_CODE_STRUCT || typecode == TYPE_CODE_UNION) */
+        {
+	  if (len <= 2 * UBI32_REGISTER_SIZE) 
+	    {
+	      for (argbytes = 0; argbytes < len; argbytes += UBI32_REGISTER_SIZE)
+		{
+		  memset (word, 0, sizeof (word));
+		  memcpy (word, val + argbytes, 
+			  len > UBI32_REGISTER_SIZE ? UBI32_REGISTER_SIZE : len);
+		  PUT_ARG (word);
+                }
+	    }
+	  else
+	    {
+	      /* Pass struct/union larger than 8 bytes by reference.  */
+	      CORE_ADDR ref = value_address (arg);
+	      if (ref == 0)
+		{
+		   /* Value is gdb generated -- push on stack before args.  */
+		   sp = align_down (sp - len, 4); 
+		   write_memory (sp, val, len);
+		   ref = sp;
+		}
+	      put_big_endian (ref, word);
+	      PUT_ARG (word);
+	    }
+        }
+    }
+
+  /* Write saved arguments to stack in reverse order.  */
+  while (si) 
+    {
+       sp -= si->len;
+       write_memory (sp, si->val, si->len);
+       si = pop_stack_item (si);
+    }
+
+  /* Set stack pointer.  */
+  regcache_cooked_write_unsigned (regcache, UBI32_SP_REGNUM, sp);
+
+  return sp; 
+}
+
+
 static const struct frame_unwind ubi32_frame_unwind = {
   NORMAL_FRAME,
   default_frame_unwind_stop_reason,
@@ -651,6 +803,7 @@ ubi32_gdbarch_init (struct gdbarch_info info, struct gdbarch_list *arches)
   frame_base_append_sniffer (gdbarch, dwarf2_frame_base_sniffer);
 
   set_gdbarch_print_insn (gdbarch, print_insn_ubi32);
+  set_gdbarch_push_dummy_call (gdbarch, ubi32_push_dummy_call);
 
   return gdbarch;
 }

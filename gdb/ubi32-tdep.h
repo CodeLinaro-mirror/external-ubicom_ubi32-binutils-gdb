@@ -29,6 +29,7 @@ struct gdbarch_tdep
    This is different from the register numbering used in the ISA.  */
 enum ubicom32v6_gdb_regnum {
   UBI32_D0_REGNUM = 0,				/* general data */
+  UBI32_FIRST_ARG_REGNUM = UBI32_D0_REGNUM,	/* first arg register */
   UBI32_D1_REGNUM = 1,				/* general data */
   UBI32_D2_REGNUM = 2,				/* general data */
   UBI32_D3_REGNUM = 3,				/* general data */
@@ -38,6 +39,7 @@ enum ubicom32v6_gdb_regnum {
   UBI32_D7_REGNUM = 7,				/* general data */
   UBI32_D8_REGNUM = 8,				/* general data */
   UBI32_D9_REGNUM = 9,				/* general data */
+  UBI32_LAST_ARG_REGNUM = UBI32_D9_REGNUM,	/* last arg register */
   UBI32_D10_REGNUM = 10,			/* general data */
   UBI32_D11_REGNUM = 11,			/* general data */
   UBI32_D12_REGNUM = 12,			/* general data */
@@ -66,6 +68,9 @@ enum ubicom32v6_gdb_regnum {
   UBI32_MT_SCHED_REGNUM = 59,			/* thread scheduling policies */
   UBI32_NUM_REGS = 134,				/* Total number of registers */
 };
+
+/* All registers are 4 bytes.  */
+#define UBI32_REGISTER_SIZE	4
 
 /* FIXME:  Are all of these values needed?  */
 struct ubi32_frame_cache
