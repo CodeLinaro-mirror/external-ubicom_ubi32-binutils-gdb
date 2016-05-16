@@ -529,6 +529,20 @@ ubi32_unwind_pc (struct gdbarch *gdbarch, struct frame_info *this_frame)
   return pc;
 }
 
+static struct frame_id
+ubi32_dummy_id (struct gdbarch *gdbarch, struct frame_info *this_frame)
+{
+  CORE_ADDR sp = get_frame_register_unsigned (this_frame, UBI32_SP_REGNUM);
+  return frame_id_build (sp, get_frame_pc (this_frame));
+
+  //ULONGEST base;
+
+  //frame_unwind_unsigned_register (next_frame, current_machine->sp_regnum, &base);
+  // base = frame_unwind_register_unsigned (next_frame, current_machine->sp_regnum);
+  // return frame_id_build (base, frame_pc_unwind (next_frame));
+}
+
+
 /* Given a GDB frame, determine the address of the calling function's
    frame.  This will be used to create a new GDB frame struct.  */
 static void
@@ -716,6 +730,67 @@ ubi32_push_dummy_call (struct gdbarch *gdbarch, struct value *function,
   return sp; 
 }
 
+/* Extract a TYPE return value from raw register array REGBUF, and copy it
+   into VALBUF in virtual format. */
+
+static void
+ubi32_extract_return_value (struct type *type, struct regcache *rcache, 
+			    gdb_byte *valbuf, enum bfd_endian byte_order)
+{
+  int offset;
+  int len = TYPE_LENGTH (type);
+  unsigned char regbuf[UBI32_REGISTER_SIZE *2];
+  ULONGEST val;
+
+  gdb_assert (len <= 8);
+  /* read out UBI32_RET_REGNUM */
+  regcache_cooked_read_unsigned (rcache, UBI32_RET_REGNUM, &val);
+  store_unsigned_integer (valbuf, UBI32_REGISTER_SIZE, byte_order, val);
+
+  if (len > 4) 
+    {
+      regcache_cooked_read_unsigned (rcache, UBI32_RET2_REGNUM, &val);
+      store_unsigned_integer (valbuf + UBI32_REGISTER_SIZE, 
+			      UBI32_REGISTER_SIZE, byte_order, val);
+    }
+}
+
+/* Store virtual-format VALBUF as a TYPE return value so that it will be
+   returned if the current function returns now.  */
+
+static void
+ubi32_store_return_value (struct type *type, struct regcache *regcache, 
+			  const gdb_byte *valbuf, enum bfd_endian byte_order)
+{
+  regcache_cooked_write (regcache, UBI32_RET_REGNUM, valbuf);
+
+  if (TYPE_LENGTH (type) == 8)
+    regcache_cooked_write (regcache, UBI32_RET2_REGNUM, 
+			   valbuf + UBI32_REGISTER_SIZE);
+}
+
+/* Handle the ubi32 return value convention.  */
+
+static enum return_value_convention
+ubi32_return_value (struct gdbarch *gdbarch, struct value *function,
+		    struct type *type, struct regcache *regcache, 
+		    gdb_byte *readbuf, const gdb_byte *writebuf)
+{
+  struct gdbarch_tdep *tdep = gdbarch_tdep (gdbarch);
+  enum bfd_endian byte_order = gdbarch_byte_order (gdbarch);
+
+  if (TYPE_LENGTH (type) > 8)
+    /* Anything larger than 8 bytes (2 registers) is returned on the stack.  */
+    return RETURN_VALUE_STRUCT_CONVENTION;
+
+  if (readbuf)
+    ubi32_extract_return_value (type, regcache, readbuf, byte_order);
+  if (writebuf)
+    ubi32_store_return_value (type, regcache, writebuf, byte_order);
+
+  return RETURN_VALUE_REGISTER_CONVENTION;
+}
+
 
 static const struct frame_unwind ubi32_frame_unwind = {
   NORMAL_FRAME,
@@ -801,9 +876,11 @@ ubi32_gdbarch_init (struct gdbarch_info info, struct gdbarch_list *arches)
   dwarf2_append_unwinders (gdbarch);
   frame_unwind_append_unwinder (gdbarch, &ubi32_frame_unwind);
   frame_base_append_sniffer (gdbarch, dwarf2_frame_base_sniffer);
+  set_gdbarch_dummy_id (gdbarch, ubi32_dummy_id);
 
   set_gdbarch_print_insn (gdbarch, print_insn_ubi32);
   set_gdbarch_push_dummy_call (gdbarch, ubi32_push_dummy_call);
+  set_gdbarch_return_value (gdbarch, ubi32_return_value);
 
   return gdbarch;
 }
