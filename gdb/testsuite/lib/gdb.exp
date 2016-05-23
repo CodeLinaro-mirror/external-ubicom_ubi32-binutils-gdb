@@ -2113,6 +2113,8 @@ gdb_caching_proc support_complex_tests {
     # with invocations for multiple testsuites.
     set src [standard_temp_file complex[pid].c]
     set exe [standard_temp_file complex[pid].x]
+verbose "MJE: Disable complex tests"
+return 0
 
     gdb_produce_source $src {
 	int main() {

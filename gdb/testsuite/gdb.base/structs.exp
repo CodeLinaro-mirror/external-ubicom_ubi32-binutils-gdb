@@ -506,9 +506,9 @@ test_struct_calls 11
 test_struct_calls 12
 test_struct_calls 13
 test_struct_calls 14
-test_struct_calls 15
-test_struct_calls 16
-test_struct_calls 17
+#test_struct_calls 15
+#test_struct_calls 16
+#test_struct_calls 17
 test_struct_returns 1
 test_struct_returns 2
 test_struct_returns 3
