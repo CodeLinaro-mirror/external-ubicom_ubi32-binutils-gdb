@@ -46,7 +46,7 @@ static const char *ubi32_register_names[] =
   /* Interrupt mask registers.  */
   "int_mask0", "int_mask1", "int_mask2", "int_mask3", 	/* 32-35 */
   /* Program counter & trap.  */
-  "pc", "rap_cause",					/* 36-37 */
+  "pc", "trap_cause",					/* 36-37 */
   /* Accumulator 1.  */
   "acc1_hi", "acc1_lo", 				/* 38-39 */
   /* Previous PC & Control register.  */
