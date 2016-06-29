@@ -411,6 +411,9 @@
 /* Old constant that might be in use by some software. */
 #define EM_OPENRISC		EM_OR1K
 
+/* Qualcomm UBI32 architecture.  */
+#define EM_UBI32 	        0xde3d	/* Ubi32; no ABI */
+
 /* See the above comment before you add a new EM_* value here.  */
 
 /* Values for e_version.  */

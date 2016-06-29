@@ -311,7 +311,7 @@ case $basic_machine in
 	| sparcv8 | sparcv9 | sparcv9b | sparcv9v \
 	| spu \
 	| tahoe | tic4x | tic54x | tic55x | tic6x | tic80 | tron \
-	| ubicom32 \
+	| ubi32 \
 	| v850 | v850e | v850e1 | v850e2 | v850es | v850e2v3 \
 	| visium \
 	| we32k \
@@ -440,7 +440,7 @@ case $basic_machine in
 	| tic30-* | tic4x-* | tic54x-* | tic55x-* | tic6x-* | tic80-* \
 	| tile*-* \
 	| tron-* \
-	| ubicom32-* \
+	| ubi32-* \
 	| v850-* | v850e-* | v850e1-* | v850es-* | v850e2-* | v850e2v3-* \
 	| vax-* \
 	| visium-* \

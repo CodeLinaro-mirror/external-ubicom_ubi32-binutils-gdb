@@ -2322,6 +2322,10 @@ enum bfd_architecture
 #define bfd_mach_nios2         0
 #define bfd_mach_nios2r1       1
 #define bfd_mach_nios2r2       2
+  bfd_arch_ubi32,
+#define bfd_mach_ubi32     0
+#define bfd_mach_ubi32ver6      5
+#define bfd_mach_ubi32ver61     6
   bfd_arch_visium,     /* Visium */
 #define bfd_mach_visium        1
   bfd_arch_last
@@ -4895,6 +4899,45 @@ Low 16 bit for load/store  */
 /* Scenix VPE4K coprocessor - data/insn-space addressing  */
   BFD_RELOC_VPE4KMATH_DATA,
   BFD_RELOC_VPE4KMATH_INSN,
+
+/* Qualcomm UBI32 Relocations.  */
+  BFD_RELOC_UBI32_21_PCREL,
+  BFD_RELOC_UBI32_24_PCREL,
+  BFD_RELOC_UBI32_HI24,
+  BFD_RELOC_UBI32_LO7_S,
+  BFD_RELOC_UBI32_LO7_2_S,
+  BFD_RELOC_UBI32_LO7_4_S,
+  BFD_RELOC_UBI32_LO7_D,
+  BFD_RELOC_UBI32_LO7_2_D,
+  BFD_RELOC_UBI32_LO7_4_D,
+  BFD_RELOC_UBI32_LO7_CALLI,
+  BFD_RELOC_UBI32_LO16_CALLI,
+  BFD_RELOC_UBI32_GOT_HI24,
+  BFD_RELOC_UBI32_GOT_LO7_S,
+  BFD_RELOC_UBI32_GOT_LO7_2_S,
+  BFD_RELOC_UBI32_GOT_LO7_4_S,
+  BFD_RELOC_UBI32_GOT_LO7_D,
+  BFD_RELOC_UBI32_GOT_LO7_2_D,
+  BFD_RELOC_UBI32_GOT_LO7_4_D,
+  BFD_RELOC_UBI32_FUNCDESC_GOT_HI24,
+  BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_S,
+  BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_2_S,
+  BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_4_S,
+  BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_D,
+  BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_2_D,
+  BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_4_D,
+  BFD_RELOC_UBI32_GOT_LO7_CALLI,
+  BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_CALLI,
+  BFD_RELOC_UBI32_FUNCDESC_VALUE,
+  BFD_RELOC_UBI32_FUNCDESC,
+  BFD_RELOC_UBI32_GOT_LO,
+  BFD_RELOC_UBI32_GOT_HI,
+  BFD_RELOC_UBI32_FUNCDESC_GOT_LO,
+  BFD_RELOC_UBI32_FUNCDESC_GOT_HI,
+  BFD_RELOC_UBI32_LO7_LEAI,
+  BFD_RELOC_UBI32_LO16_LEAI,
+  BFD_RELOC_UBI32_GOT_LO_LEAI,
+  BFD_RELOC_UBI32_FUNCDESC_GOT_LO_LEAI,
 
 /* These two relocations are used by the linker to determine which of
 the entries in a C++ virtual function table are actually used.  When

@@ -5501,7 +5501,11 @@ finish_step_over (struct execution_control_state *ecs)
       /* If we're stepping over a breakpoint with all threads locked,
 	 then only the thread that was stepped should be reporting
 	 back an event.  */
+#ifdef NOT_VERDI
       gdb_assert (ecs->event_thread->control.trap_expected);
+#else
+      warning (_("Stopped in unexpected thread."));
+#endif
 
       if (ecs->event_thread->suspend.stop_signal == GDB_SIGNAL_TRAP)
 	clear_step_over_info ();
