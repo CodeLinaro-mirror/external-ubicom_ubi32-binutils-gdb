@@ -93,26 +93,32 @@ static const char *ubi32_register_names[] =
   "sep",						/* 88	 */
   /* Valid instruction address ranges high, low, enable.  */
   "i_range0_hi", "i_range1_hi", "i_range2_hi", "i_range3_hi", /* 89-92 */
-  "i_range0_lo", "i_range1_lo", "i_range2_lo", "i_range3_lo", /* 93-96 */
-  "i_range0_en", "i_range1_en", "i_range2_en", "i_range3_en", /* 97-100 */
+  "i_range4_hi", "i_range5_hi", "i_range6_hi", "i_range7_hi", /* 93-96 */
+  "i_range0_lo", "i_range1_lo", "i_range2_lo", "i_range3_lo", /* 97-100 */
+  "i_range4_lo", "i_range5_lo", "i_range6_lo", "i_range7_lo", /* 101-104 */
+  "i_range0_en", "i_range1_en", "i_range2_en", "i_range3_en", /* 105-108 */
+  "i_range4_en", "i_range5_en", "i_range6_en", "i_range7_en", /* 109-112 */
   /* Valid data address ranges high, low, enable.  */
-  "d_range0_hi", "d_range1_hi", "d_range2_hi", "d_range3_hi",
-  "d_range4_hi", "d_range5_hi",				/* 101-106 */
-  "d_range0_lo", "d_range1_lo", "d_range2_lo", "d_range3_lo",
-  "d_range4_lo", "d_range5_lo",				/* 107-112 */
-  "d_range0_en", "d_range1_en", "d_range2_en", "d_range3_en",
-  "d_range4_en", "d_range5_en",				/* 113-118 */
+  "d_range0_hi", "d_range1_hi", "d_range2_hi", "d_range3_hi", /* 113-116 */
+  "d_range4_hi", "d_range5_hi", "d_range6_hi", "d_range7_hi", /* 117-120 */
+  "d_range0_lo", "d_range1_lo", "d_range2_lo", "d_range3_lo", /* 121-124 */
+  "d_range4_lo", "d_range5_lo", "d_range6_lo", "d_range7_lo", /* 125-128 */
+  "d_range0_en", "d_range1_en", "d_range2_en", "d_range3_en", /* 129-132 */
+  "d_range4_en", "d_range5_en", "d_range6_en", "d_range7_en", /* 133-136 */
   /* Valid user instruction address ranges enable.  */
   "i_range0_user_en", "i_range1_user_en",
-  "i_range2_user_en", "i_range3_user_en",		/* 119-122 */
+  "i_range2_user_en", "i_range3_user_en",
+  "i_range4_user_en", "i_range5_user_en",
+  "i_range6_user_en", "i_range7_user_en",		/* 137-144 */
   /* Valid user data address ranges enable.  */
   "d_range0_user_en", "d_range1_user_en",
   "d_range2_user_en", "d_range3_user_en",
-  "d_range4_user_en", "d_range5_user_en",		/* 123-128 */
+  "d_range4_user_en", "d_range5_user_en",
+  "d_range6_user_en", "d_range7_user_en",		/* 145-152 */
   /* FP control registers.  */
-  "mt_fp_flush", "mt_fp_blocked", "mt_fp_blocked_set",	/* 129-131 */
+  "mt_fp_flush", "mt_fp_blocked", "mt_fp_blocked_set",	/* 152-155 */
   /* BTB control registers.  */
-  "mt_btb_en", "btb_ctrl",				/* 132-133 */
+  "mt_btb_en", "btb_ctrl", "tnum"			/* 156-158 */
 };
 #define UBI32_NUM_REGS ARRAY_SIZE (ubi32_register_names)
 
