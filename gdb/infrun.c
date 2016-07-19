@@ -5504,7 +5504,8 @@ finish_step_over (struct execution_control_state *ecs)
 #ifdef NOT_VERDI
       gdb_assert (ecs->event_thread->control.trap_expected);
 #else
-      warning (_("Stopped in unexpected thread."));
+      if (!ecs->event_thread->control.trap_expected)
+        warning (_("Stopped in unexpected thread."));
 #endif
 
       if (ecs->event_thread->suspend.stop_signal == GDB_SIGNAL_TRAP)
