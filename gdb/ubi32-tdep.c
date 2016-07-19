@@ -29,6 +29,7 @@
 #include "trad-frame.h"
 #include "dwarf2-frame.h"
 #include "gdbcore.h"
+#include "user-regs.h"
 
 /* Register names of the Qualcomm UBI32 V6/V6.1 processor.
    The register numbers are GDB internal, not ISA register numbers.  */
@@ -114,6 +115,25 @@ static const char *ubi32_register_names[] =
   "mt_btb_en", "btb_ctrl",				/* 132-133 */
 };
 #define UBI32_NUM_REGS ARRAY_SIZE (ubi32_register_names)
+
+/* Register aliases.  */
+static struct
+{
+  const char *name;
+  const char *alias;
+  int regnum;
+} ubi32_register_aliases[] = {
+  { "sp",	"a7" },
+  { "acc0_hi",	"mac_hi" },
+  { "acc0_lo",	"mac_lo" },
+  { "source_3",	"source3" },
+  { "context_cnt", "inst_cnt" },
+  { "mt_pri",	"mt_hpri" },
+  { "mt_sched",	"mt_hrt" },
+  { "chip_cfg",	"cfg" },
+  { 0, 0 }
+};
+
 
 
 /* Return the name of register regnum.  */
@@ -791,6 +811,13 @@ ubi32_return_value (struct gdbarch *gdbarch, struct value *function,
   return RETURN_VALUE_REGISTER_CONVENTION;
 }
 
+static struct value *
+value_of_ubi32_user_reg (struct frame_info *frame, const void *baton)
+{
+  const int *reg_p = baton;
+  return value_of_register (*reg_p, frame);
+}
+
 
 static const struct frame_unwind ubi32_frame_unwind = {
   NORMAL_FRAME,
@@ -881,6 +908,15 @@ ubi32_gdbarch_init (struct gdbarch_info info, struct gdbarch_list *arches)
   set_gdbarch_print_insn (gdbarch, print_insn_ubi32);
   set_gdbarch_push_dummy_call (gdbarch, ubi32_push_dummy_call);
   set_gdbarch_return_value (gdbarch, ubi32_return_value);
+
+  /* Set register aliases.  */
+  for (i = 0;  ubi32_register_aliases[i].name; i++)
+    {
+      ubi32_register_aliases[i].regnum =
+        user_reg_map_name_to_regnum (gdbarch, ubi32_register_aliases[i].name, -1);
+      user_reg_add (gdbarch, ubi32_register_aliases[i].alias,
+		    value_of_ubi32_user_reg, &ubi32_register_aliases[i].regnum);
+    }
 
   return gdbarch;
 }
