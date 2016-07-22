@@ -1,8 +1,27 @@
-/* Ubicom32 opcode support.  -*- C -*-
-   Copyright (C) 2000, 2001, 2002 Red Hat, Inc.
-   This file is part of CGEN.  */
+/* Qualcomm Ubi32 opcode support.  -*- C -*-
 
-/* This file is an addendum to ubicom32.cpu.  Heavy use of C code isn't
+   Copyright 2016 Free Software Foundation, Inc.
+   Contributed by Michael Eager <eager@eagercon.com>
+
+   This file is part of the GNU Binutils.
+
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 3 of the License, or
+   (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston,
+   MA 02110-1301, USA.  */
+
+
+/* This file is an addendum to ubi32.cpu.  Heavy use of C code isn't
    appropriate in .cpu files, so it resides here.  This especially applies
    to assembly/disassembly where parsing/printing can be quite involved.
    Such things aren't really part of the specification of the cpu, per se,
@@ -24,8 +43,7 @@
 
 /* Check applicability of instructions against machines.  */
 #define CGEN_VALIDATE_INSN_SUPPORTED
-extern int ubicom32_cgen_insn_supported
-  PARAMS ((CGEN_CPU_DESC, const CGEN_INSN *));
+extern int ubi32_cgen_insn_supported (CGEN_CPU_DESC, const CGEN_INSN *);
 
 /* Allows reason codes to be output when assembler errors occur.  */
 #define CGEN_VERBOSE_ASSEMBLER_ERRORS
@@ -33,30 +51,27 @@ extern int ubicom32_cgen_insn_supported
 /* Override disassembly hashing */
 
 #define CGEN_DIS_HASH_SIZE 32
-#define CGEN_DIS_HASH(buf,value) ubicom32_dis_hash(buf,value)
+#define CGEN_DIS_HASH(buf,value) ubi32_dis_hash(buf,value)
 
 #define CGEN_ASM_HASH_SIZE 509
-#define CGEN_ASM_HASH(insn) ubicom32_asm_hash(insn)
+#define CGEN_ASM_HASH(insn) ubi32_asm_hash(insn)
 
 #define CGEN_DISASSEM_CHUNKSIZE 4
 
-extern unsigned int ubicom32_dis_hash (const char *buf, CGEN_INSN_INT value);
-extern unsigned int ubicom32_asm_hash (const char *insn);
+extern unsigned int ubi32_dis_hash (const char *buf, CGEN_INSN_INT value);
+extern unsigned int ubi32_asm_hash (const char *insn);
 
 /* Structure used to map between directly addressable registers and
    their human-readable names.  Used by both the assembler and the
    disassembler.
 */
-struct ubicom32_cgen_data_space_map {
+struct ubi32_cgen_data_space_map {
 	long address;
 	char *name;
         int  type;
 };
 
-extern struct ubicom32_cgen_data_space_map ubicom32_cgen_data_space_map_mars[];
-extern struct ubicom32_cgen_data_space_map ubicom32_cgen_data_space_map_mercury[];
-extern struct ubicom32_cgen_data_space_map ubicom32_cgen_data_space_map_jupiter[];
-extern struct ubicom32_cgen_data_space_map ubicom32_cgen_data_space_map_akronite[];
+extern struct ubi32_cgen_data_space_map ubi32_cgen_data_space_map_IPQ806x[];
 
 #define A0_ADDRESS 0x80
 #define A1_ADDRESS (A0_ADDRESS + 4)
@@ -75,7 +90,7 @@ typedef unsigned char UQI;
 #include "safe-ctype.h"
 
 unsigned int
-ubicom32_dis_hash (const char *buf ATTRIBUTE_UNUSED, CGEN_INSN_INT value ATTRIBUTE_UNUSED)
+ubi32_dis_hash (const char *buf ATTRIBUTE_UNUSED, CGEN_INSN_INT value ATTRIBUTE_UNUSED)
 {
   unsigned int hash = (value >> 27);
   hash &= 0x1f;
@@ -86,7 +101,7 @@ ubicom32_dis_hash (const char *buf ATTRIBUTE_UNUSED, CGEN_INSN_INT value ATTRIBU
 
 /* A better hash function for instruction mnemonics. */
 unsigned int
-ubicom32_asm_hash (const char* insn)
+ubi32_asm_hash (const char* insn)
 {
   unsigned int hash;
   const char* m = insn;
@@ -115,7 +130,7 @@ ubicom32_asm_hash (const char* insn)
 
 /* Special check to ensure that instruction exists for given machine. */
 int
-ubicom32_cgen_insn_supported (CGEN_CPU_DESC cd,
+ubi32_cgen_insn_supported (CGEN_CPU_DESC cd,
 			  const CGEN_INSN *insn)
 {
   int machs = CGEN_INSN_ATTR_VALUE (insn, CGEN_INSN_MACH);
@@ -123,418 +138,20 @@ ubicom32_cgen_insn_supported (CGEN_CPU_DESC cd,
   /* No mach attribute?  Assume it's supported for all machs.  */
   if (machs == 0)
     return 1;
-  
+
   return ((machs & cd->machs) != 0);
 }
 
 /* -- asm.c */
 
-/* Directly addressable registers on the UBICOM32.
+/* Directly addressable registers on the UBI32.
  */
 
 #define RW  0  /* read/write */
 #define RO  1  /* read-only  */
 #define WO  2  /* write-only */
 
-struct ubicom32_cgen_data_space_map ubicom32_cgen_data_space_map_mercury[] = {
-	{ 0x0,		"d0", RW, },	/* data registers */
-	/* d1, d2 and d3 are later */
-	{ 0x10,		"d4", RW, },
-	{ 0x14,		"d5", RW, },
-	{ 0x18,		"d6", RW, },
-	{ 0x1c,		"d7", RW, },
-	{ 0x20,		"d8", RW, },
-	{ 0x24,		"d9", RW, },
-	{ 0x28,		"d10", RW, },
-	{ 0x2c,		"d11", RW, },
-	{ 0x30,		"d12", RW, },
-	{ 0x34,		"d13", RW, },
-	{ 0x38,		"d14", RW, },
-	{ 0x3c,		"d15", RW, },
-	{ 0x4,		"d1", RW, },	/* put them here where they work */
-	{ 0x8,		"d2", RW, },
-	{ 0xc,		"d3", RW, },
-	{ A0_ADDRESS,	"a0", RW, },	/* address registers */
-	{ A1_ADDRESS,	"a1", RW, },
-	{ A2_ADDRESS,   "a2", RW, },
-	{ A3_ADDRESS,	"a3", RW, },
-	{ A4_ADDRESS,	"a4", RW, },
-	{ A5_ADDRESS,	"a5", RW, },
-	{ A6_ADDRESS,	"a6", RW, },
-	{ A7_ADDRESS,	"sp", RW, },	/* sp is a7; first so we use it */
-	{ A7_ADDRESS,	"a7", RW, },
-	{ 0xa0,		"mac_hi", RW, },
-	{ 0xa4,		"mac_lo", RW, },
-	{ 0xa8,         "mac_rc16", RW, },
-	{ 0xac,         "source3", RW, },
-	{ 0xac,         "source_3", RW, },
-	{ 0xb0,         "context_cnt", RO,},
-	{ 0xb0,         "inst_cnt", RO,},
-	{ 0xb4,		"csr", RW, },
-	{ 0xb8,         "rosr", RO, },
-	{ 0xbc,		"iread_data", RW, },
-	{ 0xc0,		"int_mask0", RW, },
-	{ 0xc4,		"int_mask1", RW, },
-	/* 0xc8 - 0xcf reserved for future interrupt masks */
-	{ 0xd0,         "pc", RW, },
-	/* 0xd4 - ff reserved */
-	{ 0x100,        "chip_id", RO, },
-	{ 0x104,	"int_stat0", RO, },
-	{ 0x108,	"int_stat1", RO, },
-	/* 0x10c - 0x113 reserved for future interrupt masks */
-	{ 0x114,        "int_set0", WO, },
-	{ 0x118,        "int_set1", WO, },
-        /* 0x11c - 0x123 reserved for future interrupt set */
-	{ 0x124,        "int_clr0", WO, },
-        { 0x128,        "int_clr1", WO, },
-        /* 0x13c - 0x133 reserved for future interrupt clear */
-	{ 0x134,	"global_ctrl", RW, },
-	{ 0x13c,        "mt_active_set", WO, },
-	{ 0x140,        "mt_active_clr", WO, },
-	{ 0x138,        "mt_active", RO, },
-	{ 0x148,        "mt_dbg_active_set", WO, },
-	{ 0x144,        "mt_dbg_active", RO, },
-	{ 0x14C,        "mt_en", RW, },
-	{ 0x150,        "mt_hpri", RW, }, 
-	{ 0x150,        "mt_pri", RW, }, 
-	{ 0x154,        "mt_hrt", RW, },
-	{ 0x154,        "mt_sched", RW, },
-	{ 0x15C,        "mt_break_clr", WO, },
-	{ 0x158,        "mt_break", RO, },
-	{ 0x160,        "mt_single_step", RW, },
-	{ 0x164,        "mt_min_delay_en", RW, },
-	{ 0x164,        "mt_min_del_en", RW, },
-
-	{ 0x16c,        "perr_addr", RO, },
-	{ 0x178,        "dcapt_tnum", RO, },
-	{ 0x174,        "dcapt_pc", RO, },
-	{ 0x170,        "dcapt", RW, },
-	/* 0x17c - 0x1ff reserved */
-	{ 0x17c,        "mt_dbg_active_clr", WO, },
-	{ 0x180,        "scratchpad0", RW, },
-	{ 0x184,        "scratchpad1", RW, },
-	{ 0x188,        "scratchpad2", RW, },
-	{ 0x18c,        "scratchpad3", RW, },
-
-	{ 0x0,		0, RW, },
-};
-
-struct ubicom32_cgen_data_space_map ubicom32_cgen_data_space_map_mars[] = {
-	{ 0x0,		"d0", RW, },	/* data registers */
-	/* d1, d2 and d3 are later */
-	{ 0x10,		"d4", RW, },
-	{ 0x14,		"d5", RW, },
-	{ 0x18,		"d6", RW, },
-	{ 0x1c,		"d7", RW, },
-	{ 0x20,		"d8", RW, },
-	{ 0x24,		"d9", RW, },
-	{ 0x28,		"d10", RW, },
-	{ 0x2c,		"d11", RW, },
-	{ 0x30,		"d12", RW, },
-	{ 0x34,		"d13", RW, },
-	{ 0x38,		"d14", RW, },
-	{ 0x3c,		"d15", RW, },
-	{ 0x4,		"d1", RW, },	/* put them here where they work */
-	{ 0x8,		"d2", RW, },
-	{ 0xc,		"d3", RW, },
-	{ A0_ADDRESS,	"a0", RW, },	/* address registers */
-	{ A1_ADDRESS,	"a1", RW, },
-	{ A2_ADDRESS,   "a2", RW, },
-	{ A3_ADDRESS,	"a3", RW, },
-	{ A4_ADDRESS,	"a4", RW, },
-	{ A5_ADDRESS,	"a5", RW, },
-	{ A6_ADDRESS,	"a6", RW, },
-	{ A7_ADDRESS,	"sp", RW, },	/* sp is a7; first so we use it */
-	{ A7_ADDRESS,	"a7", RW, },
-	{ 0xa0,		"mac_hi", RW, },
-	{ 0xa0,		"acc0_hi", RW, }, /* mac_hi and mac_lo are also known as acc0_hi and acc0_lo */
-	{ 0xa4,		"mac_lo", RW, },
-	{ 0xa4,		"acc0_lo", RW, },
-	{ 0xa8,         "mac_rc16", RW, },
-	{ 0xac,         "source3", RW, },
-	{ 0xac,         "source_3", RW, },
-	{ 0xb0,         "context_cnt", RO,},
-	{ 0xb0,         "inst_cnt", RO,},
-	{ 0xb4,		"csr", RW, },
-	{ 0xb8,         "rosr", RO, },
-	{ 0xbc,		"iread_data", RW, },
-	{ 0xc0,		"int_mask0", RW, },
-	{ 0xc4,		"int_mask1", RW, },
-	/* 0xc8 - 0xcf reserved for future interrupt masks */
-	{ 0xd0,         "pc", RW, },
-	{ 0xd4,         "trap_cause", RW, },
-	{ 0xd8,		"acc1_hi", RW, }, /* Defines for acc1 */
-	{ 0xdc,		"acc1_lo", RW, },
-	{ 0xe0,		"previous_pc", RO, },
-	{ 0xe4,		"ucsr", RW, },
-
-	/* 0xe8 - ff reserved */
-	{ 0x100,        "chip_id", RO, },
-	{ 0x104,	"int_stat0", RO, },
-	{ 0x108,	"int_stat1", RO, },
-	/* 0x10c - 0x113 reserved for future interrupt masks */
-	{ 0x114,        "int_set0", WO, },
-	{ 0x118,        "int_set1", WO, },
-        /* 0x11c - 0x123 reserved for future interrupt set */
-	{ 0x124,        "int_clr0", WO, },
-        { 0x128,        "int_clr1", WO, },
-        /* 0x130 - 0x133 reserved for future interrupt clear */
-	{ 0x134,	"global_ctrl", RW, },
-	{ 0x13c,        "mt_active_set", WO, },
-	{ 0x140,        "mt_active_clr", WO, },
-	{ 0x138,        "mt_active", RO, },
-	{ 0x148,        "mt_dbg_active_set", WO, },
-	{ 0x144,        "mt_dbg_active", RO, },
-	{ 0x14C,        "mt_en", RW, },
-	{ 0x150,        "mt_hpri", RW, }, 
-	{ 0x150,        "mt_pri", RW, }, 
-	{ 0x154,        "mt_hrt", RW, },
-	{ 0x154,        "mt_sched", RW, },
-	{ 0x15C,        "mt_break_clr", WO, },
-	{ 0x158,        "mt_break", RO, },
-	{ 0x160,        "mt_single_step", RW, },
-	{ 0x164,        "mt_min_delay_en", RW, },
-	{ 0x164,        "mt_min_del_en", RW, },
-	{ 0x168,        "mt_break_set", WO, },
-	/* 0x16c - 0x16f reserved */
-	{ 0x170,        "dcapt", RW, },
-	/* 0x174 - 0x17b reserved */
-	{ 0x17c,        "mt_dbg_active_clr", WO, },
-	{ 0x180,        "scratchpad0", RW, },
-	{ 0x184,        "scratchpad1", RW, },
-	{ 0x188,        "scratchpad2", RW, },
-	{ 0x18c,        "scratchpad3", RW, },
-	{ 0x190,        "scratchpad4", RW, },
-	{ 0x194,        "scratchpad5", RW, },
-	{ 0x198,        "scratchpad6", RW, },
-
-	/* 0x19c - 0x19f Reserved */
-	{ 0x1a0,        "chip_cfg", RW, },
-	{ 0x1a4,        "mt_i_blocked", RO, },
-	{ 0x1a8,	"mt_d_blocked", RO, },
-	{ 0x1ac,	"mt_i_blocked_set", WO},
-	{ 0x1b0, 	"mt_d_blocked_set", WO},
-	{ 0x1b4,	"mt_blocked_clr", WO},
-	{ 0x1b8,        "mt_trap_en", RW, },
-	{ 0x1bc,        "mt_trap", RO, },
-	{ 0x1c0,        "mt_trap_set", WO, },
-	{ 0x1c4,        "mt_trap_clr", WO, },
-	{ 0x1c8,        "sep", RW, },
-	/* 0x1cc-0x1FF Reserved */
- 	{ 0x200,	"i_range0_hi", RW},
-	{ 0x204,	"i_range1_hi", RW},
-	{ 0x208,	"i_range2_hi", RW},
-	{ 0x20c,	"i_range3_hi", RW},
-
-	/* 0x210-0x21f Reserved */
- 	{ 0x220,	"i_range0_lo", RW},
-	{ 0x224,	"i_range1_lo", RW},
-	{ 0x228,	"i_range2_lo", RW},
-	{ 0x22c,	"i_range3_lo", RW},
-
-	/* 0x230-0x23f Reserved */
- 	{ 0x240,	"i_range0_en", RW},
-	{ 0x244,	"i_range1_en", RW},
-	{ 0x248,	"i_range2_en", RW},
-	{ 0x24c,	"i_range3_en", RW},
-
-	/* 0x250-0x25f Reserved */
- 	{ 0x260,	"d_range0_hi", RW},
-	{ 0x264,	"d_range1_hi", RW},
-	{ 0x268,	"d_range2_hi", RW},
-	{ 0x26c,	"d_range3_hi", RW},
-	{ 0x270,	"d_range4_hi", RW},
-
-	/* 0x274-0x27f Reserved */
- 	{ 0x280,	"d_range0_lo", RW},
-	{ 0x284,	"d_range1_lo", RW},
-	{ 0x288,	"d_range2_lo", RW},
-	{ 0x28c,	"d_range3_lo", RW},
-	{ 0x290,	"d_range4_lo", RW},
-
-	/* 0x294-0x29f Reserved */
- 	{ 0x2a0,	"d_range0_en", RW},
-	{ 0x2a4,	"d_range1_en", RW},
-	{ 0x2a8,	"d_range2_en", RW},
-	{ 0x2ac,	"d_range3_en", RW},
-	{ 0x2b0,	"d_range4_en", RW},
-
-	/* 0x2b4-0x3ff Reserved */
-
-	{ 0x0,		0, RW, },
-};
-
-struct ubicom32_cgen_data_space_map ubicom32_cgen_data_space_map_jupiter[] = {
-	{ 0x0,		"d0", RW, },	/* data registers */
-	/* d1, d2 and d3 are later */
-	{ 0x10,		"d4", RW, },
-	{ 0x14,		"d5", RW, },
-	{ 0x18,		"d6", RW, },
-	{ 0x1c,		"d7", RW, },
-	{ 0x20,		"d8", RW, },
-	{ 0x24,		"d9", RW, },
-	{ 0x28,		"d10", RW, },
-	{ 0x2c,		"d11", RW, },
-	{ 0x30,		"d12", RW, },
-	{ 0x34,		"d13", RW, },
-	{ 0x38,		"d14", RW, },
-	{ 0x3c,		"d15", RW, },
-	{ 0x4,		"d1", RW, },	/* put them here where they work */
-	{ 0x8,		"d2", RW, },
-	{ 0xc,		"d3", RW, },
-	{ A0_ADDRESS,	"a0", RW, },	/* address registers */
-	{ A1_ADDRESS,	"a1", RW, },
-	{ A2_ADDRESS,   "a2", RW, },
-	{ A3_ADDRESS,	"a3", RW, },
-	{ A4_ADDRESS,	"a4", RW, },
-	{ A5_ADDRESS,	"a5", RW, },
-	{ A6_ADDRESS,	"a6", RW, },
-	{ A7_ADDRESS,	"sp", RW, },	/* sp is a7; first so we use it */
-	{ A7_ADDRESS,	"a7", RW, },
-	{ 0xa0,		"mac_hi", RW, },
-	{ 0xa0,		"acc0_hi", RW, }, /* mac_hi and mac_lo are also known as acc0_hi and acc0_lo */
-	{ 0xa4,		"mac_lo", RW, },
-	{ 0xa4,		"acc0_lo", RW, },
-	{ 0xa8,         "mac_rc16", RW, },
-	{ 0xac,         "source3", RW, },
-	{ 0xac,         "source_3", RW, },
-	{ 0xb0,         "context_cnt", RO,},
-	{ 0xb0,         "inst_cnt", RO,},
-	{ 0xb4,		"csr", RW, },
-	{ 0xb8,         "rosr", RO, },
-	{ 0xbc,		"iread_data", RW, },
-	{ 0xc0,		"int_mask0", RW, },
-	{ 0xc4,		"int_mask1", RW, },
-	{ 0xc8,		"int_mask2", RW, },
-	/* 0xcc - 0xcf reserved for future interrupt masks */
-	{ 0xd0,         "pc", RW, },
-	{ 0xd4,         "trap_cause", RW, },
-	{ 0xd8,		"acc1_hi", RW, }, /* Defines for acc1 */
-	{ 0xdc,		"acc1_lo", RW, },
-	{ 0xe0,		"previous_pc", RO, },
-	{ 0xe4,		"ucsr", RW, },
-
-	/* 0xe8 - ff reserved */
-	{ 0x100,        "chip_id", RO, },
-	{ 0x104,	"int_stat0", RO, },
-	{ 0x108,	"int_stat1", RO, },
-	{ 0x10c,	"int_stat2", RO, },
-	/* 0x110 - 0x113 reserved for future interrupt masks */
-	{ 0x114,        "int_set0", WO, },
-	{ 0x118,        "int_set1", WO, },
-	{ 0x11c,        "int_set2", WO, },
-        /* 0x120 - 0x123 reserved for future interrupt set */
-	{ 0x124,        "int_clr0", WO, },
-        { 0x128,        "int_clr1", WO, },
-        { 0x12c,        "int_clr2", WO, },
-        /* 0x130 - 0x133 reserved for future interrupt clear */
-	{ 0x134,	"global_ctrl", RW, },
-	{ 0x13c,        "mt_active_set", WO, },
-	{ 0x140,        "mt_active_clr", WO, },
-	{ 0x138,        "mt_active", RO, },
-	{ 0x148,        "mt_dbg_active_set", WO, },
-	{ 0x144,        "mt_dbg_active", RO, },
-	{ 0x14C,        "mt_en", RW, },
-	{ 0x150,        "mt_hpri", RW, }, 
-	{ 0x150,        "mt_pri", RW, }, 
-	{ 0x154,        "mt_hrt", RW, },
-	{ 0x154,        "mt_sched", RW, },
-	{ 0x15C,        "mt_break_clr", WO, },
-	{ 0x158,        "mt_break", RO, },
-	{ 0x160,        "mt_single_step", RW, },
-	{ 0x164,        "mt_min_delay_en", RW, },
-	{ 0x164,        "mt_min_del_en", RW, },
-	{ 0x168,        "mt_break_set", WO, },
-	{ 0x16c,        "mt_fp_flush", WO, },
-	{ 0x170,        "dcapt", RW, },
-	{ 0x174,	"mt_fp_blocked", RO, },
-	{ 0x178,	"mt_fp_blocked_set", WO},
-	{ 0x17c,        "mt_dbg_active_clr", WO, },
-	{ 0x180,        "scratchpad0", RW, },
-	{ 0x184,        "scratchpad1", RW, },
-	{ 0x188,        "scratchpad2", RW, },
-	{ 0x18c,        "scratchpad3", RW, },
-	{ 0x190,        "scratchpad4", RW, },
-	{ 0x194,        "scratchpad5", RW, },
-	{ 0x198,        "scratchpad6", RW, },
-
-	/* 0x19c - 0x19f Reserved */
-	{ 0x1a0,        "chip_cfg", RW, },
-	{ 0x1a4,        "mt_i_blocked", RO, },
-	{ 0x1a8,	"mt_d_blocked", RO, },
-	{ 0x1ac,	"mt_i_blocked_set", WO},
-	{ 0x1b0, 	"mt_d_blocked_set", WO},
-	{ 0x1b4,	"mt_blocked_clr", WO},
-	{ 0x1b8,        "mt_trap_en", RW, },
-	{ 0x1bc,        "mt_trap", RO, },
-	{ 0x1c0,        "mt_trap_set", WO, },
-	{ 0x1c4,        "mt_trap_clr", WO, },
-	{ 0x1c8,        "sep", RW, },
-	{ 0x1cc,        "mt_btb_en", RW, },
-	{ 0x1d0,        "btb_ctrl", RW, },
-	{ 0x1d4,        "tnum", RO, },
-
-	/* 0x1d8-0x1FF Reserved */
- 	{ 0x200,	"i_range0_hi", RW},
-	{ 0x204,	"i_range1_hi", RW},
-	{ 0x208,	"i_range2_hi", RW},
-	{ 0x20c,	"i_range3_hi", RW},
-
-	/* 0x210-0x21f Reserved */
- 	{ 0x220,	"i_range0_lo", RW},
-	{ 0x224,	"i_range1_lo", RW},
-	{ 0x228,	"i_range2_lo", RW},
-	{ 0x22c,	"i_range3_lo", RW},
-
-	/* 0x230-0x23f Reserved */
- 	{ 0x240,	"i_range0_en", RW},
-	{ 0x244,	"i_range1_en", RW},
-	{ 0x248,	"i_range2_en", RW},
-	{ 0x24c,	"i_range3_en", RW},
-
-	/* 0x250-0x25f Reserved */
- 	{ 0x260,	"d_range0_hi", RW},
-	{ 0x264,	"d_range1_hi", RW},
-	{ 0x268,	"d_range2_hi", RW},
-	{ 0x26c,	"d_range3_hi", RW},
-	{ 0x270,	"d_range4_hi", RW},
-	{ 0x274,	"d_range5_hi", RW},
-
-	/* 0x278-0x27f Reserved */
- 	{ 0x280,	"d_range0_lo", RW},
-	{ 0x284,	"d_range1_lo", RW},
-	{ 0x288,	"d_range2_lo", RW},
-	{ 0x28c,	"d_range3_lo", RW},
-	{ 0x290,	"d_range4_lo", RW},
-	{ 0x294,	"d_range5_lo", RW},
-
-	/* 0x298-0x29f Reserved */
- 	{ 0x2a0,	"d_range0_en", RW},
-	{ 0x2a4,	"d_range1_en", RW},
-	{ 0x2a8,	"d_range2_en", RW},
-	{ 0x2ac,	"d_range3_en", RW},
-	{ 0x2b0,	"d_range4_en", RW},
-	{ 0x2b4,	"d_range5_en", RW},
-
-	/* 0x2b8-0x2bf Reserved */
- 	{ 0x2c0,	"i_range0_user_en", RW},
-	{ 0x2c4,	"i_range1_user_en", RW},
-	{ 0x2c8,	"i_range2_user_en", RW},
-	{ 0x2cc,	"i_range3_user_en", RW},
-
-	/* 0x2d0 - 0x2df Reserved */
- 	{ 0x2e0,	"d_range0_user_en", RW},
-	{ 0x2e4,	"d_range1_user_en", RW},
-	{ 0x2e8,	"d_range2_user_en", RW},
-	{ 0x2ec,	"d_range3_user_en", RW},
-	{ 0x2f0,	"d_range4_user_en", RW},
-	{ 0x2f4,	"d_range5_user_en", RW},
-
-	/* 0x2f8 - 0x3ff Reserved */
-	{ 0x0,		0, RW, },
-};
-
-struct ubicom32_cgen_data_space_map ubicom32_cgen_data_space_map_akronite[] = {
+struct ubi32_cgen_data_space_map ubi32_cgen_data_space_map_IPQ806x[] = {
 	{ 0x0,		"d0", RW, },	/* data registers */
 	/* d1, d2 and d3 are later */
 	{ 0x10,		"d4", RW, },
@@ -605,8 +222,8 @@ struct ubicom32_cgen_data_space_map ubicom32_cgen_data_space_map_akronite[] = {
 	{ 0x148,        "mt_dbg_active_set", WO, },
 	{ 0x144,        "mt_dbg_active", RO, },
 	{ 0x14C,        "mt_en", RW, },
-	{ 0x150,        "mt_hpri", RW, }, 
-	{ 0x150,        "mt_pri", RW, }, 
+	{ 0x150,        "mt_hpri", RW, },
+	{ 0x150,        "mt_pri", RW, },
 	{ 0x154,        "mt_hrt", RW, },
 	{ 0x154,        "mt_sched", RW, },
 	{ 0x15C,        "mt_break_clr", WO, },
@@ -721,9 +338,12 @@ struct ubicom32_cgen_data_space_map ubicom32_cgen_data_space_map_akronite[] = {
 	{ 0x0,		0, RW, },
 };
 
+#if 0
 /* t_is_set will be 1 if .t is set for the madd.2 and msub.2 instructions */
 static unsigned char t_is_set =0;
+#endif
 
+#if 0
 static const char *
 parse_t_is_set_for_addsub (
 			   CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
@@ -748,10 +368,12 @@ parse_t_is_set_for_addsub (
 
   return NULL;
 }
+#endif
 
 char myerrmsg[128];
 
-/* 
+#if 0
+/*
  * If accumulator is selected for madd.2 and msub.2 instructions then
  * the T bit should not be selected. Flag an assembler error in those
  * cases.
@@ -772,7 +394,7 @@ parse_acc_for_addsub (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
       return errmsg;
     }
 
-  
+
   if(t_is_set)
     {
       /* This is erroneous. */
@@ -784,7 +406,9 @@ parse_acc_for_addsub (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
   t_is_set=0;
   return NULL;
 }
+#endif
 
+#if 0
 /*
  * For dsp madd/msub cases if S2 is a data register then t_is_set flag should be set to zero.
  */
@@ -806,12 +430,13 @@ parse_dr_for_addsub (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
   t_is_set=0;
   return NULL;
 }
+#endif
 
 static const char *
 parse_bit5 (CGEN_CPU_DESC cd,
 	    const char **strp,
 	    int opindex,
-	    long *valuep)
+	    unsigned long *valuep)
 {
   const char *errmsg;
   char mode = 0;
@@ -845,7 +470,7 @@ parse_bit5 (CGEN_CPU_DESC cd,
       errmsg = _("Attempt to find bit index of 0");
       return errmsg;
     }
-    
+
     if (mode == 1) {
       count = 31;
       while ((value & 0x80000000) == 0) {
@@ -869,13 +494,14 @@ parse_bit5 (CGEN_CPU_DESC cd,
         value >>= 1;
       }
     }
-    
+
     *valuep = count;
   }
 
   return errmsg;
 }
 
+#if 0
 /*
  * For dsp madd/msub cases if S2 is a #bit5 then t_is_set flag should be set to zero.
  */
@@ -883,7 +509,7 @@ static const char *
 parse_bit5_for_addsub (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
 		       const char **strp,
 		       int opindex,
-		       long *valuep)
+		       unsigned long *valuep)
 {
   const char *errmsg;
 
@@ -897,6 +523,7 @@ parse_bit5_for_addsub (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
   t_is_set=0;
   return NULL;
 }
+#endif
 
 /* Parse signed 4 bit immediate value, being careful (hacky) to avoid
    eating a `++' that might be present */
@@ -970,36 +597,18 @@ static const char *
 parse_direct_addr (CGEN_CPU_DESC cd,
 		   const char **strp,
 		   int opindex,
-		   long *valuep,
+		   unsigned long *valuep,
 		   int isdest)
 {
   const char *errmsg = NULL;
   bfd_vma value;
-  struct ubicom32_cgen_data_space_map *cur;
+  struct ubi32_cgen_data_space_map *cur = NULL;
   size_t len;
 
-  if(cd->machs & (1<<MACH_IP3035))
+  if ((cd->machs & (1<<MACH_UBI32_VER6)) || (cd->machs & (1<<MACH_UBI32_VER61)))
     {
-      /* cpu is mercury */
-      cur = ubicom32_cgen_data_space_map_mercury;
-    }
-
-  if((cd->machs & (1<<MACH_UBICOM32DSP)) || (cd->machs & (1<<MACH_UBICOM32_VER4)))
-    {
-      /* cpu is mars/ares */
-      cur = ubicom32_cgen_data_space_map_mars;
-    }
-
-  if (cd->machs & (1<<MACH_UBICOM32_VER5))
-    {
-      /* cpu is jupiter */
-      cur = ubicom32_cgen_data_space_map_jupiter;
-    }
-
-  if ((cd->machs & (1<<MACH_UBICOM32_VER6)) || (cd->machs & (1<<MACH_UBICOM32_VER61)))
-    {
-      /* cpu is akronite or hawkeye */
-      cur = ubicom32_cgen_data_space_map_akronite;
+      /* Cpu is IPQ806x or IPQ807x.  */
+      cur = ubi32_cgen_data_space_map_IPQ806x;
     }
 
   assert (cur);
@@ -1021,7 +630,7 @@ parse_direct_addr (CGEN_CPU_DESC cd,
 	errmsg = NULL;
 	break;
       }
-  
+
   /* Not found: try parsing it as a literal */
   if (cur->name == NULL)
     {
@@ -1043,7 +652,7 @@ parse_direct_addr (CGEN_CPU_DESC cd,
       plusplus = strstr(*strp, "++");
       if (plusplus)
 	*plusplus = 0;
-      errmsg = cgen_parse_signed_integer (cd, strp, opindex, &value);
+      errmsg = cgen_parse_signed_integer (cd, strp, opindex, (long int *)&value);
       if (plusplus)
 	*plusplus = '+';
 
@@ -1060,7 +669,7 @@ static const char *
 parse_d_direct_addr (CGEN_CPU_DESC cd,
 		     const char **strp,
 		     int opindex,
-		     long *valuep)
+		     unsigned long *valuep)
 {
   return parse_direct_addr (cd, strp, opindex, valuep, 1);
 }
@@ -1069,7 +678,7 @@ static const char *
 parse_s1_direct_addr (CGEN_CPU_DESC cd,
 		      const char **strp,
 		      int opindex,
-		      long *valuep)
+		      unsigned long *valuep)
 {
   return parse_direct_addr (cd, strp, opindex, valuep, 0);
 }
@@ -1097,86 +706,11 @@ parse_imm7_basic (CGEN_CPU_DESC cd,
   const char *errmsg;
   enum cgen_parse_operand_result result_type = CGEN_PARSE_OPERAND_RESULT_NUMBER;
   bfd_vma value;
-  int newreloc;
 
   /* in this case we want low 7-bits to accompany the 24-bit immediate of a moveai instruction */
   if (strncasecmp (*strp, "%lo(", 4) == 0)
     {
       *strp += 4;
-      errmsg = cgen_parse_address (cd, strp, opindex, reloc,
-				   &result_type, &value);
-      if (**strp != ')')
-	return _("missing `)'");
-      ++*strp;
-      if (errmsg == NULL
-  	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
-	value &= 0x7f;  /* always want 7 bits, regardless of imm7 type */
-      *valuep = value;
-      return errmsg;
-    }
-  else if (strncasecmp (*strp, "%got_lo(", strlen("%got_lo(")) == 0)
-    {
-      *strp += strlen("%got_lo(");
-
-      /* Switch the relocation to the GOT relocation. */
-      switch(reloc)
-	{
-	case BFD_RELOC_UBICOM32_LO7_S:
-	  reloc = BFD_RELOC_UBICOM32_GOT_LO7_S;
-	  break;
-	case BFD_RELOC_UBICOM32_LO7_2_S:
-	  reloc = BFD_RELOC_UBICOM32_GOT_LO7_2_S;
-	  break;
-	case BFD_RELOC_UBICOM32_LO7_4_S:
-	  reloc = BFD_RELOC_UBICOM32_GOT_LO7_4_S;
-	  break;
-	case BFD_RELOC_UBICOM32_LO7_D:
-	  reloc = BFD_RELOC_UBICOM32_GOT_LO7_D;
-	  break;
-	case BFD_RELOC_UBICOM32_LO7_2_D:
-	  reloc = BFD_RELOC_UBICOM32_GOT_LO7_2_D;
-	  break;
-	case BFD_RELOC_UBICOM32_LO7_4_D:
-	  reloc = BFD_RELOC_UBICOM32_GOT_LO7_4_D;
-	  break;
-	}
-      errmsg = cgen_parse_address (cd, strp, opindex, reloc,
-				   &result_type, &value);
-      if (**strp != ')')
-	return _("missing `)'");
-      ++*strp;
-      if (errmsg == NULL
-  	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
-	value &= 0x7f;  /* always want 7 bits, regardless of imm7 type */
-      *valuep = value;
-      return errmsg;
-    }
-  else if (strncasecmp (*strp, "%funcdesc_got_lo(", strlen("%funcdesc_got_lo(")) == 0)
-    {
-      *strp += strlen("%funcdesc_got_lo(");
-
-      /* Switch the relocation to the GOT relocation. */
-      switch(reloc)
-	{
-	case BFD_RELOC_UBICOM32_LO7_S:
-	  reloc = BFD_RELOC_UBICOM32_FUNCDESC_GOT_LO7_S;
-	  break;
-	case BFD_RELOC_UBICOM32_LO7_2_S:
-	  reloc = BFD_RELOC_UBICOM32_FUNCDESC_GOT_LO7_2_S;
-	  break;
-	case BFD_RELOC_UBICOM32_LO7_4_S:
-	  reloc = BFD_RELOC_UBICOM32_FUNCDESC_GOT_LO7_4_S;
-	  break;
-	case BFD_RELOC_UBICOM32_LO7_D:
-	  reloc = BFD_RELOC_UBICOM32_FUNCDESC_GOT_LO7_D;
-	  break;
-	case BFD_RELOC_UBICOM32_LO7_2_D:
-	  reloc = BFD_RELOC_UBICOM32_FUNCDESC_GOT_LO7_2_D;
-	  break;
-	case BFD_RELOC_UBICOM32_LO7_4_D:
-	  reloc = BFD_RELOC_UBICOM32_FUNCDESC_GOT_LO7_4_D;
-	  break;
-	}
       errmsg = cgen_parse_address (cd, strp, opindex, reloc,
 				   &result_type, &value);
       if (**strp != ')')
@@ -1224,6 +758,8 @@ parse_imm7_pdec (CGEN_CPU_DESC cd,
   enum cgen_parse_operand_result result_type = CGEN_PARSE_OPERAND_RESULT_NUMBER;
   bfd_vma value;
 
+  *valuep = 0;
+
   /* in this case we want low 7-bits to accompany the 24-bit immediate of a moveai instruction */
   if (strncasecmp (*strp, "%lo(", 4) == 0)
     {
@@ -1269,7 +805,8 @@ parse_imm7_1_s (CGEN_CPU_DESC cd,
 		unsigned long *valuep)
 {
   return parse_imm7_basic (cd, strp, opindex, valuep, _(imm7_1_rangemsg),
-			   NULL, 0x7f, 0, BFD_RELOC_UBICOM32_LO7_S);
+			   NULL, 0x7f, 0, BFD_RELOC_UBI32_LO7_S);
+/* FIXME */ return 0;
 }
 
 /* halfword imm7 */
@@ -1279,10 +816,11 @@ parse_imm7_2_s (CGEN_CPU_DESC cd,
 		int opindex,
 		unsigned long *valuep)
 {
-  return parse_imm7_basic (cd, strp, opindex, valuep, 
+  return parse_imm7_basic (cd, strp, opindex, valuep,
 			   _(imm7_2_rangemsg),
 			   _(imm7_2_maskmsg),
-			   0xfe, 0x1, BFD_RELOC_UBICOM32_LO7_2_S);
+			   0xfe, 0x1, BFD_RELOC_UBI32_LO7_2_S);
+/* FIXME */ return 0;
 }
 
 /* word imm7 */
@@ -1292,10 +830,11 @@ parse_imm7_4_s (CGEN_CPU_DESC cd,
 		int opindex,
 		unsigned long *valuep)
 {
-  return parse_imm7_basic (cd, strp, opindex, valuep, 
+  return parse_imm7_basic (cd, strp, opindex, valuep,
 			   _(imm7_4_rangemsg),
 			   _(imm7_4_maskmsg),
-			   0x1fc, 0x3, BFD_RELOC_UBICOM32_LO7_4_S);
+			   0x1fc, 0x3, BFD_RELOC_UBI32_LO7_4_S);
+/* FIXME */ return 0;
 }
 
 /* word imm7 */
@@ -1306,10 +845,10 @@ parse_pdec_imm7_4_s (CGEN_CPU_DESC cd,
 		     unsigned long *valuep)
 {
   unsigned long value;
-  const char *errmsg = parse_imm7_pdec (cd, strp, opindex, &value, 
+  const char *errmsg = parse_imm7_pdec (cd, strp, opindex, &value,
 					_(imm7_pdec_rangemsg),
 					_(imm7_4_maskmsg),
-					BFD_RELOC_UBICOM32_LO7_4_S);
+					BFD_RELOC_UBI32_LO7_4_S);
 
   if(errmsg == NULL)
     {
@@ -1334,7 +873,8 @@ parse_imm7_1_d (CGEN_CPU_DESC cd,
 		unsigned long *valuep)
 {
   return parse_imm7_basic (cd, strp, opindex, valuep, _(imm7_1_rangemsg),
-			   NULL, 0x7f, 0, BFD_RELOC_UBICOM32_LO7_D);
+			   NULL, 0x7f, 0, BFD_RELOC_UBI32_LO7_D);
+/* FIXME */ return 0;
 }
 
 /* halfword dest imm7 */
@@ -1344,10 +884,11 @@ parse_imm7_2_d (CGEN_CPU_DESC cd,
 		int opindex,
 		unsigned long *valuep)
 {
-  return parse_imm7_basic (cd, strp, opindex, valuep, 
+  return parse_imm7_basic (cd, strp, opindex, valuep,
 			   _(imm7_2_rangemsg),
 			   _(imm7_2_maskmsg),
-			   0xfe, 0x1, BFD_RELOC_UBICOM32_LO7_2_D);
+			   0xfe, 0x1, BFD_RELOC_UBI32_LO7_2_D);
+/* FIXME */ return 0;
 }
 
 /* word dest imm7 */
@@ -1357,10 +898,11 @@ parse_imm7_4_d (CGEN_CPU_DESC cd,
 		int opindex,
 		unsigned long *valuep)
 {
-  return parse_imm7_basic (cd, strp, opindex, valuep, 
+  return parse_imm7_basic (cd, strp, opindex, valuep,
 			   _(imm7_4_rangemsg),
 			   _(imm7_4_maskmsg),
-			   0x1fc, 0x3, BFD_RELOC_UBICOM32_LO7_4_D);
+			   0x1fc, 0x3, BFD_RELOC_UBI32_LO7_4_D);
+/* FIXME */ return 0;
 }
 
 /* Parse 16-bit immediate, allow %hi() or %lo() operators */
@@ -1368,7 +910,7 @@ static const char *
 parse_imm16 (CGEN_CPU_DESC cd,
 	     const char **strp,
 	     int opindex,
-	     unsigned long *valuep)
+	     long *valuep)
 {
   const char *errmsg;
   enum cgen_parse_operand_result result_type = CGEN_PARSE_OPERAND_RESULT_NUMBER;
@@ -1378,35 +920,6 @@ parse_imm16 (CGEN_CPU_DESC cd,
     {
       *strp += 4;
       errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_HI16,
-				   &result_type, &value);
-      if (**strp != ')')
-	return _("missing `)'");
-      ++*strp;
-      if (errmsg == NULL
-  	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
-	value >>= 16;
-      *valuep = value;
-      return errmsg;
-    }
-  else if (strncasecmp (*strp, "%got_hi(", strlen("%got_hi(")) == 0)
-    {
-      *strp += strlen("%got_hi(");
-      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBICOM32_GOT_HI,
-				   &result_type, &value);
-      if (**strp != ')')
-	return _("missing `)'");
-      ++*strp;
-      if (errmsg == NULL
-  	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
-	value >>= 16;
-      *valuep = value;
-      return errmsg;
-    }
-  else if ((strncasecmp (*strp, "%funcdesc_got_hi(", strlen("%funcdesc_got_hi(")) == 0)
-	   || (strncasecmp (*strp, "%got_funcdesc_hi(", strlen("%got_funcdesc_hi(")) == 0))
-    {
-      *strp += strlen("%funcdesc_got_hi(");
-      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBICOM32_FUNCDESC_GOT_HI,
 				   &result_type, &value);
       if (**strp != ')')
 	return _("missing `)'");
@@ -1431,35 +944,6 @@ parse_imm16 (CGEN_CPU_DESC cd,
       *valuep = value;
       return errmsg;
     }
-  else if (strncasecmp (*strp, "%got_lo(", strlen("%got_lo(")) == 0)
-    {
-      *strp += strlen("%got_lo(");
-      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBICOM32_GOT_LO,
-				   &result_type, &value);
-      if (**strp != ')')
-	return _("missing `)'");
-      ++*strp;
-      if (errmsg == NULL
-  	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
-	value &= 0xffff;
-      *valuep = value;
-      return errmsg;
-    }
-  else if ((strncasecmp (*strp, "%funcdesc_got_lo(", strlen("%funcdesc_got_lo(")) == 0)
-	   || (strncasecmp (*strp, "%got_funcdesc_lo(", strlen("%got_funcdesc_lo(")) == 0))
-    {
-      *strp += strlen("%funcdesc_got_lo(");
-      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBICOM32_FUNCDESC_GOT_LO,
-				   &result_type, &value);
-      if (**strp != ')')
-	return _("missing `)'");
-      ++*strp;
-      if (errmsg == NULL
-  	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
-	value &= 0xffff;
-      *valuep = value;
-      return errmsg;
-    }
   else
     {
       errmsg = cgen_parse_unsigned_integer (cd, strp, opindex, &value);
@@ -1473,12 +957,13 @@ parse_imm16 (CGEN_CPU_DESC cd,
   return errmsg;
 }
 
+#if 0
 /* Parse 24-bit immediate for moveai instruction and allow %hi() operator */
 static const char *
 parse_imm24 (CGEN_CPU_DESC cd,
 	     const char **strp,
 	     int opindex,
-	     unsigned long *valuep)
+	     long *valuep)
 {
   const char *errmsg;
   enum cgen_parse_operand_result result_type = CGEN_PARSE_OPERAND_RESULT_NUMBER;
@@ -1487,35 +972,7 @@ parse_imm24 (CGEN_CPU_DESC cd,
   if (strncasecmp (*strp, "%hi(", 4) == 0)
     {
       *strp += 4;
-      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBICOM32_HI24,
-				   &result_type, &value);
-      if (**strp != ')')
-	return _("missing `)'");
-      ++*strp;
-      if (errmsg == NULL
-  	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
-	value >>= 7;
-      *valuep = value;
-      return errmsg;
-    }
-  else if (strncasecmp (*strp, "%got_hi(", strlen("%got_hi(")) == 0)
-    {
-      *strp += strlen("%got_hi(");
-      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBICOM32_GOT_HI24,
-				   &result_type, &value);
-      if (**strp != ')')
-	return _("missing `)'");
-      ++*strp;
-      if (errmsg == NULL
-  	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
-	value >>= 7;
-      *valuep = value;
-      return errmsg;
-    }
-  else if (strncasecmp (*strp, "%funcdesc_got_hi(", strlen("%funcdesc_got_hi(")) == 0)
-    {
-      *strp += strlen("%funcdesc_got_hi(");
-      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBICOM32_FUNCDESC_GOT_HI24,
+      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBI32_HI24,
 				   &result_type, &value);
       if (**strp != ')')
 	return _("missing `)'");
@@ -1538,6 +995,7 @@ parse_imm24 (CGEN_CPU_DESC cd,
   *valuep = value;
   return errmsg;
 }
+#endif
 
 /* Parse 24-bit immediate for moveai instruction and allow %hi() operator */
 static const char *
@@ -1553,35 +1011,7 @@ parse_imm25 (CGEN_CPU_DESC cd,
   if (strncasecmp (*strp, "%hi(", 4) == 0)
     {
       *strp += 4;
-      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBICOM32_HI24,
-				   &result_type, &value);
-      if (**strp != ')')
-	return _("missing `)'");
-      ++*strp;
-      if (errmsg == NULL
-  	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
-	value >>= 7;
-      *valuep = value;
-      return errmsg;
-    }
-  else if (strncasecmp (*strp, "%got_hi(", strlen("%got_hi(")) == 0)
-    {
-      *strp += strlen("%got_hi(");
-      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBICOM32_GOT_HI24,
-				   &result_type, &value);
-      if (**strp != ')')
-	return _("missing `)'");
-      ++*strp;
-      if (errmsg == NULL
-  	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
-	value >>= 7;
-      *valuep = value;
-      return errmsg;
-    }
-  else if (strncasecmp (*strp, "%funcdesc_got_hi(", strlen("%funcdesc_got_hi(")) == 0)
-    {
-      *strp += strlen("%funcdesc_got_hi(");
-      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBICOM32_FUNCDESC_GOT_HI24,
+      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBI32_HI24,
 				   &result_type, &value);
       if (**strp != ')')
 	return _("missing `)'");
@@ -1610,7 +1040,7 @@ parse_offset21 (CGEN_CPU_DESC cd,
 		const char **strp,
 		int opindex,
 		int reloc ATTRIBUTE_UNUSED,
-		enum cgen_parse_operand_result *type_addr ATTRIBUTE_UNUSED, 
+		enum cgen_parse_operand_result *type_addr ATTRIBUTE_UNUSED,
 		unsigned long *valuep)
 {
   const char *errmsg;
@@ -1623,7 +1053,7 @@ parse_offset21 (CGEN_CPU_DESC cd,
       errmsg = cgen_parse_unsigned_integer (cd, strp, opindex, &value);
     }
   else
-    errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBICOM32_21_PCREL,
+    errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBI32_21_PCREL,
 			       &result_type, &value);
 
   if (errmsg == NULL && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
@@ -1641,7 +1071,7 @@ static const char *
 parse_offset16 (CGEN_CPU_DESC cd,
 		const char **strp,
 		int opindex,
-		unsigned long *valuep)
+		long *valuep)
 {
   const char *errmsg;
   enum cgen_parse_operand_result result_type = CGEN_PARSE_OPERAND_RESULT_NUMBER;
@@ -1651,43 +1081,7 @@ parse_offset16 (CGEN_CPU_DESC cd,
   if (strncasecmp (*strp, "%lo(", 4) == 0)
     {
       *strp += 4;
-      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBICOM32_LO7_CALLI,
-				   &result_type, &value);
-      if (errmsg != NULL)
-        return errmsg;
-
-      if (**strp != ')')
-	return _("missing `)'");
-      ++*strp;
-
-      if (result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
-        *valuep = value & 0x7c;
-
-      return NULL;
-    }
-
-  if (strncasecmp (*strp, "%got_lo(", strlen("%got_lo(")) == 0)
-    {
-      *strp += strlen("%got_lo(");
-      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBICOM32_GOT_LO7_CALLI,
-				   &result_type, &value);
-      if (errmsg != NULL)
-        return errmsg;
-
-      if (**strp != ')')
-	return _("missing `)'");
-      ++*strp;
-
-      if (result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
-        *valuep = value & 0x7c;
-
-      return NULL;
-    }
-
-  if (strncasecmp (*strp, "%funcdesc_got_lo(", strlen("%funcdesc_got_lo(")) == 0)
-    {
-      *strp += strlen("%funcdesc_got_lo(");
-      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBICOM32_FUNCDESC_GOT_LO7_CALLI,
+      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBI32_LO7_CALLI,
 				   &result_type, &value);
       if (errmsg != NULL)
         return errmsg;
@@ -1705,7 +1099,7 @@ parse_offset16 (CGEN_CPU_DESC cd,
   if (strncasecmp (*strp, "%lo18(", 6) == 0)
     {
       *strp += 6;
-      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBICOM32_LO16_CALLI,
+      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBI32_LO16_CALLI,
 				   &result_type, &value);
       if (errmsg != NULL)
         return errmsg;
@@ -1720,12 +1114,12 @@ parse_offset16 (CGEN_CPU_DESC cd,
       return NULL;
     }
 
-  errmsg = cgen_parse_signed_integer (cd, strp, opindex, &value);
+  errmsg = cgen_parse_signed_integer (cd, strp, opindex, (long int *)&value);
   if (errmsg != NULL)
     return errmsg;
 
-  /* Zero offset required ubicom32v6.  */
-  if ((cd->machs & (1<<MACH_UBICOM32_VER6)) && value != 0)
+  /* Zero offset required ubi32v6.  */
+  if ((cd->machs & (1<<MACH_UBI32_VER6)) && value != 0)
     return _("calli offset must be zero");
 
   /* ensure calli constant within limits and is multiple of 4 */
@@ -1743,7 +1137,7 @@ static const char *
 parse_leai_offset16 (CGEN_CPU_DESC cd,
 		const char **strp,
 		int opindex,
-		unsigned long *valuep)
+		long *valuep)
 {
   const char *errmsg;
   enum cgen_parse_operand_result result_type = CGEN_PARSE_OPERAND_RESULT_NUMBER;
@@ -1753,7 +1147,7 @@ parse_leai_offset16 (CGEN_CPU_DESC cd,
   if (strncasecmp (*strp, "%lo(", 4) == 0)
     {
       *strp += 4;
-      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBICOM32_LO7_LEAI,
+      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBI32_LO7_LEAI,
 				   &result_type, &value);
       if (errmsg != NULL)
         return errmsg;
@@ -1768,46 +1162,10 @@ parse_leai_offset16 (CGEN_CPU_DESC cd,
       return NULL;
     }
 
-  if (strncasecmp (*strp, "%got_lo(", strlen("%got_lo(")) == 0)
-    {
-      *strp += strlen("%got_lo(");
-      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBICOM32_GOT_LO_LEAI,
-				   &result_type, &value);
-      if (errmsg != NULL)
-        return errmsg;
-
-      if (**strp != ')')
-	return _("missing `)'");
-      ++*strp;
-
-      if (result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
-        *valuep = value & 0xffff;
-
-      return NULL;
-    }
-
-  if (strncasecmp (*strp, "%funcdesc_got_lo(", strlen("%funcdesc_got_lo(")) == 0)
-    {
-      *strp += strlen("%funcdesc_got_lo(");
-      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBICOM32_FUNCDESC_GOT_LO_LEAI,
-				   &result_type, &value);
-      if (errmsg != NULL)
-        return errmsg;
-
-      if (**strp != ')')
-	return _("missing `)'");
-      ++*strp;
-
-      if (result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
-        *valuep = value & 0xffff;
-
-      return NULL;
-    }
-
   if (strncasecmp (*strp, "%lo18(", 6) == 0)
     {
       *strp += 6;
-      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBICOM32_LO16_LEAI,
+      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBI32_LO16_LEAI,
 				   &result_type, &value);
       if (errmsg != NULL)
         return errmsg;
@@ -1822,7 +1180,7 @@ parse_leai_offset16 (CGEN_CPU_DESC cd,
       return NULL;
     }
 
-  errmsg = cgen_parse_signed_integer (cd, strp, opindex, &value);
+  errmsg = cgen_parse_signed_integer (cd, strp, opindex, (long *) &value);
   if (errmsg != NULL)
     return errmsg;
 
@@ -1841,10 +1199,10 @@ static const char *
 parse_imm8 (CGEN_CPU_DESC cd,
 	    const char **strp,
 	    int opindex,
-	    unsigned long *valuep)
+	    long *valuep)
 {
   const char *errmsg;
-  bfd_vma value;
+  long value;
   int no_sign = 0;
 
   if (**strp == '0' && TOUPPER(*(*strp+1)) == 'X')
@@ -1854,7 +1212,7 @@ parse_imm8 (CGEN_CPU_DESC cd,
 
   if (errmsg == NULL)
     {
-      if ((no_sign && ((long)value > 255)) || 
+      if ((no_sign && ((long)value > 255)) ||
 	  (!no_sign && (((long)value > 127) || ((long)value < -128))))
         return _("8-bit immediate value out of range");
     }
@@ -1866,22 +1224,13 @@ parse_imm8 (CGEN_CPU_DESC cd,
 /* -- dis.c */
 
 static int
-ubicom32_internal_print_insn (CGEN_CPU_DESC cd, bfd_vma pc, disassemble_info *info)
+ubi32_internal_print_insn (CGEN_CPU_DESC cd, bfd_vma pc, disassemble_info *info)
 {
-  if ((info)->mach <= bfd_mach_ubicom32ver4)
-    (cd)->machs |= (1 << MACH_UBICOM32_OLDMOVEAI);
-  else if ((info)->mach == bfd_mach_ubicom32ver5)
-    {
-      (cd)->machs |= (1 << MACH_UBICOM32_NEWMOVEAI);
-      (cd)->machs |= (1 << MACH_UBICOM32DSP);
-      (cd)->machs |= (1 << MACH_UBICOM32_VER4);
-    }
-
   return default_print_insn (cd, pc, info);
 }
 
 
-#define CGEN_PRINT_INSN  ubicom32_internal_print_insn
+#define CGEN_PRINT_INSN  ubi32_internal_print_insn
 
 /* Output a signed 4 bit integer */
 static void
@@ -1943,30 +1292,12 @@ print_direct_addr (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
 		   int length ATTRIBUTE_UNUSED)
 {
   disassemble_info *info = (disassemble_info *) dis_info;
-  struct ubicom32_cgen_data_space_map *cur;
+  struct ubi32_cgen_data_space_map *cur = NULL;
 
-  if(cd->machs & (1<<MACH_IP3035))
+  if ((cd->machs & (1<<MACH_UBI32_VER6)) || (cd->machs & (1<<MACH_UBI32_VER61)))
     {
-      /* cpu is mercury */
-      cur = ubicom32_cgen_data_space_map_mercury;
-    }
-
-  if((cd->machs & (1<<MACH_UBICOM32DSP)) || (cd->machs & (1<<MACH_UBICOM32_VER4)))
-    {
-      /* cpu is mars/ares */
-      cur = ubicom32_cgen_data_space_map_mars;
-    }
-
-  if (cd->machs & (1<<MACH_UBICOM32_VER5))
-    {
-      /* cpu is jupiter */
-      cur = ubicom32_cgen_data_space_map_jupiter;
-    }
-
-  if (cd->machs & (1<<MACH_UBICOM32_VER6))
-    {
-      /* cpu is akronite */
-      cur = ubicom32_cgen_data_space_map_akronite;
+      /* Cpu is IPQ806x or IPQ807x.  */
+      cur = ubi32_cgen_data_space_map_IPQ806x;
     }
 
   assert (cur);
@@ -1983,6 +1314,7 @@ print_direct_addr (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
   (*info->fprintf_func) (info->stream, "#%lx", value);
 }
 
+#if 0
 static void
 print_imm24 (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
 	     PTR dis_info,
@@ -1994,6 +1326,7 @@ print_imm24 (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
   disassemble_info *info = (disassemble_info *) dis_info;
   (*info->fprintf_func) (info->stream, "%%hi(0x%08lx)", value << 7);
 }
+#endif
 
 static void
 print_imm25 (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
