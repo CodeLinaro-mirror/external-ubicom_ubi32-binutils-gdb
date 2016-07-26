@@ -39,11 +39,11 @@ static const char *ubi32_register_names[] =
   "d0", "d1", "d2",  "d3",  "d4",  "d5",  "d6",  "d7",	/*  0- 7 */
   "d8", "d9", "d10", "d11", "d12", "d13", "d14", "d15",	/*  8-15 */
   /* Address registers.  */
-  "a0", "a1", "a2",  "a3",  "a4",  "a5",  "a6",  "sp",	/* 16-23 */
+  "a0", "a1", "a2",  "a3",  "a4",  "a5",  "a6",  "a7",	/* 16-23 */
   /* Accumulator 0.  */
-  "acc0_hi", "acc0_lo", "mac_rc16", "source_3", 	/* 24-27 */
+  "acc0_hi", "acc0_lo", "mac_rc16", "source3",	 	/* 24-27 */
   /* Context & Control.  */
-  "context_cnt", "csr", "rosr", "iread_data",		/* 28-31 */
+  "inst_cnt", "csr", "rosr", "iread_data",		/* 28-31 */
   /* Interrupt mask registers.  */
   "int_mask0", "int_mask1", "int_mask2", "int_mask3", 	/* 32-35 */
   /* Program counter & trap.  */
@@ -65,7 +65,7 @@ static const char *ubi32_register_names[] =
   /* Debugging treads active status and set.  */
   "mt_dbg_active", "mt_dbg_active_set",			/* 59-60 */
   /* Thread control enable, priority, scheduling.  */
-  "mt_en", "mt_pri", "mt_sched", 			/* 61-63 */
+  "mt_en", "mt_hpri", "mt_hrt", 			/* 61-63 */
   /* Thread stopped in break and clear.  */
   "mt_break", "mt_break_clr",				/* 64-65 */
   /* Single-step threads.  */
@@ -83,7 +83,7 @@ static const char *ubi32_register_names[] =
   "scratchpad3", "scratchpad4", "scratchpad5",		/* 74-76 */
   "scratchpad6",					/* 77	 */
   /* Chip configuration.  */
-  "chip_cfg",						/* 78	 */
+  "cfg",						/* 78	 */
   /* Thread status and trap control.  */
   "mt_i_blocked", "mt_d_blocked", 			/* 79-80 */
   "mt_i_blocked_set", "mt_d_blocked_set",		/* 81-82 */
@@ -129,14 +129,14 @@ static struct
   const char *alias;
   int regnum;
 } ubi32_register_aliases[] = {
-  { "sp",	"a7" },
+  { "a7",	"sp" },
   { "acc0_hi",	"mac_hi" },
   { "acc0_lo",	"mac_lo" },
-  { "source_3",	"source3" },
-  { "context_cnt", "inst_cnt" },
-  { "mt_pri",	"mt_hpri" },
-  { "mt_sched",	"mt_hrt" },
-  { "chip_cfg",	"cfg" },
+  { "source3",	"source_3" },
+  { "inst_cnt", "context_cnt" },
+  { "mt_hpri",	"mt_pri" },
+  { "mt_hrt",	"mt_sched" },
+  { "cfg",	"chip_cfg" },
   { 0, 0 }
 };
 
