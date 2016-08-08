@@ -121,8 +121,8 @@ static const CGEN_ISA ubi32_cgen_isa_table[] = {
 /* Machine variants.  */
 
 static const CGEN_MACH ubi32_cgen_mach_table[] = {
-  { "ubi32_ver6", "ubi32ver6", MACH_UBI32_VER6, 0 },
-  { "ubi32_ver61", "ubi32ver61", MACH_UBI32_VER61, 0 },
+  { "ubi32_ver6", "ubi32_ver6", MACH_UBI32_VER6, 0 },
+  { "ubi32_ver61", "ubi32_ver61", MACH_UBI32_VER61, 0 },
   { 0, 0, 0, 0 }
 };
 

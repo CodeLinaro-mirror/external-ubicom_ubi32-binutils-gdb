@@ -58,14 +58,14 @@
   (name ubi32_ver6)
   (comment "Ubicom IP ubi32 Version 6")
   (cpu ubi32bf)
-  (bfd-name "ubi32ver6")
+  (bfd-name "ubi32_ver6")
 )
 
 (define-mach
   (name ubi32_ver61)
   (comment "Ubicom IP ubi32 Version 6.1")
   (cpu ubi32bf)
-  (bfd-name "ubi32ver61")
+  (bfd-name "ubi32_ver61")
 )
 
 ; Model descriptions.

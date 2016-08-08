@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 #include "bfd.h"
 #include "libbfd.h"
 
-const bfd_arch_info_type bfd_ubi32v6_arch =
+const bfd_arch_info_type bfd_ubi32_ver6_arch =
 {
   32,				/* bits per word */
   32,				/* bits per address */
@@ -29,7 +29,7 @@ const bfd_arch_info_type bfd_ubi32v6_arch =
   bfd_arch_ubi32,		/* architecture */
   bfd_mach_ubi32ver6,		/* machine */
   "ubi32",			/* architecture name */
-  "ubi32v6",			/* printable name */
+  "ubi32_ver6",			/* printable name */
   3,				/* section align power */
   TRUE,				/* the default ? */
   bfd_default_compatible,	/* architecture comparison fn */
@@ -38,7 +38,7 @@ const bfd_arch_info_type bfd_ubi32v6_arch =
   NULL				/* next in list */
 };
 
-const bfd_arch_info_type bfd_ubi32v61_arch =
+const bfd_arch_info_type bfd_ubi32_ver61_arch =
 {
   32,				/* bits per word */
   32,				/* bits per address */
@@ -46,13 +46,13 @@ const bfd_arch_info_type bfd_ubi32v61_arch =
   bfd_arch_ubi32,		/* architecture */
   bfd_mach_ubi32ver61,		/* machine */
   "ubi32",			/* architecture name */
-  "ubi32ver61",			/* printable name */
+  "ubi32_ver61",		/* printable name */
   3,				/* section align power */
   TRUE,				/* the default ? */
   bfd_default_compatible,	/* architecture comparison fn */
   bfd_default_scan,		/* string to architecture convert fn */
   bfd_arch_default_fill,	/* Default fill.  */
-  &bfd_ubi32v6_arch		/* next in list */
+  &bfd_ubi32_ver6_arch		/* next in list */
 };
 
 const bfd_arch_info_type bfd_ubi32_arch =
@@ -69,5 +69,5 @@ const bfd_arch_info_type bfd_ubi32_arch =
   bfd_default_compatible,	/* architecture comparison fn */
   bfd_default_scan,		/* string to architecture convert fn */
   bfd_arch_default_fill,	/* Default fill.  */
-  &bfd_ubi32v61_arch		/* next in list */
+  &bfd_ubi32_ver61_arch		/* next in list */
 };
