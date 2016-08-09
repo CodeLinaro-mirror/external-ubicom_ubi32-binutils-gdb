@@ -70,9 +70,6 @@ extern struct ubi32_cgen_data_space_map ubi32_cgen_data_space_map_IPQ806x[];
 #define A6_ADDRESS (A0_ADDRESS + 24)
 #define A7_ADDRESS (A0_ADDRESS + 28)
 
-/* XXX */
-typedef unsigned char UQI;
-
 
 /* -- opc.c */
 /* Enum declaration for ubi32 instruction types.  */
