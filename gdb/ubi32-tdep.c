@@ -116,7 +116,7 @@ static const char *ubi32_register_names[] =
   "d_range4_user_en", "d_range5_user_en",
   "d_range6_user_en", "d_range7_user_en",		/* 145-152 */
   /* FP control registers.  */
-  "mt_fp_flush", "mt_fp_blocked", "mt_fp_blocked_set",	/* 152-155 */
+  "mt_fp_flush", "mt_fp_blocked", "mt_fp_blocked_set",	/* 153-155 */
   /* BTB control registers.  */
   "mt_btb_en", "btb_ctrl", "tnum"			/* 156-158 */
 };
@@ -910,6 +910,9 @@ ubi32_gdbarch_init (struct gdbarch_info info, struct gdbarch_list *arches)
   frame_unwind_append_unwinder (gdbarch, &ubi32_frame_unwind);
   frame_base_append_sniffer (gdbarch, dwarf2_frame_base_sniffer);
   set_gdbarch_dummy_id (gdbarch, ubi32_dummy_id);
+
+  if (tdesc_data != NULL)
+    tdesc_use_registers (gdbarch, tdesc, tdesc_data);
 
   set_gdbarch_print_insn (gdbarch, print_insn_ubi32);
   set_gdbarch_push_dummy_call (gdbarch, ubi32_push_dummy_call);
