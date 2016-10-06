@@ -143,6 +143,7 @@
 #include "elf/sh.h"
 #include "elf/sparc.h"
 #include "elf/spu.h"
+#include "elf/ubi32.h"
 #include "elf/tic6x.h"
 #include "elf/tilegx.h"
 #include "elf/tilepro.h"
@@ -785,6 +786,7 @@ guess_is_rela (unsigned int e_machine)
     case EM_TILEPRO:
     case EM_V800:
     case EM_V850:
+    case EM_UBI32:
     case EM_CYGNUS_V850:
     case EM_VAX:
     case EM_VISIUM:
@@ -1378,6 +1380,10 @@ dump_relocations (FILE * file,
 
 	case EM_CRX:
 	  rtype = elf_crx_reloc_type (type);
+	  break;
+
+	case EM_UBI32:
+	  rtype = elf_ubi32_reloc_type (type);
 	  break;
 
 	case EM_VAX:
@@ -2194,6 +2200,7 @@ get_machine_name (unsigned e_machine)
     case EM_DLX:		return "OpenDLX";
     case EM_IP2K_OLD:
     case EM_IP2K:		return "Ubicom IP2xxx 8-bit microcontrollers";
+    case EM_UBI32:		return "Ubi32 32-bit microcontrollers";
     case EM_IQ2000:       	return "Vitesse IQ2000";
     case EM_XTENSA_OLD:
     case EM_XTENSA:		return "Tensilica Xtensa Processor";
@@ -11504,6 +11511,8 @@ is_32bit_abs_reloc (unsigned int reloc_type)
       return reloc_type == 2; /* R_TILEGX_32.  */
     case EM_TILEPRO:
       return reloc_type == 1; /* R_TILEPRO_32.  */
+    case EM_UBI32:
+      return reloc_type == 2; /* R_UBI32_32  */
     case EM_CYGNUS_V850:
     case EM_V850:
       return reloc_type == 6; /* R_V850_ABS32.  */
