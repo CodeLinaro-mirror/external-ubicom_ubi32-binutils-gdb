@@ -867,11 +867,13 @@ ubi32_gdbarch_init (struct gdbarch_info info, struct gdbarch_list *arches)
       for (i = 0; i < UBI32_NUM_REGS; i++)
         valid_p &= tdesc_numbered_register (feature, tdesc_data, i,
                                             ubi32_register_names[i]);
+#if 0
       if (!valid_p)
         {
           tdesc_data_cleanup (tdesc_data);
           return NULL;
         }
+#endif
     }
 
   /* Allocate space for the new architecture.  */
