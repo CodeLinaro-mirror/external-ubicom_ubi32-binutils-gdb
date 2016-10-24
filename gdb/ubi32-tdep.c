@@ -763,22 +763,27 @@ static void
 ubi32_extract_return_value (struct type *type, struct regcache *rcache, 
 			    gdb_byte *valbuf, enum bfd_endian byte_order)
 {
-  int offset;
   int len = TYPE_LENGTH (type);
-  unsigned char regbuf[UBI32_REGISTER_SIZE *2];
-  ULONGEST val;
+  ULONGEST d0, d1, val;
 
   gdb_assert (len <= 8);
-  /* read out UBI32_RET_REGNUM */
-  regcache_cooked_read_unsigned (rcache, UBI32_RET_REGNUM, &val);
-  store_unsigned_integer (valbuf, UBI32_REGISTER_SIZE, byte_order, val);
 
-  if (len > 4) 
+  regcache_cooked_read_unsigned (rcache, UBI32_RET_REGNUM, &d0);
+  regcache_cooked_read_unsigned (rcache, UBI32_RET2_REGNUM, &d1);
+
+  if (len <= 4)
+    val = d0;
+  else
     {
-      regcache_cooked_read_unsigned (rcache, UBI32_RET2_REGNUM, &val);
-      store_unsigned_integer (valbuf + UBI32_REGISTER_SIZE, 
-			      UBI32_REGISTER_SIZE, byte_order, val);
+      if (byte_order == BFD_ENDIAN_LITTLE)
+        /* Little-endian, high word in d1, low word in d0.  */
+        val = d1 << 32 | d0;
+      else
+        /* Big-endian, high word in d0, low word in d1.  */
+        val = d0 << 32 | d1;
     }
+
+  store_unsigned_integer (valbuf, len, byte_order, val);
 }
 
 /* Store virtual-format VALBUF as a TYPE return value so that it will be
