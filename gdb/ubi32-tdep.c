@@ -615,6 +615,16 @@ put_big_endian (int val, gdb_byte *buf)
   buf[0] = (val >> 24) & 0xFF;
 }
 
+/*  Store val in buf in little-endian order.  */
+static void
+put_little_endian (int val, gdb_byte *buf)
+{
+  buf[0] = val & 0xFF;
+  buf[1] = (val >> 8) & 0xFF;
+  buf[2] = (val >> 16) & 0xFF;
+  buf[3] = (val >> 24) & 0xFF;
+}
+
 /* Stack of arguments to be pushed onto the stack in reverse order.  */
 struct saved_stack_item 
 {
@@ -673,6 +683,7 @@ ubi32_push_dummy_call (struct gdbarch *gdbarch, struct value *function,
   int argnum;
   struct saved_stack_item *si = NULL;
   struct gdbarch_tdep *tdep = gdbarch_tdep (gdbarch);
+  enum bfd_endian byte_order = gdbarch_byte_order (gdbarch);
   gdb_byte word[UBI32_REGISTER_SIZE];
   CORE_ADDR got;
 
@@ -682,7 +693,11 @@ ubi32_push_dummy_call (struct gdbarch *gdbarch, struct value *function,
   /* Struct return address passed in first argument register.  */
   if (struct_return) 
     {
-      put_big_endian (struct_addr, word);
+      if (byte_order == BFD_ENDIAN_BIG)
+        put_big_endian (struct_addr, word);
+      else
+        put_little_endian (struct_addr, word);
+
       regcache_cooked_write (regcache, argreg++, word);
     }
     
@@ -736,7 +751,10 @@ ubi32_push_dummy_call (struct gdbarch *gdbarch, struct value *function,
 		   write_memory (sp, val, len);
 		   ref = sp;
 		}
-	      put_big_endian (ref, word);
+	      if (byte_order == BFD_ENDIAN_BIG)
+	        put_big_endian (ref, word);
+	      else
+	        put_little_endian (ref, word);
 	      PUT_ARG (word);
 	    }
         }
