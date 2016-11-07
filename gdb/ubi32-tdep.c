@@ -827,9 +827,13 @@ ubi32_return_value (struct gdbarch *gdbarch, struct value *function,
 {
   struct gdbarch_tdep *tdep = gdbarch_tdep (gdbarch);
   enum bfd_endian byte_order = gdbarch_byte_order (gdbarch);
+  enum type_code typecode = TYPE_CODE (type);
 
   if (TYPE_LENGTH (type) > 8)
     /* Anything larger than 8 bytes (2 registers) is returned on the stack.  */
+    return RETURN_VALUE_STRUCT_CONVENTION;
+
+  if (typecode == TYPE_CODE_STRUCT || typecode == TYPE_CODE_UNION)
     return RETURN_VALUE_STRUCT_CONVENTION;
 
   if (readbuf)
