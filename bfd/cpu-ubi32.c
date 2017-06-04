@@ -31,14 +31,14 @@ const bfd_arch_info_type bfd_ubi32_ver6_arch =
   "ubi32",			/* architecture name */
   "ubi32_ver6",			/* printable name */
   3,				/* section align power */
-  TRUE,				/* the default ? */
+  FALSE,			/* the default ? */
   bfd_default_compatible,	/* architecture comparison fn */
   bfd_default_scan,		/* string to architecture convert fn */
   bfd_arch_default_fill,	/* Default fill.  */
   NULL				/* next in list */
 };
 
-const bfd_arch_info_type bfd_ubi32_ver61_arch =
+const bfd_arch_info_type bfd_ubi32_arch =
 {
   32,				/* bits per word */
   32,				/* bits per address */
@@ -53,21 +53,4 @@ const bfd_arch_info_type bfd_ubi32_ver61_arch =
   bfd_default_scan,		/* string to architecture convert fn */
   bfd_arch_default_fill,	/* Default fill.  */
   &bfd_ubi32_ver6_arch		/* next in list */
-};
-
-const bfd_arch_info_type bfd_ubi32_arch =
-{
-  32,				/* bits per word */
-  32,				/* bits per address */
-  8,				/* bits per byte */
-  bfd_arch_ubi32,		/* architecture */
-  bfd_mach_ubi32,		/* machine */
-  "ubi32",			/* architecture name */
-  "ubi32",			/* printable name */
-  3,				/* section align power */
-  TRUE,				/* the default ? */
-  bfd_default_compatible,	/* architecture comparison fn */
-  bfd_default_scan,		/* string to architecture convert fn */
-  bfd_arch_default_fill,	/* Default fill.  */
-  &bfd_ubi32_ver61_arch		/* next in list */
 };
