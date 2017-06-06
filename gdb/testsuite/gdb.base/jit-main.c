@@ -145,6 +145,10 @@ MAIN (int argc, char *argv[])
 
   mypid = getpid ();
 
+  alarm (300);
+
+  mypid = getpid ();
+
   count = count;  /* gdb break here 0  */
 
   if (argc < 2)

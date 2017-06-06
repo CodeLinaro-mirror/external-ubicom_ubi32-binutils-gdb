@@ -938,6 +938,8 @@ arm_linux_software_single_step (struct regcache *regcache)
 
   old_chain = make_cleanup (VEC_cleanup (CORE_ADDR), &next_pcs);
 
+  old_chain = make_cleanup (VEC_cleanup (CORE_ADDR), &next_pcs);
+
   arm_get_next_pcs_ctor (&next_pcs_ctx,
 			 &arm_linux_get_next_pcs_ops,
 			 gdbarch_byte_order (gdbarch),

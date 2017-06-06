@@ -164,6 +164,7 @@ ALL_MACHINES = \
 	cpu-tic80.lo \
 	cpu-tilegx.lo \
 	cpu-tilepro.lo \
+	cpu-ubi32.lo \
 	cpu-v850.lo \
 	cpu-v850_rh850.lo \
 	cpu-vax.lo \
@@ -254,6 +255,7 @@ ALL_MACHINES_CFILES = \
 	cpu-tic80.c \
 	cpu-tilegx.c \
 	cpu-tilepro.c \
+	cpu-ubi32.c \
 	cpu-v850.c \
 	cpu-v850_rh850.c \
 	cpu-vax.c \
@@ -383,6 +385,7 @@ BFD32_BACKENDS = \
 	elf32-tic6x.lo \
 	elf32-tilegx.lo \
 	elf32-tilepro.lo \
+	elf32-ubi32.lo \
 	elf32-v850.lo \
 	elf32-vax.lo \
 	elf32-visium.lo \

@@ -891,7 +891,11 @@ tdesc_numbered_register (const struct tdesc_feature *feature,
   struct tdesc_reg *reg = tdesc_find_register_early (feature, name);
 
   if (reg == NULL)
-    return 0;
+    {
+      warning (_("Register \"%s\" not found in target description)"),
+	       name);
+      return 0;
+    }
 
   /* Make sure the vector includes a REGNO'th element.  */
   while (regno >= VEC_length (tdesc_arch_reg, data->arch_regs))

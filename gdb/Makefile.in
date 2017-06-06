@@ -890,6 +890,7 @@ ALL_TARGET_OBS = \
 	tic6x-tdep.o \
 	tilegx-linux-tdep.o \
 	tilegx-tdep.o \
+	ubi32-tdep.o \
 	v850-tdep.o \
 	vax-nbsd-tdep.o \
 	vax-tdep.o \
@@ -2648,6 +2649,7 @@ ALLDEPFILES = \
 	tilegx-linux-nat.c \
 	tilegx-linux-tdep.c \
 	tilegx-tdep.c \
+	ubi32-tdep.c \
 	v850-tdep.c \
 	vax-bsd-nat.c \
 	vax-nbsd-tdep.c \

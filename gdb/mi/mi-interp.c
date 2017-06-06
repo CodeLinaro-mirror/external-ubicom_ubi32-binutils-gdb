@@ -339,6 +339,7 @@ static void
 mi_new_thread (struct thread_info *t)
 {
   struct inferior *inf = find_inferior_ptid (t->ptid);
+  struct cleanup *old_chain;
 
   gdb_assert (inf);
 
