@@ -637,8 +637,8 @@ static struct saved_stack_item *
 push_stack_item (struct saved_stack_item *prev, const gdb_byte *val, int len)
 {
   struct saved_stack_item *si;
-  si = xmalloc (sizeof (struct saved_stack_item));
-  si->val = xmalloc (len);
+  si = (struct saved_stack_item *)xmalloc (sizeof (struct saved_stack_item));
+  si->val = (gdb_byte *)xmalloc (len);
   si->len = len;
   si->prev = prev;
   memcpy (si->val, val, len);
@@ -847,7 +847,7 @@ ubi32_return_value (struct gdbarch *gdbarch, struct value *function,
 static struct value *
 value_of_ubi32_user_reg (struct frame_info *frame, const void *baton)
 {
-  const int *reg_p = baton;
+  const int *reg_p = (const int *)baton;
   return value_of_register (*reg_p, frame);
 }
 

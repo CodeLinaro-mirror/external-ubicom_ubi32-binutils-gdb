@@ -22,6 +22,14 @@
 #ifndef UBI32DIS_H
 #define UBI32DIS_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 int print_insn_ubi32 (bfd_vma pc, disassemble_info *info);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* UBI32DIS_H */
