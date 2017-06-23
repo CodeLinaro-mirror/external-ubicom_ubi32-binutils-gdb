@@ -529,19 +529,9 @@ ubi32_frame_cache (struct frame_info *next_frame, void **this_cache)
   return cache;
 }
 
-/* Return an instruction to set a breakpoint at PCPTR, adjusting PCPTR if
-   necessary, and store in LENPTR the size of the returned instruction.  */
+constexpr gdb_byte ubi32_break_insn[] = UBI32_BREAKPOINT;
 
-static const unsigned char *
-ubi32_breakpoint_from_pc (struct gdbarch *gdbarch, CORE_ADDR *pc,
-			  int *len)
-{
-  /* BKPT instruction.  */
-  static unsigned char break_insn[] = { 0x00, 0x00, 0x38, 0x00 };
-
-  *len = sizeof (break_insn);
-  return break_insn;
-}
+typedef BP_MANIPULATION (ubi32_break_insn) ubi32_breakpoint;
 
 /* Given THIS_FRAME, find the previous frame's resume PC (which will
    be used to construct the previous frame's ID, after looking up the
@@ -931,7 +921,10 @@ ubi32_gdbarch_init (struct gdbarch_info info, struct gdbarch_list *arches)
 
   set_gdbarch_skip_prologue (gdbarch, ubi32_skip_prologue);
   set_gdbarch_inner_than (gdbarch, core_addr_lessthan);
-  set_gdbarch_breakpoint_from_pc (gdbarch, ubi32_breakpoint_from_pc);
+  set_gdbarch_breakpoint_kind_from_pc (gdbarch,
+				       ubi32_breakpoint::kind_from_pc);
+  set_gdbarch_sw_breakpoint_from_kind (gdbarch,
+				       ubi32_breakpoint::bp_from_kind);
   set_gdbarch_unwind_pc(gdbarch, ubi32_unwind_pc);
 
   /* Unwind the frame.  */

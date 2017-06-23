@@ -24,6 +24,7 @@ struct gdbarch_tdep
   /* No target-dependent data currently defined.  */
 };
 
+#define UBI32_BREAKPOINT { 0x00, 0x00, 0x38, 0x00 };
 
 /* Internal GDB register numbering.
    This is different from the register numbering used in the ISA.  */
