@@ -109,6 +109,7 @@ case ${cpu} in
   sparc*)		cpu_type=sparc arch=sparclite ;; # ??? See tc-sparc.c.
   tilegx*be)		cpu_type=tilegx endian=big ;;
   tilegx*)		cpu_type=tilegx endian=little ;;
+  ubi32)           	cpu_type=ubi32 endian=little ;;
   v850*)		cpu_type=v850 ;;
   visium)		cpu_type=visium endian=big ;;
   x86_64*)		cpu_type=i386 arch=x86_64;;

@@ -286,6 +286,8 @@ ALL_EMULATION_SOURCES = \
 	eelf32tilegx.c \
 	eelf32tilegx_be.c \
 	eelf32tilepro.c \
+	eelf32ubi32.o \
+	eelf32ubi32fdpic.o \
 	eelf32vax.c \
 	eelf32visium.c \
 	eelf32xc16x.c \
@@ -1302,6 +1304,16 @@ eelf32tilegx_be.c: $(srcdir)/emulparams/elf32tilegx_be.sh \
 eelf32tilepro.c: $(srcdir)/emulparams/elf32tilepro.sh \
   $(ELF_DEPS) $(srcdir)/emultempl/needrelax.em \
   $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
+
+eelf32ubi32.c: $(srcdir)/emulparams/elf32ubi32.sh \
+  $(ELF_DEPS) \
+  $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
+	${GENSCRIPTS} elf32ubi32 "$(tdir_ubi32)"
+
+eelf32ubi32fdpic.c: $(srcdir)/emulparams/elf32ubi32fdpic.sh \
+  $(ELF_DEPS) \
+  $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
+	${GENSCRIPTS} elf32ubi32fdpic "$(tdir_ubi32fdpic)"
 
 eelf32vax.c: $(srcdir)/emulparams/elf32vax.sh \
   $(ELF_DEPS) $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}

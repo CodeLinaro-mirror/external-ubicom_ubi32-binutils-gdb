@@ -834,6 +834,16 @@ tilegxbe-*-*)		targ_emul=elf64tilegx_be
 tilepro-*-*)		targ_emul=elf32tilepro ;;
 ft32-*-*)		targ_emul=elf32ft32
 			;;
+
+ubi32-*-linux-*)	targ_emul=elf32ubi32
+			targ_extra_emuls=elf32ubi32fdpic
+			targ_extra_libpath=$targ_extra_emuls
+			;;
+ubi32-*-*)		targ_emul=elf32ubi32
+			targ_extra_emuls=elf32ubi32fdpic
+			targ_extra_libpath=$targ_extra_emuls
+			;;
+
 v850*-*-*)		targ_emul=v850_rh850
 			targ_extra_emuls=v850
 			;;

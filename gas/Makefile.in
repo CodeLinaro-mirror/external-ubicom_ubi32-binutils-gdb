@@ -82,23 +82,8 @@ DIST_COMMON = NEWS README ChangeLog $(srcdir)/Makefile.in \
 	bfin-parse.c rl78-parse.c rx-parse.c itbl-parse.c itbl-lex.c \
 	$(srcdir)/../depcomp $(srcdir)/../ylwrap
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/../bfd/acinclude.m4 \
-	$(top_srcdir)/../bfd/warning.m4 $(top_srcdir)/../config/acx.m4 \
-	$(top_srcdir)/../config/depstand.m4 \
-	$(top_srcdir)/../config/gettext-sister.m4 \
-	$(top_srcdir)/../config/largefile.m4 \
-	$(top_srcdir)/../config/lcmessage.m4 \
-	$(top_srcdir)/../config/lead-dot.m4 \
-	$(top_srcdir)/../config/nls.m4 \
-	$(top_srcdir)/../config/override.m4 \
-	$(top_srcdir)/../config/plugins.m4 \
-	$(top_srcdir)/../config/po.m4 \
-	$(top_srcdir)/../config/progtest.m4 \
-	$(top_srcdir)/../config/zlib.m4 $(top_srcdir)/../libtool.m4 \
-	$(top_srcdir)/../ltoptions.m4 $(top_srcdir)/../ltsugar.m4 \
-	$(top_srcdir)/../ltversion.m4 $(top_srcdir)/../lt~obsolete.m4 \
-	$(top_srcdir)/acinclude.m4 $(top_srcdir)/../bfd/version.m4 \
-	$(top_srcdir)/configure.ac
+am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
+	$(top_srcdir)/../bfd/version.m4 $(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
@@ -133,22 +118,13 @@ am__depfiles_maybe = depfiles
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 @MAINTAINER_MODE_FALSE@am__skiplex = test -f $@ ||
 LEXCOMPILE = $(LEX) $(AM_LFLAGS) $(LFLAGS)
-LTLEXCOMPILE = $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(LEX) $(AM_LFLAGS) $(LFLAGS)
 YLWRAP = $(top_srcdir)/../ylwrap
 @MAINTAINER_MODE_FALSE@am__skipyacc = test -f $@ ||
 YACCCOMPILE = $(YACC) $(AM_YFLAGS) $(YFLAGS)
-LTYACCCOMPILE = $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(YACC) $(AM_YFLAGS) $(YFLAGS)
 SOURCES = $(as_new_SOURCES) $(EXTRA_as_new_SOURCES) \
 	$(itbl_test_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
@@ -175,69 +151,43 @@ DIST_SUBDIRS = $(SUBDIRS)
 ACLOCAL = @ACLOCAL@
 ALLOCA = @ALLOCA@
 AMTAR = @AMTAR@
-AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
-CATALOGS = @CATALOGS@
-CATOBJEXT = @CATOBJEXT@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
 CYGPATH_W = @CYGPATH_W@
-DATADIRNAME = @DATADIRNAME@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
-DSYMUTIL = @DSYMUTIL@
-DUMPBIN = @DUMPBIN@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
-FGREP = @FGREP@
 GDBINIT = @GDBINIT@
-GENCAT = @GENCAT@
-GMSGFMT = @GMSGFMT@
 GREP = @GREP@
-INCINTL = @INCINTL@
 INSTALL = @INSTALL@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-INSTOBJEXT = @INSTOBJEXT@
-LD = @LD@
 LDFLAGS = @LDFLAGS@
 LEX = `if [ -f ../flex/flex ] ; then echo ../flex/flex ; else echo @LEX@ ; fi`
 LEXLIB = @LEXLIB@
 LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
-LIBINTL = @LIBINTL@
-LIBINTL_DEP = @LIBINTL_DEP@
 LIBM = @LIBM@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
-LIBTOOL = @LIBTOOL@
-LIPO = @LIPO@
-LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
 MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MKDIR_P = @MKDIR_P@
-MKINSTALLDIRS = @MKINSTALLDIRS@
-MSGFMT = @MSGFMT@
-MSGMERGE = @MSGMERGE@
-NM = @NM@
-NMEDIT = @NMEDIT@
-NO_WERROR = @NO_WERROR@
-OBJDUMP = @OBJDUMP@
 OBJEXT = @OBJEXT@
 OPCODES_LIB = @OPCODES_LIB@
-OTOOL = @OTOOL@
-OTOOL64 = @OTOOL64@
 PACKAGE = @PACKAGE@
 PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
@@ -246,18 +196,10 @@ PACKAGE_TARNAME = @PACKAGE_TARNAME@
 PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
-POSUB = @POSUB@
-RANLIB = @RANLIB@
-SED = @SED@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
-USE_NLS = @USE_NLS@
 VERSION = @VERSION@
-WARN_CFLAGS = @WARN_CFLAGS@ @WARN_WRITE_STRINGS@
-WARN_CFLAGS_FOR_BUILD = @WARN_CFLAGS_FOR_BUILD@
-WARN_WRITE_STRINGS = @WARN_WRITE_STRINGS@
-XGETTEXT = @XGETTEXT@
 YACC = `if [ -f ../bison/bison ] ; then echo ../bison/bison -y -L../bison/bison ; else echo @YACC@ ; fi`
 YFLAGS = @YFLAGS@
 abs_builddir = @abs_builddir@
@@ -265,7 +207,6 @@ abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
 abs_top_srcdir = @abs_top_srcdir@
 ac_ct_CC = @ac_ct_CC@
-ac_ct_DUMPBIN = @ac_ct_DUMPBIN@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
@@ -282,7 +223,6 @@ builddir = @builddir@
 cgen_cpu_prefix = @cgen_cpu_prefix@
 datadir = @datadir@
 datarootdir = @datarootdir@
-do_compare = @do_compare@
 docdir = @docdir@
 dvidir = @dvidir@
 exec_prefix = @exec_prefix@
@@ -323,8 +263,6 @@ te_file = @te_file@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-zlibdir = @zlibdir@
-zlibinc = @zlibinc@
 AUTOMAKE_OPTIONS = 1.11 dejagnu foreign no-dist
 ACLOCAL_AMFLAGS = -I .. -I ../config -I ../bfd
 SUBDIRS = doc po
@@ -339,6 +277,8 @@ ZLIBINC = @zlibinc@
 # maintainer mode is disabled.  Avoid this.
 am__skiplex = 
 am__skipyacc = 
+WARN_CFLAGS = @WARN_CFLAGS@ @WARN_WRITE_STRINGS@
+NO_WERROR = @NO_WERROR@
 AM_CFLAGS = $(WARN_CFLAGS) $(ZLIBINC)
 TARG_CPU = @target_cpu_type@
 TARG_CPU_C = $(srcdir)/config/tc-@target_cpu_type@.c
@@ -488,6 +428,7 @@ TARGET_CPU_CFILES = \
 	config/tc-tic6x.c \
 	config/tc-tilegx.c \
 	config/tc-tilepro.c \
+	config/tc-ubi32.c \
 	config/tc-v850.c \
 	config/tc-vax.c \
 	config/tc-visium.c \
@@ -562,6 +503,7 @@ TARGET_CPU_HFILES = \
 	config/tc-tic6x.h \
 	config/tc-tilegx.h \
 	config/tc-tilepro.h \
+	config/tc-ubi32.h \
 	config/tc-v850.h \
 	config/tc-vax.h \
 	config/tc-visium.h \
@@ -726,7 +668,7 @@ all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
-.SUFFIXES: .c .l .lo .o .obj .y
+.SUFFIXES: .c .l .o .obj .y
 am--refresh: Makefile
 	@:
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
@@ -784,13 +726,7 @@ po/Makefile.in: $(top_builddir)/config.status $(top_srcdir)/po/Make-in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 
 clean-noinstPROGRAMS:
-	@list='$(noinst_PROGRAMS)'; test -n "$$list" || exit 0; \
-	echo " rm -f" $$list; \
-	rm -f $$list || exit $$?; \
-	test -n "$(EXEEXT)" || exit 0; \
-	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
-	echo " rm -f" $$list; \
-	rm -f $$list
+	-test -z "$(noinst_PROGRAMS)" || rm -f $(noinst_PROGRAMS)
 as-new$(EXEEXT): $(as_new_OBJECTS) $(as_new_DEPENDENCIES) $(EXTRA_as_new_DEPENDENCIES) 
 	@rm -f as-new$(EXEEXT)
 	$(LINK) $(as_new_OBJECTS) $(as_new_LDADD) $(LIBS)
@@ -921,6 +857,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tc-tic6x.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tc-tilegx.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tc-tilepro.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tc-ubi32.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tc-v850.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tc-vax.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tc-visium.Po@am__quote@
@@ -947,13 +884,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
-
-.c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
 tc-aarch64.o: config/tc-aarch64.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tc-aarch64.o -MD -MP -MF $(DEPDIR)/tc-aarch64.Tpo -c -o tc-aarch64.o `test -f 'config/tc-aarch64.c' || echo '$(srcdir)/'`config/tc-aarch64.c
@@ -1837,6 +1767,20 @@ tc-tilepro.obj: config/tc-tilepro.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o tc-tilepro.obj `if test -f 'config/tc-tilepro.c'; then $(CYGPATH_W) 'config/tc-tilepro.c'; else $(CYGPATH_W) '$(srcdir)/config/tc-tilepro.c'; fi`
 
+tc-ubi32.o: config/tc-ubi32.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tc-ubi32.o -MD -MP -MF $(DEPDIR)/tc-ubi32.Tpo -c -o tc-ubi32.o `test -f 'config/tc-ubi32.c' || echo '$(srcdir)/'`config/tc-ubi32.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/tc-ubi32.Tpo $(DEPDIR)/tc-ubi32.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='config/tc-ubi32.c' object='tc-ubi32.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o tc-ubi32.o `test -f 'config/tc-ubi32.c' || echo '$(srcdir)/'`config/tc-ubi32.c
+
+tc-ubi32.obj: config/tc-ubi32.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tc-ubi32.obj -MD -MP -MF $(DEPDIR)/tc-ubi32.Tpo -c -o tc-ubi32.obj `if test -f 'config/tc-ubi32.c'; then $(CYGPATH_W) 'config/tc-ubi32.c'; else $(CYGPATH_W) '$(srcdir)/config/tc-ubi32.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/tc-ubi32.Tpo $(DEPDIR)/tc-ubi32.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='config/tc-ubi32.c' object='tc-ubi32.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o tc-ubi32.obj `if test -f 'config/tc-ubi32.c'; then $(CYGPATH_W) 'config/tc-ubi32.c'; else $(CYGPATH_W) '$(srcdir)/config/tc-ubi32.c'; fi`
+
 tc-v850.o: config/tc-v850.c
 @am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tc-v850.o -MD -MP -MF $(DEPDIR)/tc-v850.Tpo -c -o tc-v850.o `test -f 'config/tc-v850.c' || echo '$(srcdir)/'`config/tc-v850.c
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/tc-v850.Tpo $(DEPDIR)/tc-v850.Po
@@ -2235,15 +2179,6 @@ e-mipself.obj: config/e-mipself.c
 .y.c:
 	$(am__skipyacc) $(SHELL) $(YLWRAP) $< y.tab.c $@ y.tab.h $*.h y.output $*.output -- $(YACCCOMPILE)
 
-mostlyclean-libtool:
-	-rm -f *.lo
-
-clean-libtool:
-	-rm -rf .libs _libs
-
-distclean-libtool:
-	-rm -f libtool config.lt
-
 # This directory's subdirectories are mostly independent; you can cd
 # into them and run `make' without going through this Makefile.
 # To change the values of `make' variables: instead of editing Makefiles,
@@ -2456,16 +2391,14 @@ maintainer-clean-generic:
 	-rm -f rx-parse.c
 clean: clean-recursive
 
-clean-am: clean-generic clean-libtool clean-noinstPROGRAMS \
-	mostlyclean-am
+clean-am: clean-generic clean-noinstPROGRAMS mostlyclean-am
 
 distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-DEJAGNU distclean-compile \
-	distclean-generic distclean-hdr distclean-libtool \
-	distclean-tags
+	distclean-generic distclean-hdr distclean-tags
 
 dvi: dvi-recursive
 
@@ -2516,8 +2449,7 @@ maintainer-clean-am: distclean-am maintainer-clean-generic
 
 mostlyclean: mostlyclean-recursive
 
-mostlyclean-am: mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool
+mostlyclean-am: mostlyclean-compile mostlyclean-generic
 
 pdf: pdf-recursive
 
@@ -2534,19 +2466,18 @@ uninstall-am:
 
 .PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
 	all all-am am--refresh check check-DEJAGNU check-am clean \
-	clean-generic clean-libtool clean-noinstPROGRAMS ctags \
-	ctags-recursive distclean distclean-DEJAGNU distclean-compile \
-	distclean-generic distclean-hdr distclean-libtool \
-	distclean-tags dvi dvi-am html html-am info info-am install \
-	install-am install-data install-data-am install-dvi \
-	install-dvi-am install-exec install-exec-am install-exec-local \
-	install-html install-html-am install-info install-info-am \
-	install-man install-pdf install-pdf-am install-ps \
-	install-ps-am install-strip installcheck installcheck-am \
-	installdirs installdirs-am maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags tags-recursive uninstall uninstall-am
+	clean-generic clean-noinstPROGRAMS ctags ctags-recursive \
+	distclean distclean-DEJAGNU distclean-compile \
+	distclean-generic distclean-hdr distclean-tags dvi dvi-am html \
+	html-am info info-am install install-am install-data \
+	install-data-am install-dvi install-dvi-am install-exec \
+	install-exec-am install-exec-local install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-strip installcheck installcheck-am installdirs \
+	installdirs-am maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic pdf pdf-am \
+	ps ps-am tags tags-recursive uninstall uninstall-am
 
 po/POTFILES.in: @MAINT@ Makefile
 	for f in $(POTFILES); do echo $$f; done | LC_ALL=C sort > tmp \
