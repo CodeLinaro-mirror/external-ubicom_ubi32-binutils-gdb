@@ -496,6 +496,7 @@ ALL_MACHINES = \
 	cpu-tic80.lo \
 	cpu-tilegx.lo \
 	cpu-tilepro.lo \
+	cpu-ubi32.lo \
 	cpu-v850.lo \
 	cpu-v850_rh850.lo \
 	cpu-vax.lo \
@@ -584,6 +585,7 @@ ALL_MACHINES_CFILES = \
 	cpu-tic80.c \
 	cpu-tilegx.c \
 	cpu-tilepro.c \
+	cpu-ubi32.c \
 	cpu-v850.c \
 	cpu-v850_rh850.c \
 	cpu-vax.c \
@@ -1437,6 +1439,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-tic80.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-tilegx.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-tilepro.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-ubi32.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-v850.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-v850_rh850.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cpu-vax.Plo@am__quote@
