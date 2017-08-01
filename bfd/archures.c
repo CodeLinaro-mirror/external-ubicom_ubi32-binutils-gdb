@@ -526,6 +526,14 @@ DESCRIPTION
 .#define bfd_mach_nios2		0
 .#define bfd_mach_nios2r1	1
 .#define bfd_mach_nios2r2	2
+.#define BFD_UBI32_OLD_NAME
+.  bfd_arch_ubi32,
+.#define bfd_mach_ubi32		0
+.#define bfd_mach_ubi32dsp	1
+.#define bfd_mach_ubi32ver4	2
+.#define bfd_mach_ubi32posix	3
+.#define bfd_mach_ubi32ver6	5
+.#define bfd_mach_ubi32ver61	6
 .  bfd_arch_visium,	{* Visium *}
 .#define bfd_mach_visium	1
 .  bfd_arch_last
@@ -647,6 +655,7 @@ extern const bfd_arch_info_type bfd_tic6x_arch;
 extern const bfd_arch_info_type bfd_tic80_arch;
 extern const bfd_arch_info_type bfd_tilegx_arch;
 extern const bfd_arch_info_type bfd_tilepro_arch;
+extern const bfd_arch_info_type bfd_ubi32_arch;
 extern const bfd_arch_info_type bfd_v850_arch;
 extern const bfd_arch_info_type bfd_v850_rh850_arch;
 extern const bfd_arch_info_type bfd_vax_arch;
@@ -737,6 +746,7 @@ static const bfd_arch_info_type * const bfd_archures_list[] =
     &bfd_tic80_arch,
     &bfd_tilegx_arch,
     &bfd_tilepro_arch,
+    &bfd_ubi32_arch,
     &bfd_v850_arch,
     &bfd_v850_rh850_arch,
     &bfd_vax_arch,

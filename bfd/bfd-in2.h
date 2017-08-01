@@ -2370,6 +2370,14 @@ enum bfd_architecture
 #define bfd_mach_nios2         0
 #define bfd_mach_nios2r1       1
 #define bfd_mach_nios2r2       2
+#define BFD_UBI32_OLD_NAME
+  bfd_arch_ubi32,
+#define bfd_mach_ubi32		0
+#define bfd_mach_ubi32dsp	1
+#define bfd_mach_ubi32ver4	2
+#define bfd_mach_ubi32posix	3
+#define bfd_mach_ubi32ver6	5
+#define bfd_mach_ubi32ver61	6
   bfd_arch_visium,     /* Visium */
 #define bfd_mach_visium        1
   bfd_arch_last
