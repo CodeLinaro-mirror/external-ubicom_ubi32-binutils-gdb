@@ -3,7 +3,8 @@
    THIS FILE IS MACHINE GENERATED WITH CGEN: Cpu tools GENerator.
    - the resultant file is machine generated, cgen-ibld.in isn't
 
-   Copyright (C) 1996-2015 Free Software Foundation, Inc.
+   Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2005, 2006, 2007
+   Free Software Foundation, Inc.
 
    This file is part of libopcodes.
 
@@ -32,7 +33,6 @@
 #include "symcat.h"
 #include "ubi32-desc.h"
 #include "ubi32-opc.h"
-#include "cgen/basic-modes.h"
 #include "opintl.h"
 #include "safe-ctype.h"
 
@@ -137,7 +137,7 @@ insert_normal (CGEN_CPU_DESC cd,
   if (length == 0)
     return NULL;
 
-  if (word_length > 8 * sizeof (CGEN_INSN_INT))
+  if (word_length > 32)
     abort ();
 
   /* For architectures with insns smaller than the base-insn-bitsize,
@@ -441,7 +441,7 @@ extract_normal (CGEN_CPU_DESC cd,
       return 1;
     }
 
-  if (word_length > 8 * sizeof (CGEN_INSN_INT))
+  if (word_length > 32)
     abort ();
 
   /* For architectures with insns smaller than the insn-base-bitsize,
@@ -468,7 +468,7 @@ extract_normal (CGEN_CPU_DESC cd,
     {
       unsigned char *bufp = ex_info->insn_bytes + word_offset / 8;
 
-      if (word_length > 8 * sizeof (CGEN_INSN_INT))
+      if (word_length > 32)
 	abort ();
 
       if (fill_cache (cd, ex_info, word_offset / 8, word_length / 8, pc) == 0)
@@ -580,7 +580,14 @@ ubi32_cgen_insert_operand (CGEN_CPU_DESC cd,
     case UBI32_OPERAND_P :
       errmsg = insert_normal (cd, fields->f_P, 0, 0, 22, 1, 32, total_length, buffer);
       break;
+    case UBI32_OPERAND_ACC1HI :
+      break;
+    case UBI32_OPERAND_ACC1LO :
+      break;
     case UBI32_OPERAND_BIT5 :
+      errmsg = insert_normal (cd, fields->f_bit5, 0, 0, 15, 5, 32, total_length, buffer);
+      break;
+    case UBI32_OPERAND_BIT5_ADDSUB :
       errmsg = insert_normal (cd, fields->f_bit5, 0, 0, 15, 5, 32, total_length, buffer);
       break;
     case UBI32_OPERAND_CC :
@@ -661,11 +668,76 @@ ubi32_cgen_insert_operand (CGEN_CPU_DESC cd,
     case UBI32_OPERAND_D_R :
       errmsg = insert_normal (cd, fields->f_d_r, 0, 0, 20, 5, 32, total_length, buffer);
       break;
+    case UBI32_OPERAND_DSP_S2_ACC_REG_ADDSUB :
+      errmsg = insert_normal (cd, fields->f_dsp_S2, 0, 0, 14, 4, 32, total_length, buffer);
+      break;
+    case UBI32_OPERAND_DSP_S2_ACC_REG_MUL :
+      errmsg = insert_normal (cd, fields->f_dsp_S2, 0, 0, 14, 4, 32, total_length, buffer);
+      break;
+    case UBI32_OPERAND_DSP_S2_DATA_REG :
+      errmsg = insert_normal (cd, fields->f_dsp_S2, 0, 0, 14, 4, 32, total_length, buffer);
+      break;
+    case UBI32_OPERAND_DSP_S2_DATA_REG_ADDSUB :
+      errmsg = insert_normal (cd, fields->f_dsp_S2, 0, 0, 14, 4, 32, total_length, buffer);
+      break;
+    case UBI32_OPERAND_DSP_S2_SEL :
+      errmsg = insert_normal (cd, fields->f_dsp_S2_sel, 0, 0, 18, 1, 32, total_length, buffer);
+      break;
+    case UBI32_OPERAND_DSP_C :
+      errmsg = insert_normal (cd, fields->f_dsp_C, 0, 0, 20, 1, 32, total_length, buffer);
+      break;
+    case UBI32_OPERAND_DSP_DESTA :
+      errmsg = insert_normal (cd, fields->f_dsp_destA, 0, 0, 16, 1, 32, total_length, buffer);
+      break;
+    case UBI32_OPERAND_DSP_T :
+      errmsg = insert_normal (cd, fields->f_dsp_T, 0, 0, 19, 1, 32, total_length, buffer);
+      break;
+    case UBI32_OPERAND_DSP_T_ADDSUB :
+      errmsg = insert_normal (cd, fields->f_dsp_T, 0, 0, 19, 1, 32, total_length, buffer);
+      break;
+    case UBI32_OPERAND_FPU_32_S2_ACC_REG :
+      errmsg = insert_normal (cd, fields->f_FPS2_reg32, 0, 0, 14, 4, 32, total_length, buffer);
+      break;
+    case UBI32_OPERAND_FPU_32_S2_DATA_REG :
+      errmsg = insert_normal (cd, fields->f_FPS2_reg32, 0, 0, 14, 4, 32, total_length, buffer);
+      break;
+    case UBI32_OPERAND_FPU_32_DEST_REG :
+      errmsg = insert_normal (cd, fields->f_FPD32, 0, 0, 17, 2, 32, total_length, buffer);
+      break;
+    case UBI32_OPERAND_FPU_64_S1_ACC_REG :
+      errmsg = insert_normal (cd, fields->f_FPS1_reg64, 0, 0, 3, 3, 32, total_length, buffer);
+      break;
+    case UBI32_OPERAND_FPU_64_S1_DATA_REG :
+      errmsg = insert_normal (cd, fields->f_FPS1_reg64, 0, 0, 3, 3, 32, total_length, buffer);
+      break;
+    case UBI32_OPERAND_FPU_64_S2_ACC_REG :
+      errmsg = insert_normal (cd, fields->f_FPS2_reg64, 0, 0, 14, 3, 32, total_length, buffer);
+      break;
+    case UBI32_OPERAND_FPU_64_S2_DATA_REG :
+      errmsg = insert_normal (cd, fields->f_FPS2_reg64, 0, 0, 14, 3, 32, total_length, buffer);
+      break;
+    case UBI32_OPERAND_FPU_64_DEST_REG :
+      errmsg = insert_normal (cd, fields->f_FPD64, 0, 0, 17, 1, 32, total_length, buffer);
+      break;
     case UBI32_OPERAND_IMM16_1 :
       errmsg = insert_normal (cd, fields->f_imm16_1, 0|(1<<CGEN_IFLD_SIGNED), 0, 26, 16, 32, total_length, buffer);
       break;
     case UBI32_OPERAND_IMM16_2 :
       errmsg = insert_normal (cd, fields->f_imm16_2, 0|(1<<CGEN_IFLD_SIGNED), 0, 15, 16, 32, total_length, buffer);
+      break;
+    case UBI32_OPERAND_IMM24 :
+      {
+{
+  FLD (f_imm23_21) = ((((unsigned int) (FLD (f_imm24)) >> (21))) & (7));
+  FLD (f_o20_0) = ((FLD (f_imm24)) & (2097151));
+}
+        errmsg = insert_normal (cd, fields->f_imm23_21, 0, 0, 26, 3, 32, total_length, buffer);
+        if (errmsg)
+          break;
+        errmsg = insert_normal (cd, fields->f_o20_0, 0, 0, 20, 21, 32, total_length, buffer);
+        if (errmsg)
+          break;
+      }
       break;
     case UBI32_OPERAND_IMM25 :
       {
@@ -935,7 +1007,14 @@ ubi32_cgen_extract_operand (CGEN_CPU_DESC cd,
     case UBI32_OPERAND_P :
       length = extract_normal (cd, ex_info, insn_value, 0, 0, 22, 1, 32, total_length, pc, & fields->f_P);
       break;
+    case UBI32_OPERAND_ACC1HI :
+      break;
+    case UBI32_OPERAND_ACC1LO :
+      break;
     case UBI32_OPERAND_BIT5 :
+      length = extract_normal (cd, ex_info, insn_value, 0, 0, 15, 5, 32, total_length, pc, & fields->f_bit5);
+      break;
+    case UBI32_OPERAND_BIT5_ADDSUB :
       length = extract_normal (cd, ex_info, insn_value, 0, 0, 15, 5, 32, total_length, pc, & fields->f_bit5);
       break;
     case UBI32_OPERAND_CC :
@@ -1010,11 +1089,73 @@ ubi32_cgen_extract_operand (CGEN_CPU_DESC cd,
     case UBI32_OPERAND_D_R :
       length = extract_normal (cd, ex_info, insn_value, 0, 0, 20, 5, 32, total_length, pc, & fields->f_d_r);
       break;
+    case UBI32_OPERAND_DSP_S2_ACC_REG_ADDSUB :
+      length = extract_normal (cd, ex_info, insn_value, 0, 0, 14, 4, 32, total_length, pc, & fields->f_dsp_S2);
+      break;
+    case UBI32_OPERAND_DSP_S2_ACC_REG_MUL :
+      length = extract_normal (cd, ex_info, insn_value, 0, 0, 14, 4, 32, total_length, pc, & fields->f_dsp_S2);
+      break;
+    case UBI32_OPERAND_DSP_S2_DATA_REG :
+      length = extract_normal (cd, ex_info, insn_value, 0, 0, 14, 4, 32, total_length, pc, & fields->f_dsp_S2);
+      break;
+    case UBI32_OPERAND_DSP_S2_DATA_REG_ADDSUB :
+      length = extract_normal (cd, ex_info, insn_value, 0, 0, 14, 4, 32, total_length, pc, & fields->f_dsp_S2);
+      break;
+    case UBI32_OPERAND_DSP_S2_SEL :
+      length = extract_normal (cd, ex_info, insn_value, 0, 0, 18, 1, 32, total_length, pc, & fields->f_dsp_S2_sel);
+      break;
+    case UBI32_OPERAND_DSP_C :
+      length = extract_normal (cd, ex_info, insn_value, 0, 0, 20, 1, 32, total_length, pc, & fields->f_dsp_C);
+      break;
+    case UBI32_OPERAND_DSP_DESTA :
+      length = extract_normal (cd, ex_info, insn_value, 0, 0, 16, 1, 32, total_length, pc, & fields->f_dsp_destA);
+      break;
+    case UBI32_OPERAND_DSP_T :
+      length = extract_normal (cd, ex_info, insn_value, 0, 0, 19, 1, 32, total_length, pc, & fields->f_dsp_T);
+      break;
+    case UBI32_OPERAND_DSP_T_ADDSUB :
+      length = extract_normal (cd, ex_info, insn_value, 0, 0, 19, 1, 32, total_length, pc, & fields->f_dsp_T);
+      break;
+    case UBI32_OPERAND_FPU_32_S2_ACC_REG :
+      length = extract_normal (cd, ex_info, insn_value, 0, 0, 14, 4, 32, total_length, pc, & fields->f_FPS2_reg32);
+      break;
+    case UBI32_OPERAND_FPU_32_S2_DATA_REG :
+      length = extract_normal (cd, ex_info, insn_value, 0, 0, 14, 4, 32, total_length, pc, & fields->f_FPS2_reg32);
+      break;
+    case UBI32_OPERAND_FPU_32_DEST_REG :
+      length = extract_normal (cd, ex_info, insn_value, 0, 0, 17, 2, 32, total_length, pc, & fields->f_FPD32);
+      break;
+    case UBI32_OPERAND_FPU_64_S1_ACC_REG :
+      length = extract_normal (cd, ex_info, insn_value, 0, 0, 3, 3, 32, total_length, pc, & fields->f_FPS1_reg64);
+      break;
+    case UBI32_OPERAND_FPU_64_S1_DATA_REG :
+      length = extract_normal (cd, ex_info, insn_value, 0, 0, 3, 3, 32, total_length, pc, & fields->f_FPS1_reg64);
+      break;
+    case UBI32_OPERAND_FPU_64_S2_ACC_REG :
+      length = extract_normal (cd, ex_info, insn_value, 0, 0, 14, 3, 32, total_length, pc, & fields->f_FPS2_reg64);
+      break;
+    case UBI32_OPERAND_FPU_64_S2_DATA_REG :
+      length = extract_normal (cd, ex_info, insn_value, 0, 0, 14, 3, 32, total_length, pc, & fields->f_FPS2_reg64);
+      break;
+    case UBI32_OPERAND_FPU_64_DEST_REG :
+      length = extract_normal (cd, ex_info, insn_value, 0, 0, 17, 1, 32, total_length, pc, & fields->f_FPD64);
+      break;
     case UBI32_OPERAND_IMM16_1 :
       length = extract_normal (cd, ex_info, insn_value, 0|(1<<CGEN_IFLD_SIGNED), 0, 26, 16, 32, total_length, pc, & fields->f_imm16_1);
       break;
     case UBI32_OPERAND_IMM16_2 :
       length = extract_normal (cd, ex_info, insn_value, 0|(1<<CGEN_IFLD_SIGNED), 0, 15, 16, 32, total_length, pc, & fields->f_imm16_2);
+      break;
+    case UBI32_OPERAND_IMM24 :
+      {
+        length = extract_normal (cd, ex_info, insn_value, 0, 0, 26, 3, 32, total_length, pc, & fields->f_imm23_21);
+        if (length <= 0) break;
+        length = extract_normal (cd, ex_info, insn_value, 0, 0, 20, 21, 32, total_length, pc, & fields->f_o20_0);
+        if (length <= 0) break;
+{
+  FLD (f_imm24) = ((FLD (f_o20_0)) | (((FLD (f_imm23_21)) << (21))));
+}
+      }
       break;
     case UBI32_OPERAND_IMM25 :
       {
@@ -1251,7 +1392,16 @@ ubi32_cgen_get_int_operand (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
     case UBI32_OPERAND_P :
       value = fields->f_P;
       break;
+    case UBI32_OPERAND_ACC1HI :
+      value = 0;
+      break;
+    case UBI32_OPERAND_ACC1LO :
+      value = 0;
+      break;
     case UBI32_OPERAND_BIT5 :
+      value = fields->f_bit5;
+      break;
+    case UBI32_OPERAND_BIT5_ADDSUB :
       value = fields->f_bit5;
       break;
     case UBI32_OPERAND_CC :
@@ -1287,11 +1437,65 @@ ubi32_cgen_get_int_operand (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
     case UBI32_OPERAND_D_R :
       value = fields->f_d_r;
       break;
+    case UBI32_OPERAND_DSP_S2_ACC_REG_ADDSUB :
+      value = fields->f_dsp_S2;
+      break;
+    case UBI32_OPERAND_DSP_S2_ACC_REG_MUL :
+      value = fields->f_dsp_S2;
+      break;
+    case UBI32_OPERAND_DSP_S2_DATA_REG :
+      value = fields->f_dsp_S2;
+      break;
+    case UBI32_OPERAND_DSP_S2_DATA_REG_ADDSUB :
+      value = fields->f_dsp_S2;
+      break;
+    case UBI32_OPERAND_DSP_S2_SEL :
+      value = fields->f_dsp_S2_sel;
+      break;
+    case UBI32_OPERAND_DSP_C :
+      value = fields->f_dsp_C;
+      break;
+    case UBI32_OPERAND_DSP_DESTA :
+      value = fields->f_dsp_destA;
+      break;
+    case UBI32_OPERAND_DSP_T :
+      value = fields->f_dsp_T;
+      break;
+    case UBI32_OPERAND_DSP_T_ADDSUB :
+      value = fields->f_dsp_T;
+      break;
+    case UBI32_OPERAND_FPU_32_S2_ACC_REG :
+      value = fields->f_FPS2_reg32;
+      break;
+    case UBI32_OPERAND_FPU_32_S2_DATA_REG :
+      value = fields->f_FPS2_reg32;
+      break;
+    case UBI32_OPERAND_FPU_32_DEST_REG :
+      value = fields->f_FPD32;
+      break;
+    case UBI32_OPERAND_FPU_64_S1_ACC_REG :
+      value = fields->f_FPS1_reg64;
+      break;
+    case UBI32_OPERAND_FPU_64_S1_DATA_REG :
+      value = fields->f_FPS1_reg64;
+      break;
+    case UBI32_OPERAND_FPU_64_S2_ACC_REG :
+      value = fields->f_FPS2_reg64;
+      break;
+    case UBI32_OPERAND_FPU_64_S2_DATA_REG :
+      value = fields->f_FPS2_reg64;
+      break;
+    case UBI32_OPERAND_FPU_64_DEST_REG :
+      value = fields->f_FPD64;
+      break;
     case UBI32_OPERAND_IMM16_1 :
       value = fields->f_imm16_1;
       break;
     case UBI32_OPERAND_IMM16_2 :
       value = fields->f_imm16_2;
+      break;
+    case UBI32_OPERAND_IMM24 :
+      value = fields->f_imm24;
       break;
     case UBI32_OPERAND_IMM25 :
       value = fields->f_imm25;
@@ -1421,7 +1625,16 @@ ubi32_cgen_get_vma_operand (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
     case UBI32_OPERAND_P :
       value = fields->f_P;
       break;
+    case UBI32_OPERAND_ACC1HI :
+      value = 0;
+      break;
+    case UBI32_OPERAND_ACC1LO :
+      value = 0;
+      break;
     case UBI32_OPERAND_BIT5 :
+      value = fields->f_bit5;
+      break;
+    case UBI32_OPERAND_BIT5_ADDSUB :
       value = fields->f_bit5;
       break;
     case UBI32_OPERAND_CC :
@@ -1457,11 +1670,65 @@ ubi32_cgen_get_vma_operand (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
     case UBI32_OPERAND_D_R :
       value = fields->f_d_r;
       break;
+    case UBI32_OPERAND_DSP_S2_ACC_REG_ADDSUB :
+      value = fields->f_dsp_S2;
+      break;
+    case UBI32_OPERAND_DSP_S2_ACC_REG_MUL :
+      value = fields->f_dsp_S2;
+      break;
+    case UBI32_OPERAND_DSP_S2_DATA_REG :
+      value = fields->f_dsp_S2;
+      break;
+    case UBI32_OPERAND_DSP_S2_DATA_REG_ADDSUB :
+      value = fields->f_dsp_S2;
+      break;
+    case UBI32_OPERAND_DSP_S2_SEL :
+      value = fields->f_dsp_S2_sel;
+      break;
+    case UBI32_OPERAND_DSP_C :
+      value = fields->f_dsp_C;
+      break;
+    case UBI32_OPERAND_DSP_DESTA :
+      value = fields->f_dsp_destA;
+      break;
+    case UBI32_OPERAND_DSP_T :
+      value = fields->f_dsp_T;
+      break;
+    case UBI32_OPERAND_DSP_T_ADDSUB :
+      value = fields->f_dsp_T;
+      break;
+    case UBI32_OPERAND_FPU_32_S2_ACC_REG :
+      value = fields->f_FPS2_reg32;
+      break;
+    case UBI32_OPERAND_FPU_32_S2_DATA_REG :
+      value = fields->f_FPS2_reg32;
+      break;
+    case UBI32_OPERAND_FPU_32_DEST_REG :
+      value = fields->f_FPD32;
+      break;
+    case UBI32_OPERAND_FPU_64_S1_ACC_REG :
+      value = fields->f_FPS1_reg64;
+      break;
+    case UBI32_OPERAND_FPU_64_S1_DATA_REG :
+      value = fields->f_FPS1_reg64;
+      break;
+    case UBI32_OPERAND_FPU_64_S2_ACC_REG :
+      value = fields->f_FPS2_reg64;
+      break;
+    case UBI32_OPERAND_FPU_64_S2_DATA_REG :
+      value = fields->f_FPS2_reg64;
+      break;
+    case UBI32_OPERAND_FPU_64_DEST_REG :
+      value = fields->f_FPD64;
+      break;
     case UBI32_OPERAND_IMM16_1 :
       value = fields->f_imm16_1;
       break;
     case UBI32_OPERAND_IMM16_2 :
       value = fields->f_imm16_2;
+      break;
+    case UBI32_OPERAND_IMM24 :
+      value = fields->f_imm24;
       break;
     case UBI32_OPERAND_IMM25 :
       value = fields->f_imm25;
@@ -1598,7 +1865,14 @@ ubi32_cgen_set_int_operand (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
     case UBI32_OPERAND_P :
       fields->f_P = value;
       break;
+    case UBI32_OPERAND_ACC1HI :
+      break;
+    case UBI32_OPERAND_ACC1LO :
+      break;
     case UBI32_OPERAND_BIT5 :
+      fields->f_bit5 = value;
+      break;
+    case UBI32_OPERAND_BIT5_ADDSUB :
       fields->f_bit5 = value;
       break;
     case UBI32_OPERAND_CC :
@@ -1634,11 +1908,65 @@ ubi32_cgen_set_int_operand (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
     case UBI32_OPERAND_D_R :
       fields->f_d_r = value;
       break;
+    case UBI32_OPERAND_DSP_S2_ACC_REG_ADDSUB :
+      fields->f_dsp_S2 = value;
+      break;
+    case UBI32_OPERAND_DSP_S2_ACC_REG_MUL :
+      fields->f_dsp_S2 = value;
+      break;
+    case UBI32_OPERAND_DSP_S2_DATA_REG :
+      fields->f_dsp_S2 = value;
+      break;
+    case UBI32_OPERAND_DSP_S2_DATA_REG_ADDSUB :
+      fields->f_dsp_S2 = value;
+      break;
+    case UBI32_OPERAND_DSP_S2_SEL :
+      fields->f_dsp_S2_sel = value;
+      break;
+    case UBI32_OPERAND_DSP_C :
+      fields->f_dsp_C = value;
+      break;
+    case UBI32_OPERAND_DSP_DESTA :
+      fields->f_dsp_destA = value;
+      break;
+    case UBI32_OPERAND_DSP_T :
+      fields->f_dsp_T = value;
+      break;
+    case UBI32_OPERAND_DSP_T_ADDSUB :
+      fields->f_dsp_T = value;
+      break;
+    case UBI32_OPERAND_FPU_32_S2_ACC_REG :
+      fields->f_FPS2_reg32 = value;
+      break;
+    case UBI32_OPERAND_FPU_32_S2_DATA_REG :
+      fields->f_FPS2_reg32 = value;
+      break;
+    case UBI32_OPERAND_FPU_32_DEST_REG :
+      fields->f_FPD32 = value;
+      break;
+    case UBI32_OPERAND_FPU_64_S1_ACC_REG :
+      fields->f_FPS1_reg64 = value;
+      break;
+    case UBI32_OPERAND_FPU_64_S1_DATA_REG :
+      fields->f_FPS1_reg64 = value;
+      break;
+    case UBI32_OPERAND_FPU_64_S2_ACC_REG :
+      fields->f_FPS2_reg64 = value;
+      break;
+    case UBI32_OPERAND_FPU_64_S2_DATA_REG :
+      fields->f_FPS2_reg64 = value;
+      break;
+    case UBI32_OPERAND_FPU_64_DEST_REG :
+      fields->f_FPD64 = value;
+      break;
     case UBI32_OPERAND_IMM16_1 :
       fields->f_imm16_1 = value;
       break;
     case UBI32_OPERAND_IMM16_2 :
       fields->f_imm16_2 = value;
+      break;
+    case UBI32_OPERAND_IMM24 :
+      fields->f_imm24 = value;
       break;
     case UBI32_OPERAND_IMM25 :
       fields->f_imm25 = value;
@@ -1759,7 +2087,14 @@ ubi32_cgen_set_vma_operand (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
     case UBI32_OPERAND_P :
       fields->f_P = value;
       break;
+    case UBI32_OPERAND_ACC1HI :
+      break;
+    case UBI32_OPERAND_ACC1LO :
+      break;
     case UBI32_OPERAND_BIT5 :
+      fields->f_bit5 = value;
+      break;
+    case UBI32_OPERAND_BIT5_ADDSUB :
       fields->f_bit5 = value;
       break;
     case UBI32_OPERAND_CC :
@@ -1795,11 +2130,65 @@ ubi32_cgen_set_vma_operand (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
     case UBI32_OPERAND_D_R :
       fields->f_d_r = value;
       break;
+    case UBI32_OPERAND_DSP_S2_ACC_REG_ADDSUB :
+      fields->f_dsp_S2 = value;
+      break;
+    case UBI32_OPERAND_DSP_S2_ACC_REG_MUL :
+      fields->f_dsp_S2 = value;
+      break;
+    case UBI32_OPERAND_DSP_S2_DATA_REG :
+      fields->f_dsp_S2 = value;
+      break;
+    case UBI32_OPERAND_DSP_S2_DATA_REG_ADDSUB :
+      fields->f_dsp_S2 = value;
+      break;
+    case UBI32_OPERAND_DSP_S2_SEL :
+      fields->f_dsp_S2_sel = value;
+      break;
+    case UBI32_OPERAND_DSP_C :
+      fields->f_dsp_C = value;
+      break;
+    case UBI32_OPERAND_DSP_DESTA :
+      fields->f_dsp_destA = value;
+      break;
+    case UBI32_OPERAND_DSP_T :
+      fields->f_dsp_T = value;
+      break;
+    case UBI32_OPERAND_DSP_T_ADDSUB :
+      fields->f_dsp_T = value;
+      break;
+    case UBI32_OPERAND_FPU_32_S2_ACC_REG :
+      fields->f_FPS2_reg32 = value;
+      break;
+    case UBI32_OPERAND_FPU_32_S2_DATA_REG :
+      fields->f_FPS2_reg32 = value;
+      break;
+    case UBI32_OPERAND_FPU_32_DEST_REG :
+      fields->f_FPD32 = value;
+      break;
+    case UBI32_OPERAND_FPU_64_S1_ACC_REG :
+      fields->f_FPS1_reg64 = value;
+      break;
+    case UBI32_OPERAND_FPU_64_S1_DATA_REG :
+      fields->f_FPS1_reg64 = value;
+      break;
+    case UBI32_OPERAND_FPU_64_S2_ACC_REG :
+      fields->f_FPS2_reg64 = value;
+      break;
+    case UBI32_OPERAND_FPU_64_S2_DATA_REG :
+      fields->f_FPS2_reg64 = value;
+      break;
+    case UBI32_OPERAND_FPU_64_DEST_REG :
+      fields->f_FPD64 = value;
+      break;
     case UBI32_OPERAND_IMM16_1 :
       fields->f_imm16_1 = value;
       break;
     case UBI32_OPERAND_IMM16_2 :
       fields->f_imm16_2 = value;
+      break;
+    case UBI32_OPERAND_IMM24 :
+      fields->f_imm24 = value;
       break;
     case UBI32_OPERAND_IMM25 :
       fields->f_imm25 = value;

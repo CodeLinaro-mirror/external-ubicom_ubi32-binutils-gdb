@@ -3960,7 +3960,7 @@ case "${target}" in
     noconfigdirs="$noconfigdirs sim"
     ;;
   ubi32-*-*)
-    nocinfigdirs="$noconfigdirs gdb sim target-newlib target-libgloss"
+    noconfigdirs="$noconfigdirs gdb sim target-newlib target-libgloss"
     ;;
   tilegx*-*-*)
     noconfigdirs="$noconfigdirs sim"

@@ -463,6 +463,8 @@ case ${generic_target} in
 
   tilepro-*-* | tilegx*-*-*)		fmt=elf ;;
 
+  ubi32-*-*)				fmt=elf ;;
+
   v850*-*-*)				fmt=elf ;;
 
   vax-*-netbsdelf*)			fmt=elf em=nbsd ;;

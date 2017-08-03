@@ -532,6 +532,7 @@ DESCRIPTION
 .#define bfd_mach_ubi32dsp	1
 .#define bfd_mach_ubi32ver4	2
 .#define bfd_mach_ubi32posix	3
+.#define bfd_mach_ubi32ver5	4
 .#define bfd_mach_ubi32ver6	5
 .#define bfd_mach_ubi32ver61	6
 .  bfd_arch_visium,	{* Visium *}

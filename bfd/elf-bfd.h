@@ -478,7 +478,8 @@ enum elf_target_id
   TILEGX_ELF_DATA,
   TILEPRO_ELF_DATA,
   RISCV_ELF_DATA,
-  GENERIC_ELF_DATA
+  GENERIC_ELF_DATA,
+  UBI32_ELF_DATA
 };
 
 struct elf_sym_strtab

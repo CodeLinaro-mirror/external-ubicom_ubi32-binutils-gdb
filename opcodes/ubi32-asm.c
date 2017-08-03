@@ -4,7 +4,8 @@
    THIS FILE IS MACHINE GENERATED WITH CGEN.
    - the resultant file is machine generated, cgen-asm.in isn't
 
-   Copyright (C) 1996-2015 Free Software Foundation, Inc.
+   Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2005, 2007
+   Free Software Foundation, Inc.
 
    This file is part of libopcodes.
 
@@ -234,7 +235,7 @@ struct ubi32_cgen_data_space_map ubi32_cgen_data_space_map_mars[] = {
 	{ 0x1a4,        "mt_i_blocked", RO, },
 	{ 0x1a8,	"mt_d_blocked", RO, },
 	{ 0x1ac,	"mt_i_blocked_set", WO},
-	{ 0x1b0, 	"mt_d_blocked_set", WO},
+	{ 0x1b0,	"mt_d_blocked_set", WO},
 	{ 0x1b4,	"mt_blocked_clr", WO},
 	{ 0x1b8,        "mt_trap_en", RW, },
 	{ 0x1bc,        "mt_trap", RO, },
@@ -242,39 +243,39 @@ struct ubi32_cgen_data_space_map ubi32_cgen_data_space_map_mars[] = {
 	{ 0x1c4,        "mt_trap_clr", WO, },
 	{ 0x1c8,        "sep", RW, },
 	/* 0x1cc-0x1FF Reserved */
- 	{ 0x200,	"i_range0_hi", RW},
+	{ 0x200,	"i_range0_hi", RW},
 	{ 0x204,	"i_range1_hi", RW},
 	{ 0x208,	"i_range2_hi", RW},
 	{ 0x20c,	"i_range3_hi", RW},
 
 	/* 0x210-0x21f Reserved */
- 	{ 0x220,	"i_range0_lo", RW},
+	{ 0x220,	"i_range0_lo", RW},
 	{ 0x224,	"i_range1_lo", RW},
 	{ 0x228,	"i_range2_lo", RW},
 	{ 0x22c,	"i_range3_lo", RW},
 
 	/* 0x230-0x23f Reserved */
- 	{ 0x240,	"i_range0_en", RW},
+	{ 0x240,	"i_range0_en", RW},
 	{ 0x244,	"i_range1_en", RW},
 	{ 0x248,	"i_range2_en", RW},
 	{ 0x24c,	"i_range3_en", RW},
 
 	/* 0x250-0x25f Reserved */
- 	{ 0x260,	"d_range0_hi", RW},
+	{ 0x260,	"d_range0_hi", RW},
 	{ 0x264,	"d_range1_hi", RW},
 	{ 0x268,	"d_range2_hi", RW},
 	{ 0x26c,	"d_range3_hi", RW},
 	{ 0x270,	"d_range4_hi", RW},
 
 	/* 0x274-0x27f Reserved */
- 	{ 0x280,	"d_range0_lo", RW},
+	{ 0x280,	"d_range0_lo", RW},
 	{ 0x284,	"d_range1_lo", RW},
 	{ 0x288,	"d_range2_lo", RW},
 	{ 0x28c,	"d_range3_lo", RW},
 	{ 0x290,	"d_range4_lo", RW},
 
 	/* 0x294-0x29f Reserved */
- 	{ 0x2a0,	"d_range0_en", RW},
+	{ 0x2a0,	"d_range0_en", RW},
 	{ 0x2a4,	"d_range1_en", RW},
 	{ 0x2a8,	"d_range2_en", RW},
 	{ 0x2ac,	"d_range3_en", RW},
@@ -384,7 +385,7 @@ struct ubi32_cgen_data_space_map ubi32_cgen_data_space_map_jupiter[] = {
 	{ 0x1a4,        "mt_i_blocked", RO, },
 	{ 0x1a8,	"mt_d_blocked", RO, },
 	{ 0x1ac,	"mt_i_blocked_set", WO},
-	{ 0x1b0, 	"mt_d_blocked_set", WO},
+	{ 0x1b0,	"mt_d_blocked_set", WO},
 	{ 0x1b4,	"mt_blocked_clr", WO},
 	{ 0x1b8,        "mt_trap_en", RW, },
 	{ 0x1bc,        "mt_trap", RO, },
@@ -396,25 +397,25 @@ struct ubi32_cgen_data_space_map ubi32_cgen_data_space_map_jupiter[] = {
 	{ 0x1d4,        "tnum", RO, },
 
 	/* 0x1d8-0x1FF Reserved */
- 	{ 0x200,	"i_range0_hi", RW},
+	{ 0x200,	"i_range0_hi", RW},
 	{ 0x204,	"i_range1_hi", RW},
 	{ 0x208,	"i_range2_hi", RW},
 	{ 0x20c,	"i_range3_hi", RW},
 
 	/* 0x210-0x21f Reserved */
- 	{ 0x220,	"i_range0_lo", RW},
+	{ 0x220,	"i_range0_lo", RW},
 	{ 0x224,	"i_range1_lo", RW},
 	{ 0x228,	"i_range2_lo", RW},
 	{ 0x22c,	"i_range3_lo", RW},
 
 	/* 0x230-0x23f Reserved */
- 	{ 0x240,	"i_range0_en", RW},
+	{ 0x240,	"i_range0_en", RW},
 	{ 0x244,	"i_range1_en", RW},
 	{ 0x248,	"i_range2_en", RW},
 	{ 0x24c,	"i_range3_en", RW},
 
 	/* 0x250-0x25f Reserved */
- 	{ 0x260,	"d_range0_hi", RW},
+	{ 0x260,	"d_range0_hi", RW},
 	{ 0x264,	"d_range1_hi", RW},
 	{ 0x268,	"d_range2_hi", RW},
 	{ 0x26c,	"d_range3_hi", RW},
@@ -422,7 +423,7 @@ struct ubi32_cgen_data_space_map ubi32_cgen_data_space_map_jupiter[] = {
 	{ 0x274,	"d_range5_hi", RW},
 
 	/* 0x278-0x27f Reserved */
- 	{ 0x280,	"d_range0_lo", RW},
+	{ 0x280,	"d_range0_lo", RW},
 	{ 0x284,	"d_range1_lo", RW},
 	{ 0x288,	"d_range2_lo", RW},
 	{ 0x28c,	"d_range3_lo", RW},
@@ -430,7 +431,7 @@ struct ubi32_cgen_data_space_map ubi32_cgen_data_space_map_jupiter[] = {
 	{ 0x294,	"d_range5_lo", RW},
 
 	/* 0x298-0x29f Reserved */
- 	{ 0x2a0,	"d_range0_en", RW},
+	{ 0x2a0,	"d_range0_en", RW},
 	{ 0x2a4,	"d_range1_en", RW},
 	{ 0x2a8,	"d_range2_en", RW},
 	{ 0x2ac,	"d_range3_en", RW},
@@ -438,13 +439,13 @@ struct ubi32_cgen_data_space_map ubi32_cgen_data_space_map_jupiter[] = {
 	{ 0x2b4,	"d_range5_en", RW},
 
 	/* 0x2b8-0x2bf Reserved */
- 	{ 0x2c0,	"i_range0_user_en", RW},
+	{ 0x2c0,	"i_range0_user_en", RW},
 	{ 0x2c4,	"i_range1_user_en", RW},
 	{ 0x2c8,	"i_range2_user_en", RW},
 	{ 0x2cc,	"i_range3_user_en", RW},
 
 	/* 0x2d0 - 0x2df Reserved */
- 	{ 0x2e0,	"d_range0_user_en", RW},
+	{ 0x2e0,	"d_range0_user_en", RW},
 	{ 0x2e4,	"d_range1_user_en", RW},
 	{ 0x2e8,	"d_range2_user_en", RW},
 	{ 0x2ec,	"d_range3_user_en", RW},
@@ -554,7 +555,7 @@ struct ubi32_cgen_data_space_map ubi32_cgen_data_space_map_akronite[] = {
 	{ 0x1a4,        "mt_i_blocked", RO, },
 	{ 0x1a8,	"mt_d_blocked", RO, },
 	{ 0x1ac,	"mt_i_blocked_set", WO},
-	{ 0x1b0, 	"mt_d_blocked_set", WO},
+	{ 0x1b0,	"mt_d_blocked_set", WO},
 	{ 0x1b4,	"mt_blocked_clr", WO},
 	{ 0x1b8,        "mt_trap_en", RW, },
 	{ 0x1bc,        "mt_trap", RO, },
@@ -566,7 +567,7 @@ struct ubi32_cgen_data_space_map ubi32_cgen_data_space_map_akronite[] = {
 	{ 0x1d4,        "tnum", RO, },
 
 	/* 0x1d8-0x1FF Reserved */
- 	{ 0x200,	"i_range0_hi", RW},
+	{ 0x200,	"i_range0_hi", RW},
 	{ 0x204,	"i_range1_hi", RW},
 	{ 0x208,	"i_range2_hi", RW},
 	{ 0x20c,	"i_range3_hi", RW},
@@ -575,7 +576,7 @@ struct ubi32_cgen_data_space_map ubi32_cgen_data_space_map_akronite[] = {
 	{ 0x218,	"i_range6_hi", RW},
 	{ 0x21c,	"i_range7_hi", RW},
 
- 	{ 0x220,	"i_range0_lo", RW},
+	{ 0x220,	"i_range0_lo", RW},
 	{ 0x224,	"i_range1_lo", RW},
 	{ 0x228,	"i_range2_lo", RW},
 	{ 0x22c,	"i_range3_lo", RW},
@@ -584,7 +585,7 @@ struct ubi32_cgen_data_space_map ubi32_cgen_data_space_map_akronite[] = {
 	{ 0x238,	"i_range6_lo", RW},
 	{ 0x23c,	"i_range7_lo", RW},
 
- 	{ 0x240,	"i_range0_en", RW},
+	{ 0x240,	"i_range0_en", RW},
 	{ 0x244,	"i_range1_en", RW},
 	{ 0x248,	"i_range2_en", RW},
 	{ 0x24c,	"i_range3_en", RW},
@@ -593,7 +594,7 @@ struct ubi32_cgen_data_space_map ubi32_cgen_data_space_map_akronite[] = {
 	{ 0x258,	"i_range6_en", RW},
 	{ 0x25c,	"i_range7_en", RW},
 
- 	{ 0x260,	"d_range0_hi", RW},
+	{ 0x260,	"d_range0_hi", RW},
 	{ 0x264,	"d_range1_hi", RW},
 	{ 0x268,	"d_range2_hi", RW},
 	{ 0x26c,	"d_range3_hi", RW},
@@ -602,7 +603,7 @@ struct ubi32_cgen_data_space_map ubi32_cgen_data_space_map_akronite[] = {
 	{ 0x278,	"d_range6_hi", RW},
 	{ 0x27c,	"d_range7_hi", RW},
 
- 	{ 0x280,	"d_range0_lo", RW},
+	{ 0x280,	"d_range0_lo", RW},
 	{ 0x284,	"d_range1_lo", RW},
 	{ 0x288,	"d_range2_lo", RW},
 	{ 0x28c,	"d_range3_lo", RW},
@@ -611,7 +612,7 @@ struct ubi32_cgen_data_space_map ubi32_cgen_data_space_map_akronite[] = {
 	{ 0x298,	"d_range6_lo", RW},
 	{ 0x29c,	"d_range7_lo", RW},
 
- 	{ 0x2a0,	"d_range0_en", RW},
+	{ 0x2a0,	"d_range0_en", RW},
 	{ 0x2a4,	"d_range1_en", RW},
 	{ 0x2a8,	"d_range2_en", RW},
 	{ 0x2ac,	"d_range3_en", RW},
@@ -620,7 +621,7 @@ struct ubi32_cgen_data_space_map ubi32_cgen_data_space_map_akronite[] = {
 	{ 0x2b8,	"d_range6_en", RW},
 	{ 0x2bc,	"d_range7_en", RW},
 
- 	{ 0x2c0,	"i_range0_user_en", RW},
+	{ 0x2c0,	"i_range0_user_en", RW},
 	{ 0x2c4,	"i_range1_user_en", RW},
 	{ 0x2c8,	"i_range2_user_en", RW},
 	{ 0x2cc,	"i_range3_user_en", RW},
@@ -629,7 +630,7 @@ struct ubi32_cgen_data_space_map ubi32_cgen_data_space_map_akronite[] = {
 	{ 0x2d8,	"i_range6_user_en", RW},
 	{ 0x2dc,	"i_range7_user_en", RW},
 
- 	{ 0x2e0,	"d_range0_user_en", RW},
+	{ 0x2e0,	"d_range0_user_en", RW},
 	{ 0x2e4,	"d_range1_user_en", RW},
 	{ 0x2e8,	"d_range2_user_en", RW},
 	{ 0x2ec,	"d_range3_user_en", RW},
@@ -642,12 +643,9 @@ struct ubi32_cgen_data_space_map ubi32_cgen_data_space_map_akronite[] = {
 	{ 0x0,		0, RW, },
 };
 
-#if 0
 /* t_is_set will be 1 if .t is set for the madd.2 and msub.2 instructions */
 static unsigned char t_is_set =0;
-#endif
 
-#if 0
 static const char *
 parse_t_is_set_for_addsub (
 			   CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
@@ -672,11 +670,9 @@ parse_t_is_set_for_addsub (
 
   return NULL;
 }
-#endif
 
 char myerrmsg[128];
 
-#if 0
 /*
  * If accumulator is selected for madd.2 and msub.2 instructions then
  * the T bit should not be selected. Flag an assembler error in those
@@ -710,9 +706,7 @@ parse_acc_for_addsub (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
   t_is_set=0;
   return NULL;
 }
-#endif
 
-#if 0
 /*
  * For dsp madd/msub cases if S2 is a data register then t_is_set flag should be set to zero.
  */
@@ -734,7 +728,6 @@ parse_dr_for_addsub (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
   t_is_set=0;
   return NULL;
 }
-#endif
 
 static const char *
 parse_bit5 (CGEN_CPU_DESC cd,
@@ -805,7 +798,6 @@ parse_bit5 (CGEN_CPU_DESC cd,
   return errmsg;
 }
 
-#if 0
 /*
  * For dsp madd/msub cases if S2 is a #bit5 then t_is_set flag should be set to zero.
  */
@@ -827,7 +819,6 @@ parse_bit5_for_addsub (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
   t_is_set=0;
   return NULL;
 }
-#endif
 
 /* Parse signed 4 bit immediate value, being careful (hacky) to avoid
    eating a `++' that might be present */
@@ -901,13 +892,31 @@ static const char *
 parse_direct_addr (CGEN_CPU_DESC cd,
 		   const char **strp,
 		   int opindex,
-		   unsigned long *valuep,
+		   long *valuep,
 		   int isdest)
 {
   const char *errmsg = NULL;
-  bfd_vma value;
+  long value;
   struct ubi32_cgen_data_space_map *cur;
   size_t len;
+
+  if(cd->machs & (1<<MACH_IP3035))
+    {
+      /* cpu is mercury */
+      cur = ubi32_cgen_data_space_map_mercury;
+    }
+
+  if((cd->machs & (1<<MACH_UBI32DSP)) || (cd->machs & (1<<MACH_UBI32_VER4)))
+    {
+      /* cpu is mars/ares */
+      cur = ubi32_cgen_data_space_map_mars;
+    }
+
+  if (cd->machs & (1<<MACH_UBI32_VER5))
+    {
+      /* cpu is jupiter */
+      cur = ubi32_cgen_data_space_map_jupiter;
+    }
 
   if ((cd->machs & (1<<MACH_UBI32_VER6)) || (cd->machs & (1<<MACH_UBI32_VER61)))
     {
@@ -956,7 +965,7 @@ parse_direct_addr (CGEN_CPU_DESC cd,
       plusplus = strstr(*strp, "++");
       if (plusplus)
 	*plusplus = 0;
-      errmsg = cgen_parse_signed_integer (cd, strp, opindex, (long int *)&value);
+      errmsg = cgen_parse_signed_integer (cd, strp, opindex, &value);
       if (plusplus)
 	*plusplus = '+';
 
@@ -973,7 +982,7 @@ static const char *
 parse_d_direct_addr (CGEN_CPU_DESC cd,
 		     const char **strp,
 		     int opindex,
-		     unsigned long *valuep)
+		     long *valuep)
 {
   return parse_direct_addr (cd, strp, opindex, valuep, 1);
 }
@@ -982,7 +991,7 @@ static const char *
 parse_s1_direct_addr (CGEN_CPU_DESC cd,
 		      const char **strp,
 		      int opindex,
-		      unsigned long *valuep)
+		      long *valuep)
 {
   return parse_direct_addr (cd, strp, opindex, valuep, 0);
 }
@@ -1021,7 +1030,81 @@ parse_imm7_basic (CGEN_CPU_DESC cd,
 	return _("missing `)'");
       ++*strp;
       if (errmsg == NULL
-  	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
+	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
+	value &= 0x7f;  /* always want 7 bits, regardless of imm7 type */
+      *valuep = value;
+      return errmsg;
+    }
+  else if (strncasecmp (*strp, "%got_lo(", strlen("%got_lo(")) == 0)
+    {
+      *strp += strlen("%got_lo(");
+
+      /* Switch the relocation to the GOT relocation. */
+      switch(reloc)
+	{
+	case BFD_RELOC_UBI32_LO7_S:
+	  reloc = BFD_RELOC_UBI32_GOT_LO7_S;
+	  break;
+	case BFD_RELOC_UBI32_LO7_2_S:
+	  reloc = BFD_RELOC_UBI32_GOT_LO7_2_S;
+	  break;
+	case BFD_RELOC_UBI32_LO7_4_S:
+	  reloc = BFD_RELOC_UBI32_GOT_LO7_4_S;
+	  break;
+	case BFD_RELOC_UBI32_LO7_D:
+	  reloc = BFD_RELOC_UBI32_GOT_LO7_D;
+	  break;
+	case BFD_RELOC_UBI32_LO7_2_D:
+	  reloc = BFD_RELOC_UBI32_GOT_LO7_2_D;
+	  break;
+	case BFD_RELOC_UBI32_LO7_4_D:
+	  reloc = BFD_RELOC_UBI32_GOT_LO7_4_D;
+	  break;
+	}
+      errmsg = cgen_parse_address (cd, strp, opindex, reloc,
+				   &result_type, &value);
+      if (**strp != ')')
+	return _("missing `)'");
+      ++*strp;
+      if (errmsg == NULL
+	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
+	value &= 0x7f;  /* always want 7 bits, regardless of imm7 type */
+      *valuep = value;
+      return errmsg;
+    }
+  else if (strncasecmp (*strp, "%funcdesc_got_lo(", strlen("%funcdesc_got_lo(")) == 0)
+    {
+      *strp += strlen("%funcdesc_got_lo(");
+
+      /* Switch the relocation to the GOT relocation. */
+      switch(reloc)
+	{
+	case BFD_RELOC_UBI32_LO7_S:
+	  reloc = BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_S;
+	  break;
+	case BFD_RELOC_UBI32_LO7_2_S:
+	  reloc = BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_2_S;
+	  break;
+	case BFD_RELOC_UBI32_LO7_4_S:
+	  reloc = BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_4_S;
+	  break;
+	case BFD_RELOC_UBI32_LO7_D:
+	  reloc = BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_D;
+	  break;
+	case BFD_RELOC_UBI32_LO7_2_D:
+	  reloc = BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_2_D;
+	  break;
+	case BFD_RELOC_UBI32_LO7_4_D:
+	  reloc = BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_4_D;
+	  break;
+	}
+      errmsg = cgen_parse_address (cd, strp, opindex, reloc,
+				   &result_type, &value);
+      if (**strp != ')')
+	return _("missing `)'");
+      ++*strp;
+      if (errmsg == NULL
+	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
 	value &= 0x7f;  /* always want 7 bits, regardless of imm7 type */
       *valuep = value;
       return errmsg;
@@ -1062,8 +1145,6 @@ parse_imm7_pdec (CGEN_CPU_DESC cd,
   enum cgen_parse_operand_result result_type = CGEN_PARSE_OPERAND_RESULT_NUMBER;
   bfd_vma value;
 
-  *valuep = 0;
-
   /* in this case we want low 7-bits to accompany the 24-bit immediate of a moveai instruction */
   if (strncasecmp (*strp, "%lo(", 4) == 0)
     {
@@ -1074,7 +1155,7 @@ parse_imm7_pdec (CGEN_CPU_DESC cd,
 	return _("missing `)'");
       ++*strp;
       if (errmsg == NULL
-  	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
+	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
 	value &= 0x7f;  /* always want 7 bits, regardless of imm7 type */
       *valuep = value;
       return errmsg;
@@ -1110,7 +1191,6 @@ parse_imm7_1_s (CGEN_CPU_DESC cd,
 {
   return parse_imm7_basic (cd, strp, opindex, valuep, _(imm7_1_rangemsg),
 			   NULL, 0x7f, 0, BFD_RELOC_UBI32_LO7_S);
-/* FIXME */ return 0;
 }
 
 /* halfword imm7 */
@@ -1124,7 +1204,6 @@ parse_imm7_2_s (CGEN_CPU_DESC cd,
 			   _(imm7_2_rangemsg),
 			   _(imm7_2_maskmsg),
 			   0xfe, 0x1, BFD_RELOC_UBI32_LO7_2_S);
-/* FIXME */ return 0;
 }
 
 /* word imm7 */
@@ -1138,7 +1217,6 @@ parse_imm7_4_s (CGEN_CPU_DESC cd,
 			   _(imm7_4_rangemsg),
 			   _(imm7_4_maskmsg),
 			   0x1fc, 0x3, BFD_RELOC_UBI32_LO7_4_S);
-/* FIXME */ return 0;
 }
 
 /* word imm7 */
@@ -1148,7 +1226,7 @@ parse_pdec_imm7_4_s (CGEN_CPU_DESC cd,
 		     int opindex,
 		     unsigned long *valuep)
 {
-  unsigned long value;
+  unsigned long value = 0;
   const char *errmsg = parse_imm7_pdec (cd, strp, opindex, &value,
 					_(imm7_pdec_rangemsg),
 					_(imm7_4_maskmsg),
@@ -1178,7 +1256,6 @@ parse_imm7_1_d (CGEN_CPU_DESC cd,
 {
   return parse_imm7_basic (cd, strp, opindex, valuep, _(imm7_1_rangemsg),
 			   NULL, 0x7f, 0, BFD_RELOC_UBI32_LO7_D);
-/* FIXME */ return 0;
 }
 
 /* halfword dest imm7 */
@@ -1192,7 +1269,6 @@ parse_imm7_2_d (CGEN_CPU_DESC cd,
 			   _(imm7_2_rangemsg),
 			   _(imm7_2_maskmsg),
 			   0xfe, 0x1, BFD_RELOC_UBI32_LO7_2_D);
-/* FIXME */ return 0;
 }
 
 /* word dest imm7 */
@@ -1206,7 +1282,6 @@ parse_imm7_4_d (CGEN_CPU_DESC cd,
 			   _(imm7_4_rangemsg),
 			   _(imm7_4_maskmsg),
 			   0x1fc, 0x3, BFD_RELOC_UBI32_LO7_4_D);
-/* FIXME */ return 0;
 }
 
 /* Parse 16-bit immediate, allow %hi() or %lo() operators */
@@ -1214,7 +1289,7 @@ static const char *
 parse_imm16 (CGEN_CPU_DESC cd,
 	     const char **strp,
 	     int opindex,
-	     long *valuep)
+	     unsigned long *valuep)
 {
   const char *errmsg;
   enum cgen_parse_operand_result result_type = CGEN_PARSE_OPERAND_RESULT_NUMBER;
@@ -1229,7 +1304,36 @@ parse_imm16 (CGEN_CPU_DESC cd,
 	return _("missing `)'");
       ++*strp;
       if (errmsg == NULL
-  	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
+	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
+	value >>= 16;
+      *valuep = value;
+      return errmsg;
+    }
+  else if (strncasecmp (*strp, "%got_hi(", strlen("%got_hi(")) == 0)
+    {
+      *strp += strlen("%got_hi(");
+      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBI32_GOT_HI,
+				   &result_type, &value);
+      if (**strp != ')')
+	return _("missing `)'");
+      ++*strp;
+      if (errmsg == NULL
+	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
+	value >>= 16;
+      *valuep = value;
+      return errmsg;
+    }
+  else if ((strncasecmp (*strp, "%funcdesc_got_hi(", strlen("%funcdesc_got_hi(")) == 0)
+	   || (strncasecmp (*strp, "%got_funcdesc_hi(", strlen("%got_funcdesc_hi(")) == 0))
+    {
+      *strp += strlen("%funcdesc_got_hi(");
+      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBI32_FUNCDESC_GOT_HI,
+				   &result_type, &value);
+      if (**strp != ')')
+	return _("missing `)'");
+      ++*strp;
+      if (errmsg == NULL
+	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
 	value >>= 16;
       *valuep = value;
       return errmsg;
@@ -1243,7 +1347,36 @@ parse_imm16 (CGEN_CPU_DESC cd,
 	return _("missing `)'");
       ++*strp;
       if (errmsg == NULL
-  	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
+	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
+	value &= 0xffff;
+      *valuep = value;
+      return errmsg;
+    }
+  else if (strncasecmp (*strp, "%got_lo(", strlen("%got_lo(")) == 0)
+    {
+      *strp += strlen("%got_lo(");
+      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBI32_GOT_LO,
+				   &result_type, &value);
+      if (**strp != ')')
+	return _("missing `)'");
+      ++*strp;
+      if (errmsg == NULL
+	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
+	value &= 0xffff;
+      *valuep = value;
+      return errmsg;
+    }
+  else if ((strncasecmp (*strp, "%funcdesc_got_lo(", strlen("%funcdesc_got_lo(")) == 0)
+	   || (strncasecmp (*strp, "%got_funcdesc_lo(", strlen("%got_funcdesc_lo(")) == 0))
+    {
+      *strp += strlen("%funcdesc_got_lo(");
+      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBI32_FUNCDESC_GOT_LO,
+				   &result_type, &value);
+      if (**strp != ')')
+	return _("missing `)'");
+      ++*strp;
+      if (errmsg == NULL
+	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
 	value &= 0xffff;
       *valuep = value;
       return errmsg;
@@ -1261,13 +1394,12 @@ parse_imm16 (CGEN_CPU_DESC cd,
   return errmsg;
 }
 
-#if 0
 /* Parse 24-bit immediate for moveai instruction and allow %hi() operator */
 static const char *
 parse_imm24 (CGEN_CPU_DESC cd,
 	     const char **strp,
 	     int opindex,
-	     long *valuep)
+	     unsigned long *valuep)
 {
   const char *errmsg;
   enum cgen_parse_operand_result result_type = CGEN_PARSE_OPERAND_RESULT_NUMBER;
@@ -1282,7 +1414,35 @@ parse_imm24 (CGEN_CPU_DESC cd,
 	return _("missing `)'");
       ++*strp;
       if (errmsg == NULL
-  	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
+	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
+	value >>= 7;
+      *valuep = value;
+      return errmsg;
+    }
+  else if (strncasecmp (*strp, "%got_hi(", strlen("%got_hi(")) == 0)
+    {
+      *strp += strlen("%got_hi(");
+      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBI32_GOT_HI24,
+				   &result_type, &value);
+      if (**strp != ')')
+	return _("missing `)'");
+      ++*strp;
+      if (errmsg == NULL
+	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
+	value >>= 7;
+      *valuep = value;
+      return errmsg;
+    }
+  else if (strncasecmp (*strp, "%funcdesc_got_hi(", strlen("%funcdesc_got_hi(")) == 0)
+    {
+      *strp += strlen("%funcdesc_got_hi(");
+      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBI32_FUNCDESC_GOT_HI24,
+				   &result_type, &value);
+      if (**strp != ')')
+	return _("missing `)'");
+      ++*strp;
+      if (errmsg == NULL
+	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
 	value >>= 7;
       *valuep = value;
       return errmsg;
@@ -1299,7 +1459,6 @@ parse_imm24 (CGEN_CPU_DESC cd,
   *valuep = value;
   return errmsg;
 }
-#endif
 
 /* Parse 24-bit immediate for moveai instruction and allow %hi() operator */
 static const char *
@@ -1321,7 +1480,35 @@ parse_imm25 (CGEN_CPU_DESC cd,
 	return _("missing `)'");
       ++*strp;
       if (errmsg == NULL
-  	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
+	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
+	value >>= 7;
+      *valuep = value;
+      return errmsg;
+    }
+  else if (strncasecmp (*strp, "%got_hi(", strlen("%got_hi(")) == 0)
+    {
+      *strp += strlen("%got_hi(");
+      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBI32_GOT_HI24,
+				   &result_type, &value);
+      if (**strp != ')')
+	return _("missing `)'");
+      ++*strp;
+      if (errmsg == NULL
+	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
+	value >>= 7;
+      *valuep = value;
+      return errmsg;
+    }
+  else if (strncasecmp (*strp, "%funcdesc_got_hi(", strlen("%funcdesc_got_hi(")) == 0)
+    {
+      *strp += strlen("%funcdesc_got_hi(");
+      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBI32_FUNCDESC_GOT_HI24,
+				   &result_type, &value);
+      if (**strp != ')')
+	return _("missing `)'");
+      ++*strp;
+      if (errmsg == NULL
+	  && result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
 	value >>= 7;
       *valuep = value;
       return errmsg;
@@ -1375,7 +1562,7 @@ static const char *
 parse_offset16 (CGEN_CPU_DESC cd,
 		const char **strp,
 		int opindex,
-		long *valuep)
+		unsigned long *valuep)
 {
   const char *errmsg;
   enum cgen_parse_operand_result result_type = CGEN_PARSE_OPERAND_RESULT_NUMBER;
@@ -1386,6 +1573,42 @@ parse_offset16 (CGEN_CPU_DESC cd,
     {
       *strp += 4;
       errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBI32_LO7_CALLI,
+				   &result_type, &value);
+      if (errmsg != NULL)
+        return errmsg;
+
+      if (**strp != ')')
+	return _("missing `)'");
+      ++*strp;
+
+      if (result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
+        *valuep = value & 0x7c;
+
+      return NULL;
+    }
+
+  if (strncasecmp (*strp, "%got_lo(", strlen("%got_lo(")) == 0)
+    {
+      *strp += strlen("%got_lo(");
+      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBI32_GOT_LO7_CALLI,
+				   &result_type, &value);
+      if (errmsg != NULL)
+        return errmsg;
+
+      if (**strp != ')')
+	return _("missing `)'");
+      ++*strp;
+
+      if (result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
+        *valuep = value & 0x7c;
+
+      return NULL;
+    }
+
+  if (strncasecmp (*strp, "%funcdesc_got_lo(", strlen("%funcdesc_got_lo(")) == 0)
+    {
+      *strp += strlen("%funcdesc_got_lo(");
+      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_CALLI,
 				   &result_type, &value);
       if (errmsg != NULL)
         return errmsg;
@@ -1418,7 +1641,7 @@ parse_offset16 (CGEN_CPU_DESC cd,
       return NULL;
     }
 
-  errmsg = cgen_parse_signed_integer (cd, strp, opindex, (long int *)&value);
+  errmsg = cgen_parse_signed_integer (cd, strp, opindex, (long *) &value);
   if (errmsg != NULL)
     return errmsg;
 
@@ -1441,7 +1664,7 @@ static const char *
 parse_leai_offset16 (CGEN_CPU_DESC cd,
 		const char **strp,
 		int opindex,
-		long *valuep)
+		unsigned long *valuep)
 {
   const char *errmsg;
   enum cgen_parse_operand_result result_type = CGEN_PARSE_OPERAND_RESULT_NUMBER;
@@ -1462,6 +1685,42 @@ parse_leai_offset16 (CGEN_CPU_DESC cd,
 
       if (result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
         *valuep = value & 0x7c;
+
+      return NULL;
+    }
+
+  if (strncasecmp (*strp, "%got_lo(", strlen("%got_lo(")) == 0)
+    {
+      *strp += strlen("%got_lo(");
+      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBI32_GOT_LO_LEAI,
+				   &result_type, &value);
+      if (errmsg != NULL)
+        return errmsg;
+
+      if (**strp != ')')
+	return _("missing `)'");
+      ++*strp;
+
+      if (result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
+        *valuep = value & 0xffff;
+
+      return NULL;
+    }
+
+  if (strncasecmp (*strp, "%funcdesc_got_lo(", strlen("%funcdesc_got_lo(")) == 0)
+    {
+      *strp += strlen("%funcdesc_got_lo(");
+      errmsg = cgen_parse_address (cd, strp, opindex, BFD_RELOC_UBI32_FUNCDESC_GOT_LO_LEAI,
+				   &result_type, &value);
+      if (errmsg != NULL)
+        return errmsg;
+
+      if (**strp != ')')
+	return _("missing `)'");
+      ++*strp;
+
+      if (result_type == CGEN_PARSE_OPERAND_RESULT_NUMBER)
+        *valuep = value & 0xffff;
 
       return NULL;
     }
@@ -1503,7 +1762,7 @@ static const char *
 parse_imm8 (CGEN_CPU_DESC cd,
 	    const char **strp,
 	    int opindex,
-	    long *valuep)
+	    unsigned long *valuep)
 {
   const char *errmsg;
   long value;
@@ -1570,8 +1829,17 @@ ubi32_cgen_parse_operand (CGEN_CPU_DESC cd,
     case UBI32_OPERAND_P :
       errmsg = cgen_parse_keyword (cd, strp, & ubi32_cgen_opval_h_P, & fields->f_P);
       break;
+    case UBI32_OPERAND_ACC1HI :
+      errmsg = cgen_parse_unsigned_integer (cd, strp, UBI32_OPERAND_ACC1HI, (unsigned long *) (& junk));
+      break;
+    case UBI32_OPERAND_ACC1LO :
+      errmsg = cgen_parse_unsigned_integer (cd, strp, UBI32_OPERAND_ACC1LO, (unsigned long *) (& junk));
+      break;
     case UBI32_OPERAND_BIT5 :
       errmsg = parse_bit5 (cd, strp, UBI32_OPERAND_BIT5, (unsigned long *) (& fields->f_bit5));
+      break;
+    case UBI32_OPERAND_BIT5_ADDSUB :
+      errmsg = parse_bit5_for_addsub (cd, strp, UBI32_OPERAND_BIT5_ADDSUB, (unsigned long *) (& fields->f_bit5));
       break;
     case UBI32_OPERAND_CC :
       errmsg = cgen_parse_keyword (cd, strp, & ubi32_cgen_opval_h_cc, & fields->f_cond);
@@ -1580,7 +1848,7 @@ ubi32_cgen_parse_operand (CGEN_CPU_DESC cd,
       errmsg = cgen_parse_keyword (cd, strp, & ubi32_cgen_opval_addr_names, & fields->f_d_An);
       break;
     case UBI32_OPERAND_D_DIRECT_ADDR :
-      errmsg = parse_d_direct_addr (cd, strp, UBI32_OPERAND_D_DIRECT_ADDR, (unsigned long *) (& fields->f_d_direct));
+      errmsg = parse_d_direct_addr (cd, strp, UBI32_OPERAND_D_DIRECT_ADDR, (long *) (& fields->f_d_direct));
       break;
     case UBI32_OPERAND_D_I4_1 :
       errmsg = parse_imm4_1 (cd, strp, UBI32_OPERAND_D_I4_1, (long *) (& fields->f_d_i4_1));
@@ -1601,16 +1869,70 @@ ubi32_cgen_parse_operand (CGEN_CPU_DESC cd,
       errmsg = parse_imm7_4_d (cd, strp, UBI32_OPERAND_D_IMM7_4, (unsigned long *) (& fields->f_d_imm7_4));
       break;
     case UBI32_OPERAND_D_IMM8 :
-      errmsg = parse_imm8 (cd, strp, UBI32_OPERAND_D_IMM8, (long *) (& fields->f_d_imm8));
+      errmsg = parse_imm8 (cd, strp, UBI32_OPERAND_D_IMM8, (unsigned long *) (& fields->f_d_imm8));
       break;
     case UBI32_OPERAND_D_R :
       errmsg = cgen_parse_keyword (cd, strp, & ubi32_cgen_opval_data_names, & fields->f_d_r);
+      break;
+    case UBI32_OPERAND_DSP_S2_ACC_REG_ADDSUB :
+      errmsg = parse_acc_for_addsub (cd, strp, & ubi32_cgen_opval_acc_names, & fields->f_dsp_S2);
+      break;
+    case UBI32_OPERAND_DSP_S2_ACC_REG_MUL :
+      errmsg = cgen_parse_keyword (cd, strp, & ubi32_cgen_opval_acc_names, & fields->f_dsp_S2);
+      break;
+    case UBI32_OPERAND_DSP_S2_DATA_REG :
+      errmsg = cgen_parse_keyword (cd, strp, & ubi32_cgen_opval_data_names, & fields->f_dsp_S2);
+      break;
+    case UBI32_OPERAND_DSP_S2_DATA_REG_ADDSUB :
+      errmsg = parse_dr_for_addsub (cd, strp, & ubi32_cgen_opval_data_names, & fields->f_dsp_S2);
+      break;
+    case UBI32_OPERAND_DSP_S2_SEL :
+      errmsg = cgen_parse_unsigned_integer (cd, strp, UBI32_OPERAND_DSP_S2_SEL, (unsigned long *) (& fields->f_dsp_S2_sel));
+      break;
+    case UBI32_OPERAND_DSP_C :
+      errmsg = cgen_parse_keyword (cd, strp, & ubi32_cgen_opval_h_DSP_C, & fields->f_dsp_C);
+      break;
+    case UBI32_OPERAND_DSP_DESTA :
+      errmsg = cgen_parse_keyword (cd, strp, & ubi32_cgen_opval_h_DSP_Dest_A, & fields->f_dsp_destA);
+      break;
+    case UBI32_OPERAND_DSP_T :
+      errmsg = cgen_parse_keyword (cd, strp, & ubi32_cgen_opval_h_DSP_T, & fields->f_dsp_T);
+      break;
+    case UBI32_OPERAND_DSP_T_ADDSUB :
+      errmsg = parse_t_is_set_for_addsub (cd, strp, & ubi32_cgen_opval_h_DSP_T_addsub, & fields->f_dsp_T);
+      break;
+    case UBI32_OPERAND_FPU_32_S2_ACC_REG :
+      errmsg = cgen_parse_keyword (cd, strp, & ubi32_cgen_opval_acc_lo_names, & fields->f_FPS2_reg32);
+      break;
+    case UBI32_OPERAND_FPU_32_S2_DATA_REG :
+      errmsg = cgen_parse_keyword (cd, strp, & ubi32_cgen_opval_data_names, & fields->f_FPS2_reg32);
+      break;
+    case UBI32_OPERAND_FPU_32_DEST_REG :
+      errmsg = cgen_parse_keyword (cd, strp, & ubi32_cgen_opval_acc_lo_names, & fields->f_FPD32);
+      break;
+    case UBI32_OPERAND_FPU_64_S1_ACC_REG :
+      errmsg = cgen_parse_keyword (cd, strp, & ubi32_cgen_opval_acc_names, & fields->f_FPS1_reg64);
+      break;
+    case UBI32_OPERAND_FPU_64_S1_DATA_REG :
+      errmsg = cgen_parse_keyword (cd, strp, & ubi32_cgen_opval_data_names_even, & fields->f_FPS1_reg64);
+      break;
+    case UBI32_OPERAND_FPU_64_S2_ACC_REG :
+      errmsg = cgen_parse_keyword (cd, strp, & ubi32_cgen_opval_acc_names, & fields->f_FPS2_reg64);
+      break;
+    case UBI32_OPERAND_FPU_64_S2_DATA_REG :
+      errmsg = cgen_parse_keyword (cd, strp, & ubi32_cgen_opval_data_names_even, & fields->f_FPS2_reg64);
+      break;
+    case UBI32_OPERAND_FPU_64_DEST_REG :
+      errmsg = cgen_parse_keyword (cd, strp, & ubi32_cgen_opval_acc_names, & fields->f_FPD64);
       break;
     case UBI32_OPERAND_IMM16_1 :
       errmsg = cgen_parse_signed_integer (cd, strp, UBI32_OPERAND_IMM16_1, (long *) (& fields->f_imm16_1));
       break;
     case UBI32_OPERAND_IMM16_2 :
-      errmsg = parse_imm16 (cd, strp, UBI32_OPERAND_IMM16_2, (long *) (& fields->f_imm16_2));
+      errmsg = parse_imm16 (cd, strp, UBI32_OPERAND_IMM16_2, (unsigned long *) (& fields->f_imm16_2));
+      break;
+    case UBI32_OPERAND_IMM24 :
+      errmsg = parse_imm24 (cd, strp, UBI32_OPERAND_IMM24, (unsigned long *) (& fields->f_imm24));
       break;
     case UBI32_OPERAND_IMM25 :
       errmsg = parse_imm25 (cd, strp, UBI32_OPERAND_IMM25, (unsigned long *) (& fields->f_imm25));
@@ -1628,7 +1950,7 @@ ubi32_cgen_parse_operand (CGEN_CPU_DESC cd,
       errmsg = cgen_parse_unsigned_integer (cd, strp, UBI32_OPERAND_IRQ_1, (unsigned long *) (& junk));
       break;
     case UBI32_OPERAND_LEAI_OFFSET16 :
-      errmsg = parse_leai_offset16 (cd, strp, UBI32_OPERAND_LEAI_OFFSET16, (long *) (& fields->f_leai_o16));
+      errmsg = parse_leai_offset16 (cd, strp, UBI32_OPERAND_LEAI_OFFSET16, (unsigned long *) (& fields->f_leai_o16));
       break;
     case UBI32_OPERAND_MACHI :
       errmsg = cgen_parse_unsigned_integer (cd, strp, UBI32_OPERAND_MACHI, (unsigned long *) (& junk));
@@ -1637,7 +1959,7 @@ ubi32_cgen_parse_operand (CGEN_CPU_DESC cd,
       errmsg = cgen_parse_unsigned_integer (cd, strp, UBI32_OPERAND_MACLO, (unsigned long *) (& junk));
       break;
     case UBI32_OPERAND_OFFSET16 :
-      errmsg = parse_offset16 (cd, strp, UBI32_OPERAND_OFFSET16, (long *) (& fields->f_o16));
+      errmsg = parse_offset16 (cd, strp, UBI32_OPERAND_OFFSET16, (unsigned long *) (& fields->f_o16));
       break;
     case UBI32_OPERAND_OFFSET21 :
       {
@@ -1666,7 +1988,7 @@ ubi32_cgen_parse_operand (CGEN_CPU_DESC cd,
       errmsg = cgen_parse_keyword (cd, strp, & ubi32_cgen_opval_addr_names, & fields->f_s1_An);
       break;
     case UBI32_OPERAND_S1_DIRECT_ADDR :
-      errmsg = parse_s1_direct_addr (cd, strp, UBI32_OPERAND_S1_DIRECT_ADDR, (unsigned long *) (& fields->f_s1_direct));
+      errmsg = parse_s1_direct_addr (cd, strp, UBI32_OPERAND_S1_DIRECT_ADDR, (long *) (& fields->f_s1_direct));
       break;
     case UBI32_OPERAND_S1_I4_1 :
       errmsg = parse_imm4_1 (cd, strp, UBI32_OPERAND_S1_I4_1, (long *) (& fields->f_s1_i4_1));
@@ -1687,7 +2009,7 @@ ubi32_cgen_parse_operand (CGEN_CPU_DESC cd,
       errmsg = parse_imm7_4_s (cd, strp, UBI32_OPERAND_S1_IMM7_4, (unsigned long *) (& fields->f_s1_imm7_4));
       break;
     case UBI32_OPERAND_S1_IMM8 :
-      errmsg = parse_imm8 (cd, strp, UBI32_OPERAND_S1_IMM8, (long *) (& fields->f_s1_imm8));
+      errmsg = parse_imm8 (cd, strp, UBI32_OPERAND_S1_IMM8, (unsigned long *) (& fields->f_s1_imm8));
       break;
     case UBI32_OPERAND_S1_R :
       errmsg = cgen_parse_keyword (cd, strp, & ubi32_cgen_opval_data_names, & fields->f_s1_r);
@@ -1890,7 +2212,7 @@ parse_insn_normal (CGEN_CPU_DESC cd,
   const CGEN_SYNTAX_CHAR_TYPE * syn;
 #ifdef CGEN_MNEMONIC_OPERANDS
   /* FIXME: wip */
-  int past_opcode_p;
+  // int past_opcode_p;
 #endif
 
   /* For now we assume the mnemonic is first (there are no leading operands).
@@ -1912,7 +2234,7 @@ parse_insn_normal (CGEN_CPU_DESC cd,
   CGEN_INIT_PARSE (cd);
   cgen_init_parse_operand (cd);
 #ifdef CGEN_MNEMONIC_OPERANDS
-  past_opcode_p = 0;
+  // past_opcode_p = 0;
 #endif
 
   /* We don't check for (*str != '\0') here because we want to parse
@@ -1938,7 +2260,9 @@ parse_insn_normal (CGEN_CPU_DESC cd,
 	    {
 #ifdef CGEN_MNEMONIC_OPERANDS
 	      if (CGEN_SYNTAX_CHAR(* syn) == ' ')
-		past_opcode_p = 1;
+		{
+		// past_opcode_p = 1;
+		}
 #endif
 	      ++ syn;
 	      ++ str;
@@ -1966,11 +2290,9 @@ parse_insn_normal (CGEN_CPU_DESC cd,
 	  continue;
 	}
 
-#ifdef CGEN_MNEMONIC_OPERANDS
-      (void) past_opcode_p;
-#endif
       /* We have an operand of some sort.  */
-      errmsg = cd->parse_operand (cd, CGEN_SYNTAX_FIELD (*syn), &str, fields);
+      errmsg = cd->parse_operand (cd, CGEN_SYNTAX_FIELD (*syn),
+					  &str, fields);
       if (errmsg)
 	return errmsg;
 
@@ -2087,39 +2409,31 @@ ubi32_cgen_assemble_insn (CGEN_CPU_DESC cd,
 
   {
     static char errbuf[150];
-    const char *tmp_errmsg;
 #ifdef CGEN_VERBOSE_ASSEMBLER_ERRORS
-#define be_verbose 1
-#else
-#define be_verbose 0
-#endif
+    const char *tmp_errmsg;
 
-    if (be_verbose)
-      {
-	/* If requesting verbose error messages, use insert_errmsg.
-	   Failing that, use parse_errmsg.  */
-	tmp_errmsg = (insert_errmsg ? insert_errmsg :
-		      parse_errmsg ? parse_errmsg :
-		      recognized_mnemonic ?
-		      _("unrecognized form of instruction") :
-		      _("unrecognized instruction"));
+    /* If requesting verbose error messages, use insert_errmsg.
+       Failing that, use parse_errmsg.  */
+    tmp_errmsg = (insert_errmsg ? insert_errmsg :
+		  parse_errmsg ? parse_errmsg :
+		  recognized_mnemonic ?
+		  _("unrecognized form of instruction") :
+		  _("unrecognized instruction"));
 
-	if (strlen (start) > 50)
-	  /* xgettext:c-format */
-	  sprintf (errbuf, "%s `%.50s...'", tmp_errmsg, start);
-	else
-	  /* xgettext:c-format */
-	  sprintf (errbuf, "%s `%.50s'", tmp_errmsg, start);
-      }
+    if (strlen (start) > 50)
+      /* xgettext:c-format */
+      sprintf (errbuf, "%s `%.50s...'", tmp_errmsg, start);
     else
-      {
-	if (strlen (start) > 50)
-	  /* xgettext:c-format */
-	  sprintf (errbuf, _("bad instruction `%.50s...'"), start);
-	else
-	  /* xgettext:c-format */
-	  sprintf (errbuf, _("bad instruction `%.50s'"), start);
-      }
+      /* xgettext:c-format */
+      sprintf (errbuf, "%s `%.50s'", tmp_errmsg, start);
+#else
+    if (strlen (start) > 50)
+      /* xgettext:c-format */
+      sprintf (errbuf, _("bad instruction `%.50s...'"), start);
+    else
+      /* xgettext:c-format */
+      sprintf (errbuf, _("bad instruction `%.50s'"), start);
+#endif
 
     *errmsg = errbuf;
     return NULL;

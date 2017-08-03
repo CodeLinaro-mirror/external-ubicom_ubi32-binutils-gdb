@@ -384,7 +384,7 @@ HFILES = \
 	sh-opc.h \
 	sh64-opc.h \
 	sysdep.h \
-	ubicom32-desc.h ubicom32-opc.h \
+	ubi32-desc.h ubi32-opc.h \
 	w65-opc.h \
 	xc16x-desc.h xc16x-opc.h \
 	xstormy16-desc.h xstormy16-opc.h \

@@ -46,6 +46,14 @@ static const CGEN_ATTR_ENTRY bool_attr[] =
 static const CGEN_ATTR_ENTRY MACH_attr[] ATTRIBUTE_UNUSED =
 {
   { "base", MACH_BASE },
+  { "ip3035", MACH_IP3035 },
+  { "ubi32dsp", MACH_UBI32DSP },
+  { "ip3023compatibility", MACH_IP3023COMPATIBILITY },
+  { "ubi32_ver4", MACH_UBI32_VER4 },
+  { "ubi32_ver5", MACH_UBI32_VER5 },
+  { "ubi32_oldmoveai", MACH_UBI32_OLDMOVEAI },
+  { "ubi32_newmoveai", MACH_UBI32_NEWMOVEAI },
+  { "ubi32_newmoveaisimulate", MACH_UBI32_NEWMOVEAISIMULATE },
   { "ubi32_ver6", MACH_UBI32_VER6 },
   { "ubi32_ver61", MACH_UBI32_VER61 },
   { "max", MACH_MAX },
@@ -121,8 +129,15 @@ static const CGEN_ISA ubi32_cgen_isa_table[] = {
 /* Machine variants.  */
 
 static const CGEN_MACH ubi32_cgen_mach_table[] = {
+  { "ip3035", "ubi32", MACH_IP3035, 0 },
+  { "ubi32dsp", "ubi32dsp", MACH_UBI32DSP, 0 },
+  { "ip3023compatibility", "ubi32dsp", MACH_IP3023COMPATIBILITY, 0 },
+  { "ubi32_ver4", "ubi32ver4", MACH_UBI32_VER4, 0 },
+  { "ubi32_ver5", "ubi32ver5", MACH_UBI32_VER5, 0 },
   { "ubi32_ver6", "ubi32ver6", MACH_UBI32_VER6, 0 },
   { "ubi32_ver61", "ubi32ver61", MACH_UBI32_VER61, 0 },
+  { "ubi32_oldmoveai", "ubi32ver4", MACH_UBI32_OLDMOVEAI, 0 },
+  { "ubi32_newmoveai", "ubi32ver5", MACH_UBI32_NEWMOVEAI, 0 },
   { 0, 0, 0, 0 }
 };
 
@@ -294,6 +309,73 @@ CGEN_KEYWORD ubi32_cgen_opval_h_P =
   0, 0, 0, 0, ""
 };
 
+static CGEN_KEYWORD_ENTRY ubi32_cgen_opval_h_DSP_C_entries[] =
+{
+  { ".c", 1, {0, {{{0, 0}}}}, 0, 0 },
+  { "", 0, {0, {{{0, 0}}}}, 0, 0 }
+};
+
+CGEN_KEYWORD ubi32_cgen_opval_h_DSP_C =
+{
+  & ubi32_cgen_opval_h_DSP_C_entries[0],
+  2,
+  0, 0, 0, 0, ""
+};
+
+static CGEN_KEYWORD_ENTRY ubi32_cgen_opval_h_FPU_acc_lo_32_entries[] =
+{
+  { "acc0_lo", 0, {0, {{{0, 0}}}}, 0, 0 },
+  { "acc0_hi", 1, {0, {{{0, 0}}}}, 0, 0 },
+  { "acc1_lo", 2, {0, {{{0, 0}}}}, 0, 0 },
+  { "acc1_hi", 3, {0, {{{0, 0}}}}, 0, 0 }
+};
+
+CGEN_KEYWORD ubi32_cgen_opval_h_FPU_acc_lo_32 =
+{
+  & ubi32_cgen_opval_h_FPU_acc_lo_32_entries[0],
+  4,
+  0, 0, 0, 0, ""
+};
+
+static CGEN_KEYWORD_ENTRY ubi32_cgen_opval_h_DSP_T_entries[] =
+{
+  { "", 0, {0, {{{0, 0}}}}, 0, 0 },
+  { ".t", 1, {0, {{{0, 0}}}}, 0, 0 }
+};
+
+CGEN_KEYWORD ubi32_cgen_opval_h_DSP_T =
+{
+  & ubi32_cgen_opval_h_DSP_T_entries[0],
+  2,
+  0, 0, 0, 0, ""
+};
+
+static CGEN_KEYWORD_ENTRY ubi32_cgen_opval_h_DSP_T_addsub_entries[] =
+{
+  { "", 0, {0, {{{0, 0}}}}, 0, 0 },
+  { ".t", 1, {0, {{{0, 0}}}}, 0, 0 }
+};
+
+CGEN_KEYWORD ubi32_cgen_opval_h_DSP_T_addsub =
+{
+  & ubi32_cgen_opval_h_DSP_T_addsub_entries[0],
+  2,
+  0, 0, 0, 0, ""
+};
+
+static CGEN_KEYWORD_ENTRY ubi32_cgen_opval_h_DSP_Dest_A_entries[] =
+{
+  { "acc0", 0, {0, {{{0, 0}}}}, 0, 0 },
+  { "acc1", 1, {0, {{{0, 0}}}}, 0, 0 }
+};
+
+CGEN_KEYWORD ubi32_cgen_opval_h_DSP_Dest_A =
+{
+  & ubi32_cgen_opval_h_DSP_Dest_A_entries[0],
+  2,
+  0, 0, 0, 0, ""
+};
+
 
 /* The hardware table.  */
 
@@ -328,6 +410,8 @@ const CGEN_HW_ENTRY ubi32_cgen_hw_table[] =
   { "h-src-3", HW_H_SRC_3, CGEN_ASM_NONE, 0, { 0|A(VIRTUAL), { { { (1<<MACH_BASE), 0 } } } } },
   { "h-csr", HW_H_CSR, CGEN_ASM_NONE, 0, { 0|A(VIRTUAL), { { { (1<<MACH_BASE), 0 } } } } },
   { "h-iread", HW_H_IREAD, CGEN_ASM_NONE, 0, { 0|A(VIRTUAL), { { { (1<<MACH_BASE), 0 } } } } },
+  { "h-acc1-hi", HW_H_ACC1_HI, CGEN_ASM_NONE, 0, { 0|A(VIRTUAL), { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } } },
+  { "h-acc1-lo", HW_H_ACC1_LO, CGEN_ASM_NONE, 0, { 0|A(VIRTUAL), { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } } },
   { "h-pc", HW_H_PC, CGEN_ASM_NONE, 0, { 0|A(PROFILE)|A(PC), { { { (1<<MACH_BASE), 0 } } } } },
   { "h-nbit-16", HW_H_NBIT_16, CGEN_ASM_NONE, 0, { 0|A(VIRTUAL), { { { (1<<MACH_BASE), 0 } } } } },
   { "h-zbit-16", HW_H_ZBIT_16, CGEN_ASM_NONE, 0, { 0|A(VIRTUAL), { { { (1<<MACH_BASE), 0 } } } } },
@@ -342,6 +426,17 @@ const CGEN_HW_ENTRY ubi32_cgen_hw_table[] =
   { "h-cc", HW_H_CC, CGEN_ASM_KEYWORD, (PTR) & ubi32_cgen_opval_h_cc, { 0, { { { (1<<MACH_BASE), 0 } } } } },
   { "h-C", HW_H_C, CGEN_ASM_KEYWORD, (PTR) & ubi32_cgen_opval_h_C, { 0, { { { (1<<MACH_BASE), 0 } } } } },
   { "h-P", HW_H_P, CGEN_ASM_KEYWORD, (PTR) & ubi32_cgen_opval_h_P, { 0, { { { (1<<MACH_BASE), 0 } } } } },
+  { "h-DSP-C", HW_H_DSP_C, CGEN_ASM_KEYWORD, (PTR) & ubi32_cgen_opval_h_DSP_C, { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } } },
+  { "h-FPU-acc-lo-32", HW_H_FPU_ACC_LO_32, CGEN_ASM_KEYWORD, (PTR) & ubi32_cgen_opval_h_FPU_acc_lo_32, { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } } },
+  { "h-DSP-T", HW_H_DSP_T, CGEN_ASM_KEYWORD, (PTR) & ubi32_cgen_opval_h_DSP_T, { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } } },
+  { "h-DSP-T-addsub", HW_H_DSP_T_ADDSUB, CGEN_ASM_KEYWORD, (PTR) & ubi32_cgen_opval_h_DSP_T_addsub, { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } } },
+  { "h-DSP-Dest-A", HW_H_DSP_DEST_A, CGEN_ASM_KEYWORD, (PTR) & ubi32_cgen_opval_h_DSP_Dest_A, { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } } },
+  { "h-DSP-S2-Acc-reg-mul", HW_H_DSP_S2_ACC_REG_MUL, CGEN_ASM_KEYWORD, (PTR) & ubi32_cgen_opval_acc_names, { 0|A(VIRTUAL), { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } } },
+  { "h-DSP-S2-Acc-reg-addsub", HW_H_DSP_S2_ACC_REG_ADDSUB, CGEN_ASM_KEYWORD, (PTR) & ubi32_cgen_opval_acc_names, { 0|A(VIRTUAL), { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } } },
+  { "h-FPU-acc-64", HW_H_FPU_ACC_64, CGEN_ASM_KEYWORD, (PTR) & ubi32_cgen_opval_acc_names, { 0|A(VIRTUAL), { { { (1<<MACH_UBI32_VER5), 0 } } } } },
+  { "h-FPU-acc-32", HW_H_FPU_ACC_32, CGEN_ASM_KEYWORD, (PTR) & ubi32_cgen_opval_acc_lo_names, { 0|A(VIRTUAL), { { { (1<<MACH_UBI32_VER5), 0 } } } } },
+  { "h-FPU-data-reg-32", HW_H_FPU_DATA_REG_32, CGEN_ASM_KEYWORD, (PTR) & ubi32_cgen_opval_data_names, { 0|A(VIRTUAL), { { { (1<<MACH_UBI32_VER5), 0 } } } } },
+  { "h-FPU-data-reg-64", HW_H_FPU_DATA_REG_64, CGEN_ASM_KEYWORD, (PTR) & ubi32_cgen_opval_data_names_even, { 0|A(VIRTUAL), { { { (1<<MACH_UBI32_VER5), 0 } } } } },
   { "h-sp", HW_H_SP, CGEN_ASM_KEYWORD, (PTR) & ubi32_cgen_opval_spad_names, { 0|A(VIRTUAL), { { { (1<<MACH_BASE), 0 } } } } },
   { 0, 0, CGEN_ASM_NONE, 0, { 0, { { { (1<<MACH_BASE), 0 } } } } }
 };
@@ -405,8 +500,10 @@ const CGEN_IFLD ubi32_cgen_ifld_table[] =
   { UBI32_F_O23_21, "f-o23-21", 0, 32, 26, 3, { 0, { { { (1<<MACH_BASE), 0 } } } }  },
   { UBI32_F_O20_0, "f-o20-0", 0, 32, 20, 21, { 0, { { { (1<<MACH_BASE), 0 } } } }  },
   { UBI32_F_O24, "f-o24", 0, 0, 0, 0,{ 0|A(PCREL_ADDR)|A(VIRTUAL), { { { (1<<MACH_BASE), 0 } } } }  },
-  { UBI32_F_IMM24_21, "f-imm24-21", 0, 32, 27, 4, { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }  },
-  { UBI32_F_IMM25, "f-imm25", 0, 0, 0, 0,{ 0|A(VIRTUAL), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }  },
+  { UBI32_F_IMM23_21, "f-imm23-21", 0, 32, 26, 3, { 0, { { { (1<<MACH_UBI32_OLDMOVEAI), 0 } } } }  },
+  { UBI32_F_IMM24, "f-imm24", 0, 0, 0, 0,{ 0|A(VIRTUAL), { { { (1<<MACH_UBI32_OLDMOVEAI), 0 } } } }  },
+  { UBI32_F_IMM24_21, "f-imm24-21", 0, 32, 27, 4, { 0, { { { (1<<MACH_UBI32_NEWMOVEAI), 0 } } } }  },
+  { UBI32_F_IMM25, "f-imm25", 0, 0, 0, 0,{ 0|A(VIRTUAL), { { { (1<<MACH_UBI32_NEWMOVEAI)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }  },
   { UBI32_F_O15_13, "f-o15-13", 0, 32, 26, 3, { 0, { { { (1<<MACH_BASE), 0 } } } }  },
   { UBI32_F_O12_8, "f-o12-8", 0, 32, 20, 5, { 0, { { { (1<<MACH_BASE), 0 } } } }  },
   { UBI32_F_O7_5, "f-o7-5", 0, 32, 10, 3, { 0, { { { (1<<MACH_BASE), 0 } } } }  },
@@ -420,8 +517,31 @@ const CGEN_IFLD ubi32_cgen_ifld_table[] =
   { UBI32_F_P, "f-P", 0, 32, 22, 1, { 0, { { { (1<<MACH_BASE), 0 } } } }  },
   { UBI32_F_C, "f-C", 0, 32, 21, 1, { 0, { { { (1<<MACH_BASE), 0 } } } }  },
   { UBI32_F_INT, "f-int", 0, 32, 5, 6, { 0, { { { (1<<MACH_BASE), 0 } } } }  },
+  { UBI32_F_DSP_C, "f-dsp-C", 0, 32, 20, 1, { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }  },
+  { UBI32_F_DSP_T, "f-dsp-T", 0, 32, 19, 1, { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }  },
+  { UBI32_F_DSP_S2_SEL, "f-dsp-S2-sel", 0, 32, 18, 1, { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }  },
+  { UBI32_F_DSP_R, "f-dsp-R", 0, 32, 17, 1, { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }  },
+  { UBI32_F_DSP_DESTA, "f-dsp-destA", 0, 32, 16, 1, { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }  },
+  { UBI32_F_DSP_B15, "f-dsp-b15", 0, 32, 15, 1, { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }  },
+  { UBI32_F_DSP_S2, "f-dsp-S2", 0, 32, 14, 4, { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }  },
+  { UBI32_F_DSP_J, "f-dsp-J", 0, 32, 26, 1, { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }  },
   { UBI32_F_S2, "f-s2", 0, 32, 14, 4, { 0, { { { (1<<MACH_BASE), 0 } } } }  },
   { UBI32_F_B15, "f-b15", 0, 32, 15, 1, { 0, { { { (1<<MACH_BASE), 0 } } } }  },
+  { UBI32_F_BIT0, "f-bit0", 0, 32, 0, 1, { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }  },
+  { UBI32_F_BIT16, "f-bit16", 0, 32, 16, 1, { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }  },
+  { UBI32_F_FPUNUSED20, "f-FPunused20", 0, 32, 20, 3, { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }  },
+  { UBI32_F_FPUNUSED15, "f-FPunused15", 0, 32, 15, 5, { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }  },
+  { UBI32_F_FPUNUSED11, "f-FPunused11", 0, 32, 11, 7, { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }  },
+  { UBI32_F_FPD32, "f-FPD32", 0, 32, 17, 2, { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }  },
+  { UBI32_F_FPD64, "f-FPD64", 0, 32, 17, 1, { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }  },
+  { UBI32_F_FPS2_SEL, "f-FPS2-sel", 0, 32, 15, 1, { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }  },
+  { UBI32_F_FPS2_REG32, "f-FPS2-reg32", 0, 32, 14, 4, { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }  },
+  { UBI32_F_FPS232, "f-FPS232", 0, 32, 15, 5, { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }  },
+  { UBI32_F_FPS2_REG64, "f-FPS2-reg64", 0, 32, 14, 3, { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }  },
+  { UBI32_F_FPS264, "f-FPS264", 0, 32, 15, 4, { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }  },
+  { UBI32_F_FPS1_SEL, "f-FPS1-sel", 0, 32, 4, 1, { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }  },
+  { UBI32_F_FPS1_REG64, "f-FPS1-reg64", 0, 32, 3, 3, { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }  },
+  { UBI32_F_FPS164, "f-FPS164", 0, 32, 4, 4, { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }  },
   { 0, 0, 0, 0, 0, 0, { 0, { { { (1<<MACH_BASE), 0 } } } } }
 };
 
@@ -438,6 +558,7 @@ const CGEN_MAYBE_MULTI_IFLD UBI32_F_S1_IMM7_1_MULTI_IFIELD [];
 const CGEN_MAYBE_MULTI_IFLD UBI32_F_S1_IMM7_2_MULTI_IFIELD [];
 const CGEN_MAYBE_MULTI_IFLD UBI32_F_S1_IMM7_4_MULTI_IFIELD [];
 const CGEN_MAYBE_MULTI_IFLD UBI32_F_O24_MULTI_IFIELD [];
+const CGEN_MAYBE_MULTI_IFLD UBI32_F_IMM24_MULTI_IFIELD [];
 const CGEN_MAYBE_MULTI_IFLD UBI32_F_IMM25_MULTI_IFIELD [];
 const CGEN_MAYBE_MULTI_IFLD UBI32_F_O16_MULTI_IFIELD [];
 const CGEN_MAYBE_MULTI_IFLD UBI32_F_LEAI_O16_MULTI_IFIELD [];
@@ -484,6 +605,12 @@ const CGEN_MAYBE_MULTI_IFLD UBI32_F_S1_IMM7_4_MULTI_IFIELD [] =
 const CGEN_MAYBE_MULTI_IFLD UBI32_F_O24_MULTI_IFIELD [] =
 {
     { 0, { (const PTR) &ubi32_cgen_ifld_table[UBI32_F_O23_21] } },
+    { 0, { (const PTR) &ubi32_cgen_ifld_table[UBI32_F_O20_0] } },
+    { 0, { (const PTR) 0 } }
+};
+const CGEN_MAYBE_MULTI_IFLD UBI32_F_IMM24_MULTI_IFIELD [] =
+{
+    { 0, { (const PTR) &ubi32_cgen_ifld_table[UBI32_F_IMM23_21] } },
     { 0, { (const PTR) &ubi32_cgen_ifld_table[UBI32_F_O20_0] } },
     { 0, { (const PTR) 0 } }
 };
@@ -601,6 +728,14 @@ const CGEN_OPERAND ubi32_cgen_operand_table[] =
   { "maclo", UBI32_OPERAND_MACLO, HW_H_MAC_LO, 0, 0,
     { 0, { (const PTR) 0 } },
     { 0, { { { (1<<MACH_BASE), 0 } } } }  },
+/* acc1hi: acc1 hi register */
+  { "acc1hi", UBI32_OPERAND_ACC1HI, HW_H_ACC1_HI, 0, 0,
+    { 0, { (const PTR) 0 } },
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }  },
+/* acc1lo: acc1 lo register */
+  { "acc1lo", UBI32_OPERAND_ACC1LO, HW_H_ACC1_LO, 0, 0,
+    { 0, { (const PTR) 0 } },
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }  },
 /* irq-0: irq status register 0 */
   { "irq-0", UBI32_OPERAND_IRQ_0, HW_H_IRQ_STATUS_0, 0, 0,
     { 0, { (const PTR) 0 } },
@@ -625,13 +760,99 @@ const CGEN_OPERAND ubi32_cgen_operand_table[] =
   { "An-inc", UBI32_OPERAND_AN_INC, HW_H_AR_INC_FLAG, 0, 0,
     { 0, { (const PTR) 0 } },
     { 0|A(SEM_ONLY), { { { (1<<MACH_BASE), 0 } } } }  },
+/* dsp-c: DSP Clip bit */
+  { "dsp-c", UBI32_OPERAND_DSP_C, HW_H_DSP_C, 20, 1,
+    { 0, { (const PTR) &ubi32_cgen_ifld_table[UBI32_F_DSP_C] } },
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }  },
+/* dsp-t: DSP Top Half bit */
+  { "dsp-t", UBI32_OPERAND_DSP_T, HW_H_DSP_T, 19, 1,
+    { 0, { (const PTR) &ubi32_cgen_ifld_table[UBI32_F_DSP_T] } },
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }  },
+/* dsp-destA: DSP Destination Acc Sel */
+  { "dsp-destA", UBI32_OPERAND_DSP_DESTA, HW_H_DSP_DEST_A, 16, 1,
+    { 0, { (const PTR) &ubi32_cgen_ifld_table[UBI32_F_DSP_DESTA] } },
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }  },
+/* dsp-S2-sel: DSP S2 reg Select */
+  { "dsp-S2-sel", UBI32_OPERAND_DSP_S2_SEL, HW_H_UINT, 18, 1,
+    { 0, { (const PTR) &ubi32_cgen_ifld_table[UBI32_F_DSP_S2_SEL] } },
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }  },
+/* dsp-S2-data-reg: DSP S2 is a data reg  */
+  { "dsp-S2-data-reg", UBI32_OPERAND_DSP_S2_DATA_REG, HW_H_DR, 14, 4,
+    { 0, { (const PTR) &ubi32_cgen_ifld_table[UBI32_F_DSP_S2] } },
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }  },
+/* dsp-S2-acc-reg-mul: DSP S2 reg is a  Acc Lo reg */
+  { "dsp-S2-acc-reg-mul", UBI32_OPERAND_DSP_S2_ACC_REG_MUL, HW_H_DSP_S2_ACC_REG_MUL, 14, 4,
+    { 0, { (const PTR) &ubi32_cgen_ifld_table[UBI32_F_DSP_S2] } },
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }  },
+/* dsp-S2-acc-reg-addsub: DSP S2 reg is a  Acc reg for madd and msuub */
+  { "dsp-S2-acc-reg-addsub", UBI32_OPERAND_DSP_S2_ACC_REG_ADDSUB, HW_H_DSP_S2_ACC_REG_ADDSUB, 14, 4,
+    { 0, { (const PTR) &ubi32_cgen_ifld_table[UBI32_F_DSP_S2] } },
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }  },
+/* dsp-S2-data-reg-addsub: DSP S2 reg is a data reg for madd and msuub */
+  { "dsp-S2-data-reg-addsub", UBI32_OPERAND_DSP_S2_DATA_REG_ADDSUB, HW_H_DR, 14, 4,
+    { 0, { (const PTR) &ubi32_cgen_ifld_table[UBI32_F_DSP_S2] } },
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }  },
+/* dsp-t-addsub: DSP Top Half spec for madd.2 and msub.2 */
+  { "dsp-t-addsub", UBI32_OPERAND_DSP_T_ADDSUB, HW_H_DSP_T_ADDSUB, 19, 1,
+    { 0, { (const PTR) &ubi32_cgen_ifld_table[UBI32_F_DSP_T] } },
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }  },
 /* bit5: immediate bit index */
   { "bit5", UBI32_OPERAND_BIT5, HW_H_UINT, 15, 5,
     { 0, { (const PTR) &ubi32_cgen_ifld_table[UBI32_F_BIT5] } },
     { 0, { { { (1<<MACH_BASE), 0 } } } }  },
+/* bit5-addsub: immediate bit index */
+  { "bit5-addsub", UBI32_OPERAND_BIT5_ADDSUB, HW_H_UINT, 15, 5,
+    { 0, { (const PTR) &ubi32_cgen_ifld_table[UBI32_F_BIT5] } },
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }  },
+/* fpu-32-S2-data-reg: FPU S2 is a 32 bit data register */
+  { "fpu-32-S2-data-reg", UBI32_OPERAND_FPU_32_S2_DATA_REG, HW_H_FPU_DATA_REG_32, 14, 4,
+    { 0, { (const PTR) &ubi32_cgen_ifld_table[UBI32_F_FPS2_REG32] } },
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }  },
+/* fpu-32-S2-acc-reg: FPU S2 is a 32 bit accumulator register */
+  { "fpu-32-S2-acc-reg", UBI32_OPERAND_FPU_32_S2_ACC_REG, HW_H_FPU_ACC_32, 14, 4,
+    { 0, { (const PTR) &ubi32_cgen_ifld_table[UBI32_F_FPS2_REG32] } },
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }  },
+/* fpu-64-S2-data-reg: FPU S2 is a 64 bit data register */
+  { "fpu-64-S2-data-reg", UBI32_OPERAND_FPU_64_S2_DATA_REG, HW_H_FPU_DATA_REG_64, 14, 3,
+    { 0, { (const PTR) &ubi32_cgen_ifld_table[UBI32_F_FPS2_REG64] } },
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }  },
+/* fpu-64-S2-acc-reg: FPU S2 is a 64 bit accumulator register */
+  { "fpu-64-S2-acc-reg", UBI32_OPERAND_FPU_64_S2_ACC_REG, HW_H_FPU_ACC_64, 14, 3,
+    { 0, { (const PTR) &ubi32_cgen_ifld_table[UBI32_F_FPS2_REG64] } },
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }  },
+/* fpu-64-S1-data-reg: FPU S1 is a 64 bit data register */
+  { "fpu-64-S1-data-reg", UBI32_OPERAND_FPU_64_S1_DATA_REG, HW_H_FPU_DATA_REG_64, 3, 3,
+    { 0, { (const PTR) &ubi32_cgen_ifld_table[UBI32_F_FPS1_REG64] } },
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }  },
+/* fpu-64-S1-acc-reg: FPU S1 is a 64 bit accumulator register */
+  { "fpu-64-S1-acc-reg", UBI32_OPERAND_FPU_64_S1_ACC_REG, HW_H_FPU_ACC_64, 3, 3,
+    { 0, { (const PTR) &ubi32_cgen_ifld_table[UBI32_F_FPS1_REG64] } },
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }  },
+/* fpu-32-dest-reg: FPU Destination is a 32 bit accumulator register */
+  { "fpu-32-dest-reg", UBI32_OPERAND_FPU_32_DEST_REG, HW_H_FPU_ACC_32, 17, 2,
+    { 0, { (const PTR) &ubi32_cgen_ifld_table[UBI32_F_FPD32] } },
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }  },
+/* fpu-64-dest-reg: FPU Destination is a 64 bit accumulator register */
+  { "fpu-64-dest-reg", UBI32_OPERAND_FPU_64_DEST_REG, HW_H_FPU_ACC_64, 17, 1,
+    { 0, { (const PTR) &ubi32_cgen_ifld_table[UBI32_F_FPD64] } },
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }  },
+/* fpu-32-src2-data-reg:  */
+/* fpu-32-src2-acc-reg:  */
+/* dsp-src2-reg-acc-reg-mul:  */
+/* dsp-src2-reg-acc-reg-addsub:  */
+/* dsp-src2-data-reg:  */
+/* dsp-src2-data-reg-addsub:  */
+/* dsp-src2-data-reg-addsub2:  */
+/* dsp-imm-bit5:  */
+/* dsp-imm-bit5-addsub:  */
+/* dsp-imm-bit5-addsub2:  */
 /* imm-bit5:  */
 /* dyn-reg:  */
 /* op3: 5-bit immediate value or dynamic register specification */
+/* dsp-src2-mul: Data register or accumulator lo register specification */
+/* dsp-compatibility-src2-mul: Data register or accumulator lo register specification */
+/* dsp-src2-addsub: Data register or accumulator register specification for madd msub instructions */
+/* dsp-src2-addsub2: Data register or accumulator register specification for madd msub instructions */
 /* offset21: 21-bit relative offset */
   { "offset21", UBI32_OPERAND_OFFSET21, HW_H_IADDR, 20, 21,
     { 0, { (const PTR) &ubi32_cgen_ifld_table[UBI32_F_O21] } },
@@ -644,10 +865,14 @@ const CGEN_OPERAND ubi32_cgen_operand_table[] =
   { "leai-offset16", UBI32_OPERAND_LEAI_OFFSET16, HW_H_SINT, 4, 16,
     { 4, { (const PTR) &UBI32_F_LEAI_O16_MULTI_IFIELD[0] } },
     { 0|A(VIRTUAL), { { { (1<<MACH_BASE), 0 } } } }  },
+/* imm24: 24-bit immediate */
+  { "imm24", UBI32_OPERAND_IMM24, HW_H_UINT, 20, 24,
+    { 2, { (const PTR) &UBI32_F_IMM24_MULTI_IFIELD[0] } },
+    { 0|A(VIRTUAL), { { { (1<<MACH_UBI32_OLDMOVEAI), 0 } } } }  },
 /* imm25: 25-bit immediate */
   { "imm25", UBI32_OPERAND_IMM25, HW_H_UINT, 20, 25,
     { 2, { (const PTR) &UBI32_F_IMM25_MULTI_IFIELD[0] } },
-    { 0|A(VIRTUAL), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }  },
+    { 0|A(VIRTUAL), { { { (1<<MACH_UBI32_NEWMOVEAI)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }  },
 /* nbit-16: 16-bit negative    bit */
   { "nbit-16", UBI32_OPERAND_NBIT_16, HW_H_NBIT_16, 0, 0,
     { 0, { (const PTR) 0 } },
@@ -877,460 +1102,2970 @@ static const CGEN_IBASE ubi32_cgen_insn_table[MAX_INSNS] =
      A `num' value of zero is thus invalid.
      Also, the special `invalid' insn resides here.  */
   { 0, 0, 0, 0, { 0, { { { (1<<MACH_BASE), 0 } } } } },
+/* fcmps ${s1-direct-addr},${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FCMPS_ACC_S1_DIRECT, "fcmps_acc-s1-direct", "fcmps", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fcmps #${s1-imm8},${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FCMPS_ACC_S1_IMMEDIATE, "fcmps_acc-s1-immediate", "fcmps", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fcmps (${s1-An},${s1-r}),${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FCMPS_ACC_S1_INDIRECT_WITH_INDEX_4, "fcmps_acc-s1-indirect-with-index-4", "fcmps", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fcmps ${s1-imm7-4}(${s1-An}),${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FCMPS_ACC_S1_INDIRECT_WITH_OFFSET_4, "fcmps_acc-s1-indirect-with-offset-4", "fcmps", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fcmps (${s1-An}),${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FCMPS_ACC_S1_INDIRECT_4, "fcmps_acc-s1-indirect-4", "fcmps", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fcmps (${s1-An})${s1-i4-4}++,${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FCMPS_ACC_S1_INDIRECT_WITH_POST_INCREMENT_4, "fcmps_acc-s1-indirect-with-post-increment-4", "fcmps", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fcmps ${s1-i4-4}(${s1-An})++,${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FCMPS_ACC_S1_INDIRECT_WITH_PRE_INCREMENT_4, "fcmps_acc-s1-indirect-with-pre-increment-4", "fcmps", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fcmps ${s1-direct-addr},${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FCMPS_DATA_S1_DIRECT, "fcmps_data-s1-direct", "fcmps", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fcmps #${s1-imm8},${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FCMPS_DATA_S1_IMMEDIATE, "fcmps_data-s1-immediate", "fcmps", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fcmps (${s1-An},${s1-r}),${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FCMPS_DATA_S1_INDIRECT_WITH_INDEX_4, "fcmps_data-s1-indirect-with-index-4", "fcmps", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fcmps ${s1-imm7-4}(${s1-An}),${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FCMPS_DATA_S1_INDIRECT_WITH_OFFSET_4, "fcmps_data-s1-indirect-with-offset-4", "fcmps", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fcmps (${s1-An}),${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FCMPS_DATA_S1_INDIRECT_4, "fcmps_data-s1-indirect-4", "fcmps", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fcmps (${s1-An})${s1-i4-4}++,${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FCMPS_DATA_S1_INDIRECT_WITH_POST_INCREMENT_4, "fcmps_data-s1-indirect-with-post-increment-4", "fcmps", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fcmps ${s1-i4-4}(${s1-An})++,${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FCMPS_DATA_S1_INDIRECT_WITH_PRE_INCREMENT_4, "fcmps_data-s1-indirect-with-pre-increment-4", "fcmps", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fs2l ${fpu-64-dest-reg},${s1-direct-addr} */
+  {
+    UBI32_INSN_FS2L_S1_DIRECT, "fs2l-s1-direct", "fs2l", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fs2l ${fpu-64-dest-reg},#${s1-imm8} */
+  {
+    UBI32_INSN_FS2L_S1_IMMEDIATE, "fs2l-s1-immediate", "fs2l", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fs2l ${fpu-64-dest-reg},(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_FS2L_S1_INDIRECT_WITH_INDEX_4, "fs2l-s1-indirect-with-index-4", "fs2l", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fs2l ${fpu-64-dest-reg},${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_FS2L_S1_INDIRECT_WITH_OFFSET_4, "fs2l-s1-indirect-with-offset-4", "fs2l", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fs2l ${fpu-64-dest-reg},(${s1-An}) */
+  {
+    UBI32_INSN_FS2L_S1_INDIRECT_4, "fs2l-s1-indirect-4", "fs2l", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fs2l ${fpu-64-dest-reg},(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_FS2L_S1_INDIRECT_WITH_POST_INCREMENT_4, "fs2l-s1-indirect-with-post-increment-4", "fs2l", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fs2l ${fpu-64-dest-reg},${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_FS2L_S1_INDIRECT_WITH_PRE_INCREMENT_4, "fs2l-s1-indirect-with-pre-increment-4", "fs2l", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fs2i ${fpu-32-dest-reg},${s1-direct-addr} */
+  {
+    UBI32_INSN_FS2I_S1_DIRECT, "fs2i-s1-direct", "fs2i", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fs2i ${fpu-32-dest-reg},#${s1-imm8} */
+  {
+    UBI32_INSN_FS2I_S1_IMMEDIATE, "fs2i-s1-immediate", "fs2i", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fs2i ${fpu-32-dest-reg},(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_FS2I_S1_INDIRECT_WITH_INDEX_4, "fs2i-s1-indirect-with-index-4", "fs2i", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fs2i ${fpu-32-dest-reg},${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_FS2I_S1_INDIRECT_WITH_OFFSET_4, "fs2i-s1-indirect-with-offset-4", "fs2i", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fs2i ${fpu-32-dest-reg},(${s1-An}) */
+  {
+    UBI32_INSN_FS2I_S1_INDIRECT_4, "fs2i-s1-indirect-4", "fs2i", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fs2i ${fpu-32-dest-reg},(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_FS2I_S1_INDIRECT_WITH_POST_INCREMENT_4, "fs2i-s1-indirect-with-post-increment-4", "fs2i", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fs2i ${fpu-32-dest-reg},${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_FS2I_S1_INDIRECT_WITH_PRE_INCREMENT_4, "fs2i-s1-indirect-with-pre-increment-4", "fs2i", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fs2d ${fpu-64-dest-reg},${s1-direct-addr} */
+  {
+    UBI32_INSN_FS2D_S1_DIRECT, "fs2d-s1-direct", "fs2d", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fs2d ${fpu-64-dest-reg},#${s1-imm8} */
+  {
+    UBI32_INSN_FS2D_S1_IMMEDIATE, "fs2d-s1-immediate", "fs2d", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fs2d ${fpu-64-dest-reg},(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_FS2D_S1_INDIRECT_WITH_INDEX_4, "fs2d-s1-indirect-with-index-4", "fs2d", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fs2d ${fpu-64-dest-reg},${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_FS2D_S1_INDIRECT_WITH_OFFSET_4, "fs2d-s1-indirect-with-offset-4", "fs2d", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fs2d ${fpu-64-dest-reg},(${s1-An}) */
+  {
+    UBI32_INSN_FS2D_S1_INDIRECT_4, "fs2d-s1-indirect-4", "fs2d", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fs2d ${fpu-64-dest-reg},(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_FS2D_S1_INDIRECT_WITH_POST_INCREMENT_4, "fs2d-s1-indirect-with-post-increment-4", "fs2d", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fs2d ${fpu-64-dest-reg},${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_FS2D_S1_INDIRECT_WITH_PRE_INCREMENT_4, "fs2d-s1-indirect-with-pre-increment-4", "fs2d", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fi2d ${fpu-64-dest-reg},${s1-direct-addr} */
+  {
+    UBI32_INSN_FI2D_S1_DIRECT, "fi2d-s1-direct", "fi2d", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fi2d ${fpu-64-dest-reg},#${s1-imm8} */
+  {
+    UBI32_INSN_FI2D_S1_IMMEDIATE, "fi2d-s1-immediate", "fi2d", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fi2d ${fpu-64-dest-reg},(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_FI2D_S1_INDIRECT_WITH_INDEX_4, "fi2d-s1-indirect-with-index-4", "fi2d", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fi2d ${fpu-64-dest-reg},${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_FI2D_S1_INDIRECT_WITH_OFFSET_4, "fi2d-s1-indirect-with-offset-4", "fi2d", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fi2d ${fpu-64-dest-reg},(${s1-An}) */
+  {
+    UBI32_INSN_FI2D_S1_INDIRECT_4, "fi2d-s1-indirect-4", "fi2d", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fi2d ${fpu-64-dest-reg},(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_FI2D_S1_INDIRECT_WITH_POST_INCREMENT_4, "fi2d-s1-indirect-with-post-increment-4", "fi2d", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fi2d ${fpu-64-dest-reg},${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_FI2D_S1_INDIRECT_WITH_PRE_INCREMENT_4, "fi2d-s1-indirect-with-pre-increment-4", "fi2d", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fi2s ${fpu-32-dest-reg},${s1-direct-addr} */
+  {
+    UBI32_INSN_FI2S_S1_DIRECT, "fi2s-s1-direct", "fi2s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fi2s ${fpu-32-dest-reg},#${s1-imm8} */
+  {
+    UBI32_INSN_FI2S_S1_IMMEDIATE, "fi2s-s1-immediate", "fi2s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fi2s ${fpu-32-dest-reg},(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_FI2S_S1_INDIRECT_WITH_INDEX_4, "fi2s-s1-indirect-with-index-4", "fi2s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fi2s ${fpu-32-dest-reg},${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_FI2S_S1_INDIRECT_WITH_OFFSET_4, "fi2s-s1-indirect-with-offset-4", "fi2s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fi2s ${fpu-32-dest-reg},(${s1-An}) */
+  {
+    UBI32_INSN_FI2S_S1_INDIRECT_4, "fi2s-s1-indirect-4", "fi2s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fi2s ${fpu-32-dest-reg},(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_FI2S_S1_INDIRECT_WITH_POST_INCREMENT_4, "fi2s-s1-indirect-with-post-increment-4", "fi2s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fi2s ${fpu-32-dest-reg},${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_FI2S_S1_INDIRECT_WITH_PRE_INCREMENT_4, "fi2s-s1-indirect-with-pre-increment-4", "fi2s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fabss ${fpu-32-dest-reg},${s1-direct-addr} */
+  {
+    UBI32_INSN_FABSS_S1_DIRECT, "fabss-s1-direct", "fabss", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fabss ${fpu-32-dest-reg},#${s1-imm8} */
+  {
+    UBI32_INSN_FABSS_S1_IMMEDIATE, "fabss-s1-immediate", "fabss", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fabss ${fpu-32-dest-reg},(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_FABSS_S1_INDIRECT_WITH_INDEX_4, "fabss-s1-indirect-with-index-4", "fabss", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fabss ${fpu-32-dest-reg},${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_FABSS_S1_INDIRECT_WITH_OFFSET_4, "fabss-s1-indirect-with-offset-4", "fabss", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fabss ${fpu-32-dest-reg},(${s1-An}) */
+  {
+    UBI32_INSN_FABSS_S1_INDIRECT_4, "fabss-s1-indirect-4", "fabss", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fabss ${fpu-32-dest-reg},(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_FABSS_S1_INDIRECT_WITH_POST_INCREMENT_4, "fabss-s1-indirect-with-post-increment-4", "fabss", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fabss ${fpu-32-dest-reg},${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_FABSS_S1_INDIRECT_WITH_PRE_INCREMENT_4, "fabss-s1-indirect-with-pre-increment-4", "fabss", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fnegs ${fpu-32-dest-reg},${s1-direct-addr} */
+  {
+    UBI32_INSN_FNEGS_S1_DIRECT, "fnegs-s1-direct", "fnegs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fnegs ${fpu-32-dest-reg},#${s1-imm8} */
+  {
+    UBI32_INSN_FNEGS_S1_IMMEDIATE, "fnegs-s1-immediate", "fnegs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fnegs ${fpu-32-dest-reg},(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_FNEGS_S1_INDIRECT_WITH_INDEX_4, "fnegs-s1-indirect-with-index-4", "fnegs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fnegs ${fpu-32-dest-reg},${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_FNEGS_S1_INDIRECT_WITH_OFFSET_4, "fnegs-s1-indirect-with-offset-4", "fnegs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fnegs ${fpu-32-dest-reg},(${s1-An}) */
+  {
+    UBI32_INSN_FNEGS_S1_INDIRECT_4, "fnegs-s1-indirect-4", "fnegs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fnegs ${fpu-32-dest-reg},(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_FNEGS_S1_INDIRECT_WITH_POST_INCREMENT_4, "fnegs-s1-indirect-with-post-increment-4", "fnegs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fnegs ${fpu-32-dest-reg},${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_FNEGS_S1_INDIRECT_WITH_PRE_INCREMENT_4, "fnegs-s1-indirect-with-pre-increment-4", "fnegs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsqrts ${fpu-32-dest-reg},${s1-direct-addr} */
+  {
+    UBI32_INSN_FSQRTS_S1_DIRECT, "fsqrts-s1-direct", "fsqrts", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsqrts ${fpu-32-dest-reg},#${s1-imm8} */
+  {
+    UBI32_INSN_FSQRTS_S1_IMMEDIATE, "fsqrts-s1-immediate", "fsqrts", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsqrts ${fpu-32-dest-reg},(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_FSQRTS_S1_INDIRECT_WITH_INDEX_4, "fsqrts-s1-indirect-with-index-4", "fsqrts", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsqrts ${fpu-32-dest-reg},${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_FSQRTS_S1_INDIRECT_WITH_OFFSET_4, "fsqrts-s1-indirect-with-offset-4", "fsqrts", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsqrts ${fpu-32-dest-reg},(${s1-An}) */
+  {
+    UBI32_INSN_FSQRTS_S1_INDIRECT_4, "fsqrts-s1-indirect-4", "fsqrts", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsqrts ${fpu-32-dest-reg},(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_FSQRTS_S1_INDIRECT_WITH_POST_INCREMENT_4, "fsqrts-s1-indirect-with-post-increment-4", "fsqrts", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsqrts ${fpu-32-dest-reg},${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_FSQRTS_S1_INDIRECT_WITH_PRE_INCREMENT_4, "fsqrts-s1-indirect-with-pre-increment-4", "fsqrts", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fdivs ${fpu-32-dest-reg},${s1-direct-addr},${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FDIVS_ACC_S1_DIRECT, "fdivs_acc-s1-direct", "fdivs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fdivs ${fpu-32-dest-reg},#${s1-imm8},${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FDIVS_ACC_S1_IMMEDIATE, "fdivs_acc-s1-immediate", "fdivs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fdivs ${fpu-32-dest-reg},(${s1-An},${s1-r}),${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FDIVS_ACC_S1_INDIRECT_WITH_INDEX_4, "fdivs_acc-s1-indirect-with-index-4", "fdivs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fdivs ${fpu-32-dest-reg},${s1-imm7-4}(${s1-An}),${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FDIVS_ACC_S1_INDIRECT_WITH_OFFSET_4, "fdivs_acc-s1-indirect-with-offset-4", "fdivs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fdivs ${fpu-32-dest-reg},(${s1-An}),${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FDIVS_ACC_S1_INDIRECT_4, "fdivs_acc-s1-indirect-4", "fdivs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fdivs ${fpu-32-dest-reg},(${s1-An})${s1-i4-4}++,${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FDIVS_ACC_S1_INDIRECT_WITH_POST_INCREMENT_4, "fdivs_acc-s1-indirect-with-post-increment-4", "fdivs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fdivs ${fpu-32-dest-reg},${s1-i4-4}(${s1-An})++,${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FDIVS_ACC_S1_INDIRECT_WITH_PRE_INCREMENT_4, "fdivs_acc-s1-indirect-with-pre-increment-4", "fdivs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fdivs ${fpu-32-dest-reg},${s1-direct-addr},${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FDIVS_DATA_S1_DIRECT, "fdivs_data-s1-direct", "fdivs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fdivs ${fpu-32-dest-reg},#${s1-imm8},${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FDIVS_DATA_S1_IMMEDIATE, "fdivs_data-s1-immediate", "fdivs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fdivs ${fpu-32-dest-reg},(${s1-An},${s1-r}),${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FDIVS_DATA_S1_INDIRECT_WITH_INDEX_4, "fdivs_data-s1-indirect-with-index-4", "fdivs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fdivs ${fpu-32-dest-reg},${s1-imm7-4}(${s1-An}),${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FDIVS_DATA_S1_INDIRECT_WITH_OFFSET_4, "fdivs_data-s1-indirect-with-offset-4", "fdivs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fdivs ${fpu-32-dest-reg},(${s1-An}),${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FDIVS_DATA_S1_INDIRECT_4, "fdivs_data-s1-indirect-4", "fdivs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fdivs ${fpu-32-dest-reg},(${s1-An})${s1-i4-4}++,${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FDIVS_DATA_S1_INDIRECT_WITH_POST_INCREMENT_4, "fdivs_data-s1-indirect-with-post-increment-4", "fdivs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fdivs ${fpu-32-dest-reg},${s1-i4-4}(${s1-An})++,${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FDIVS_DATA_S1_INDIRECT_WITH_PRE_INCREMENT_4, "fdivs_data-s1-indirect-with-pre-increment-4", "fdivs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fmuls ${fpu-32-dest-reg},${s1-direct-addr},${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FMULS_ACC_S1_DIRECT, "fmuls_acc-s1-direct", "fmuls", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fmuls ${fpu-32-dest-reg},#${s1-imm8},${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FMULS_ACC_S1_IMMEDIATE, "fmuls_acc-s1-immediate", "fmuls", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fmuls ${fpu-32-dest-reg},(${s1-An},${s1-r}),${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FMULS_ACC_S1_INDIRECT_WITH_INDEX_4, "fmuls_acc-s1-indirect-with-index-4", "fmuls", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fmuls ${fpu-32-dest-reg},${s1-imm7-4}(${s1-An}),${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FMULS_ACC_S1_INDIRECT_WITH_OFFSET_4, "fmuls_acc-s1-indirect-with-offset-4", "fmuls", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fmuls ${fpu-32-dest-reg},(${s1-An}),${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FMULS_ACC_S1_INDIRECT_4, "fmuls_acc-s1-indirect-4", "fmuls", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fmuls ${fpu-32-dest-reg},(${s1-An})${s1-i4-4}++,${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FMULS_ACC_S1_INDIRECT_WITH_POST_INCREMENT_4, "fmuls_acc-s1-indirect-with-post-increment-4", "fmuls", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fmuls ${fpu-32-dest-reg},${s1-i4-4}(${s1-An})++,${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FMULS_ACC_S1_INDIRECT_WITH_PRE_INCREMENT_4, "fmuls_acc-s1-indirect-with-pre-increment-4", "fmuls", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fmuls ${fpu-32-dest-reg},${s1-direct-addr},${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FMULS_DATA_S1_DIRECT, "fmuls_data-s1-direct", "fmuls", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fmuls ${fpu-32-dest-reg},#${s1-imm8},${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FMULS_DATA_S1_IMMEDIATE, "fmuls_data-s1-immediate", "fmuls", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fmuls ${fpu-32-dest-reg},(${s1-An},${s1-r}),${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FMULS_DATA_S1_INDIRECT_WITH_INDEX_4, "fmuls_data-s1-indirect-with-index-4", "fmuls", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fmuls ${fpu-32-dest-reg},${s1-imm7-4}(${s1-An}),${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FMULS_DATA_S1_INDIRECT_WITH_OFFSET_4, "fmuls_data-s1-indirect-with-offset-4", "fmuls", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fmuls ${fpu-32-dest-reg},(${s1-An}),${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FMULS_DATA_S1_INDIRECT_4, "fmuls_data-s1-indirect-4", "fmuls", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fmuls ${fpu-32-dest-reg},(${s1-An})${s1-i4-4}++,${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FMULS_DATA_S1_INDIRECT_WITH_POST_INCREMENT_4, "fmuls_data-s1-indirect-with-post-increment-4", "fmuls", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fmuls ${fpu-32-dest-reg},${s1-i4-4}(${s1-An})++,${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FMULS_DATA_S1_INDIRECT_WITH_PRE_INCREMENT_4, "fmuls_data-s1-indirect-with-pre-increment-4", "fmuls", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsubs ${fpu-32-dest-reg},${s1-direct-addr},${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FSUBS_ACC_S1_DIRECT, "fsubs_acc-s1-direct", "fsubs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsubs ${fpu-32-dest-reg},#${s1-imm8},${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FSUBS_ACC_S1_IMMEDIATE, "fsubs_acc-s1-immediate", "fsubs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsubs ${fpu-32-dest-reg},(${s1-An},${s1-r}),${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FSUBS_ACC_S1_INDIRECT_WITH_INDEX_4, "fsubs_acc-s1-indirect-with-index-4", "fsubs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsubs ${fpu-32-dest-reg},${s1-imm7-4}(${s1-An}),${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FSUBS_ACC_S1_INDIRECT_WITH_OFFSET_4, "fsubs_acc-s1-indirect-with-offset-4", "fsubs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsubs ${fpu-32-dest-reg},(${s1-An}),${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FSUBS_ACC_S1_INDIRECT_4, "fsubs_acc-s1-indirect-4", "fsubs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsubs ${fpu-32-dest-reg},(${s1-An})${s1-i4-4}++,${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FSUBS_ACC_S1_INDIRECT_WITH_POST_INCREMENT_4, "fsubs_acc-s1-indirect-with-post-increment-4", "fsubs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsubs ${fpu-32-dest-reg},${s1-i4-4}(${s1-An})++,${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FSUBS_ACC_S1_INDIRECT_WITH_PRE_INCREMENT_4, "fsubs_acc-s1-indirect-with-pre-increment-4", "fsubs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsubs ${fpu-32-dest-reg},${s1-direct-addr},${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FSUBS_DATA_S1_DIRECT, "fsubs_data-s1-direct", "fsubs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsubs ${fpu-32-dest-reg},#${s1-imm8},${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FSUBS_DATA_S1_IMMEDIATE, "fsubs_data-s1-immediate", "fsubs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsubs ${fpu-32-dest-reg},(${s1-An},${s1-r}),${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FSUBS_DATA_S1_INDIRECT_WITH_INDEX_4, "fsubs_data-s1-indirect-with-index-4", "fsubs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsubs ${fpu-32-dest-reg},${s1-imm7-4}(${s1-An}),${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FSUBS_DATA_S1_INDIRECT_WITH_OFFSET_4, "fsubs_data-s1-indirect-with-offset-4", "fsubs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsubs ${fpu-32-dest-reg},(${s1-An}),${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FSUBS_DATA_S1_INDIRECT_4, "fsubs_data-s1-indirect-4", "fsubs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsubs ${fpu-32-dest-reg},(${s1-An})${s1-i4-4}++,${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FSUBS_DATA_S1_INDIRECT_WITH_POST_INCREMENT_4, "fsubs_data-s1-indirect-with-post-increment-4", "fsubs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsubs ${fpu-32-dest-reg},${s1-i4-4}(${s1-An})++,${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FSUBS_DATA_S1_INDIRECT_WITH_PRE_INCREMENT_4, "fsubs_data-s1-indirect-with-pre-increment-4", "fsubs", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fadds ${fpu-32-dest-reg},${s1-direct-addr},${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FADDS_ACC_S1_DIRECT, "fadds_acc-s1-direct", "fadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fadds ${fpu-32-dest-reg},#${s1-imm8},${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FADDS_ACC_S1_IMMEDIATE, "fadds_acc-s1-immediate", "fadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fadds ${fpu-32-dest-reg},(${s1-An},${s1-r}),${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FADDS_ACC_S1_INDIRECT_WITH_INDEX_4, "fadds_acc-s1-indirect-with-index-4", "fadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fadds ${fpu-32-dest-reg},${s1-imm7-4}(${s1-An}),${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FADDS_ACC_S1_INDIRECT_WITH_OFFSET_4, "fadds_acc-s1-indirect-with-offset-4", "fadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fadds ${fpu-32-dest-reg},(${s1-An}),${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FADDS_ACC_S1_INDIRECT_4, "fadds_acc-s1-indirect-4", "fadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fadds ${fpu-32-dest-reg},(${s1-An})${s1-i4-4}++,${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FADDS_ACC_S1_INDIRECT_WITH_POST_INCREMENT_4, "fadds_acc-s1-indirect-with-post-increment-4", "fadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fadds ${fpu-32-dest-reg},${s1-i4-4}(${s1-An})++,${fpu-32-S2-acc-reg} */
+  {
+    UBI32_INSN_FADDS_ACC_S1_INDIRECT_WITH_PRE_INCREMENT_4, "fadds_acc-s1-indirect-with-pre-increment-4", "fadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fadds ${fpu-32-dest-reg},${s1-direct-addr},${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FADDS_DATA_S1_DIRECT, "fadds_data-s1-direct", "fadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fadds ${fpu-32-dest-reg},#${s1-imm8},${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FADDS_DATA_S1_IMMEDIATE, "fadds_data-s1-immediate", "fadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fadds ${fpu-32-dest-reg},(${s1-An},${s1-r}),${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FADDS_DATA_S1_INDIRECT_WITH_INDEX_4, "fadds_data-s1-indirect-with-index-4", "fadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fadds ${fpu-32-dest-reg},${s1-imm7-4}(${s1-An}),${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FADDS_DATA_S1_INDIRECT_WITH_OFFSET_4, "fadds_data-s1-indirect-with-offset-4", "fadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fadds ${fpu-32-dest-reg},(${s1-An}),${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FADDS_DATA_S1_INDIRECT_4, "fadds_data-s1-indirect-4", "fadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fadds ${fpu-32-dest-reg},(${s1-An})${s1-i4-4}++,${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FADDS_DATA_S1_INDIRECT_WITH_POST_INCREMENT_4, "fadds_data-s1-indirect-with-post-increment-4", "fadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fadds ${fpu-32-dest-reg},${s1-i4-4}(${s1-An})++,${fpu-32-S2-data-reg} */
+  {
+    UBI32_INSN_FADDS_DATA_S1_INDIRECT_WITH_PRE_INCREMENT_4, "fadds_data-s1-indirect-with-pre-increment-4", "fadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* msub.2${dsp-c}${dsp-t-addsub} ${dsp-destA},${s1-direct-addr},${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_2_S1_DIRECT_DSP_SRC2_DATA_REG_ADDSUB2, "dsp-msub.2-s1-direct-dsp-src2-data-reg-addsub2", "msub.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.2${dsp-c}${dsp-t-addsub} ${dsp-destA},#${s1-imm8},${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_2_S1_IMMEDIATE_DSP_SRC2_DATA_REG_ADDSUB2, "dsp-msub.2-s1-immediate-dsp-src2-data-reg-addsub2", "msub.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.2${dsp-c}${dsp-t-addsub} ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_2_S1_INDIRECT_WITH_INDEX_2_DSP_SRC2_DATA_REG_ADDSUB2, "dsp-msub.2-s1-indirect-with-index-2-dsp-src2-data-reg-addsub2", "msub.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.2${dsp-c}${dsp-t-addsub} ${dsp-destA},${s1-imm7-2}(${s1-An}),${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_2_S1_INDIRECT_WITH_OFFSET_2_DSP_SRC2_DATA_REG_ADDSUB2, "dsp-msub.2-s1-indirect-with-offset-2-dsp-src2-data-reg-addsub2", "msub.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.2${dsp-c}${dsp-t-addsub} ${dsp-destA},(${s1-An}),${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_2_S1_INDIRECT_2_DSP_SRC2_DATA_REG_ADDSUB2, "dsp-msub.2-s1-indirect-2-dsp-src2-data-reg-addsub2", "msub.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.2${dsp-c}${dsp-t-addsub} ${dsp-destA},(${s1-An})${s1-i4-2}++,${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_2_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_SRC2_DATA_REG_ADDSUB2, "dsp-msub.2-s1-indirect-with-post-increment-2-dsp-src2-data-reg-addsub2", "msub.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.2${dsp-c}${dsp-t-addsub} ${dsp-destA},${s1-i4-2}(${s1-An})++,${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_2_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_SRC2_DATA_REG_ADDSUB2, "dsp-msub.2-s1-indirect-with-pre-increment-2-dsp-src2-data-reg-addsub2", "msub.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.2${dsp-c}${dsp-t-addsub} ${dsp-destA},${s1-direct-addr},${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_2_S1_DIRECT_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-msub.2-s1-direct-dsp-src2-reg-acc-reg-addsub", "msub.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.2${dsp-c}${dsp-t-addsub} ${dsp-destA},#${s1-imm8},${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_2_S1_IMMEDIATE_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-msub.2-s1-immediate-dsp-src2-reg-acc-reg-addsub", "msub.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.2${dsp-c}${dsp-t-addsub} ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_2_S1_INDIRECT_WITH_INDEX_2_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-msub.2-s1-indirect-with-index-2-dsp-src2-reg-acc-reg-addsub", "msub.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.2${dsp-c}${dsp-t-addsub} ${dsp-destA},${s1-imm7-2}(${s1-An}),${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_2_S1_INDIRECT_WITH_OFFSET_2_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-msub.2-s1-indirect-with-offset-2-dsp-src2-reg-acc-reg-addsub", "msub.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.2${dsp-c}${dsp-t-addsub} ${dsp-destA},(${s1-An}),${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_2_S1_INDIRECT_2_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-msub.2-s1-indirect-2-dsp-src2-reg-acc-reg-addsub", "msub.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.2${dsp-c}${dsp-t-addsub} ${dsp-destA},(${s1-An})${s1-i4-2}++,${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_2_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-msub.2-s1-indirect-with-post-increment-2-dsp-src2-reg-acc-reg-addsub", "msub.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.2${dsp-c}${dsp-t-addsub} ${dsp-destA},${s1-i4-2}(${s1-An})++,${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_2_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-msub.2-s1-indirect-with-pre-increment-2-dsp-src2-reg-acc-reg-addsub", "msub.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.2${dsp-c}${dsp-t-addsub} ${dsp-destA},${s1-direct-addr},#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_2_S1_DIRECT_DSP_IMM_BIT5_ADDSUB2, "dsp-msub.2-s1-direct-dsp-imm-bit5-addsub2", "msub.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.2${dsp-c}${dsp-t-addsub} ${dsp-destA},#${s1-imm8},#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_2_S1_IMMEDIATE_DSP_IMM_BIT5_ADDSUB2, "dsp-msub.2-s1-immediate-dsp-imm-bit5-addsub2", "msub.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.2${dsp-c}${dsp-t-addsub} ${dsp-destA},(${s1-An},${s1-r}),#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_2_S1_INDIRECT_WITH_INDEX_2_DSP_IMM_BIT5_ADDSUB2, "dsp-msub.2-s1-indirect-with-index-2-dsp-imm-bit5-addsub2", "msub.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.2${dsp-c}${dsp-t-addsub} ${dsp-destA},${s1-imm7-2}(${s1-An}),#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_2_S1_INDIRECT_WITH_OFFSET_2_DSP_IMM_BIT5_ADDSUB2, "dsp-msub.2-s1-indirect-with-offset-2-dsp-imm-bit5-addsub2", "msub.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.2${dsp-c}${dsp-t-addsub} ${dsp-destA},(${s1-An}),#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_2_S1_INDIRECT_2_DSP_IMM_BIT5_ADDSUB2, "dsp-msub.2-s1-indirect-2-dsp-imm-bit5-addsub2", "msub.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.2${dsp-c}${dsp-t-addsub} ${dsp-destA},(${s1-An})${s1-i4-2}++,#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_2_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_IMM_BIT5_ADDSUB2, "dsp-msub.2-s1-indirect-with-post-increment-2-dsp-imm-bit5-addsub2", "msub.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.2${dsp-c}${dsp-t-addsub} ${dsp-destA},${s1-i4-2}(${s1-An})++,#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_2_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_IMM_BIT5_ADDSUB2, "dsp-msub.2-s1-indirect-with-pre-increment-2-dsp-imm-bit5-addsub2", "msub.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.4${dsp-c} ${dsp-destA},${s1-direct-addr},${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_4_S1_DIRECT_DSP_SRC2_DATA_REG_ADDSUB, "dsp-msub.4-s1-direct-dsp-src2-data-reg-addsub", "msub.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.4${dsp-c} ${dsp-destA},#${s1-imm8},${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_4_S1_IMMEDIATE_DSP_SRC2_DATA_REG_ADDSUB, "dsp-msub.4-s1-immediate-dsp-src2-data-reg-addsub", "msub.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.4${dsp-c} ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_4_S1_INDIRECT_WITH_INDEX_4_DSP_SRC2_DATA_REG_ADDSUB, "dsp-msub.4-s1-indirect-with-index-4-dsp-src2-data-reg-addsub", "msub.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.4${dsp-c} ${dsp-destA},${s1-imm7-4}(${s1-An}),${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_4_S1_INDIRECT_WITH_OFFSET_4_DSP_SRC2_DATA_REG_ADDSUB, "dsp-msub.4-s1-indirect-with-offset-4-dsp-src2-data-reg-addsub", "msub.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.4${dsp-c} ${dsp-destA},(${s1-An}),${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_4_S1_INDIRECT_4_DSP_SRC2_DATA_REG_ADDSUB, "dsp-msub.4-s1-indirect-4-dsp-src2-data-reg-addsub", "msub.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.4${dsp-c} ${dsp-destA},(${s1-An})${s1-i4-4}++,${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_4_S1_INDIRECT_WITH_POST_INCREMENT_4_DSP_SRC2_DATA_REG_ADDSUB, "dsp-msub.4-s1-indirect-with-post-increment-4-dsp-src2-data-reg-addsub", "msub.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.4${dsp-c} ${dsp-destA},${s1-i4-4}(${s1-An})++,${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_4_S1_INDIRECT_WITH_PRE_INCREMENT_4_DSP_SRC2_DATA_REG_ADDSUB, "dsp-msub.4-s1-indirect-with-pre-increment-4-dsp-src2-data-reg-addsub", "msub.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.4${dsp-c} ${dsp-destA},${s1-direct-addr},${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_4_S1_DIRECT_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-msub.4-s1-direct-dsp-src2-reg-acc-reg-addsub", "msub.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.4${dsp-c} ${dsp-destA},#${s1-imm8},${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_4_S1_IMMEDIATE_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-msub.4-s1-immediate-dsp-src2-reg-acc-reg-addsub", "msub.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.4${dsp-c} ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_4_S1_INDIRECT_WITH_INDEX_4_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-msub.4-s1-indirect-with-index-4-dsp-src2-reg-acc-reg-addsub", "msub.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.4${dsp-c} ${dsp-destA},${s1-imm7-4}(${s1-An}),${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_4_S1_INDIRECT_WITH_OFFSET_4_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-msub.4-s1-indirect-with-offset-4-dsp-src2-reg-acc-reg-addsub", "msub.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.4${dsp-c} ${dsp-destA},(${s1-An}),${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_4_S1_INDIRECT_4_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-msub.4-s1-indirect-4-dsp-src2-reg-acc-reg-addsub", "msub.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.4${dsp-c} ${dsp-destA},(${s1-An})${s1-i4-4}++,${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_4_S1_INDIRECT_WITH_POST_INCREMENT_4_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-msub.4-s1-indirect-with-post-increment-4-dsp-src2-reg-acc-reg-addsub", "msub.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.4${dsp-c} ${dsp-destA},${s1-i4-4}(${s1-An})++,${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_4_S1_INDIRECT_WITH_PRE_INCREMENT_4_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-msub.4-s1-indirect-with-pre-increment-4-dsp-src2-reg-acc-reg-addsub", "msub.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.4${dsp-c} ${dsp-destA},${s1-direct-addr},#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_4_S1_DIRECT_DSP_IMM_BIT5_ADDSUB, "dsp-msub.4-s1-direct-dsp-imm-bit5-addsub", "msub.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.4${dsp-c} ${dsp-destA},#${s1-imm8},#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_4_S1_IMMEDIATE_DSP_IMM_BIT5_ADDSUB, "dsp-msub.4-s1-immediate-dsp-imm-bit5-addsub", "msub.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.4${dsp-c} ${dsp-destA},(${s1-An},${s1-r}),#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_4_S1_INDIRECT_WITH_INDEX_4_DSP_IMM_BIT5_ADDSUB, "dsp-msub.4-s1-indirect-with-index-4-dsp-imm-bit5-addsub", "msub.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.4${dsp-c} ${dsp-destA},${s1-imm7-4}(${s1-An}),#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_4_S1_INDIRECT_WITH_OFFSET_4_DSP_IMM_BIT5_ADDSUB, "dsp-msub.4-s1-indirect-with-offset-4-dsp-imm-bit5-addsub", "msub.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.4${dsp-c} ${dsp-destA},(${s1-An}),#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_4_S1_INDIRECT_4_DSP_IMM_BIT5_ADDSUB, "dsp-msub.4-s1-indirect-4-dsp-imm-bit5-addsub", "msub.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.4${dsp-c} ${dsp-destA},(${s1-An})${s1-i4-4}++,#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_4_S1_INDIRECT_WITH_POST_INCREMENT_4_DSP_IMM_BIT5_ADDSUB, "dsp-msub.4-s1-indirect-with-post-increment-4-dsp-imm-bit5-addsub", "msub.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msub.4${dsp-c} ${dsp-destA},${s1-i4-4}(${s1-An})++,#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MSUB_4_S1_INDIRECT_WITH_PRE_INCREMENT_4_DSP_IMM_BIT5_ADDSUB, "dsp-msub.4-s1-indirect-with-pre-increment-4-dsp-imm-bit5-addsub", "msub.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.2${dsp-c}${dsp-t-addsub} ${dsp-destA},${s1-direct-addr},${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_2_S1_DIRECT_DSP_SRC2_DATA_REG_ADDSUB2, "dsp-madd.2-s1-direct-dsp-src2-data-reg-addsub2", "madd.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.2${dsp-c}${dsp-t-addsub} ${dsp-destA},#${s1-imm8},${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_2_S1_IMMEDIATE_DSP_SRC2_DATA_REG_ADDSUB2, "dsp-madd.2-s1-immediate-dsp-src2-data-reg-addsub2", "madd.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.2${dsp-c}${dsp-t-addsub} ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_2_S1_INDIRECT_WITH_INDEX_2_DSP_SRC2_DATA_REG_ADDSUB2, "dsp-madd.2-s1-indirect-with-index-2-dsp-src2-data-reg-addsub2", "madd.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.2${dsp-c}${dsp-t-addsub} ${dsp-destA},${s1-imm7-2}(${s1-An}),${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_2_S1_INDIRECT_WITH_OFFSET_2_DSP_SRC2_DATA_REG_ADDSUB2, "dsp-madd.2-s1-indirect-with-offset-2-dsp-src2-data-reg-addsub2", "madd.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.2${dsp-c}${dsp-t-addsub} ${dsp-destA},(${s1-An}),${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_2_S1_INDIRECT_2_DSP_SRC2_DATA_REG_ADDSUB2, "dsp-madd.2-s1-indirect-2-dsp-src2-data-reg-addsub2", "madd.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.2${dsp-c}${dsp-t-addsub} ${dsp-destA},(${s1-An})${s1-i4-2}++,${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_2_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_SRC2_DATA_REG_ADDSUB2, "dsp-madd.2-s1-indirect-with-post-increment-2-dsp-src2-data-reg-addsub2", "madd.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.2${dsp-c}${dsp-t-addsub} ${dsp-destA},${s1-i4-2}(${s1-An})++,${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_2_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_SRC2_DATA_REG_ADDSUB2, "dsp-madd.2-s1-indirect-with-pre-increment-2-dsp-src2-data-reg-addsub2", "madd.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.2${dsp-c}${dsp-t-addsub} ${dsp-destA},${s1-direct-addr},${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_2_S1_DIRECT_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-madd.2-s1-direct-dsp-src2-reg-acc-reg-addsub", "madd.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.2${dsp-c}${dsp-t-addsub} ${dsp-destA},#${s1-imm8},${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_2_S1_IMMEDIATE_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-madd.2-s1-immediate-dsp-src2-reg-acc-reg-addsub", "madd.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.2${dsp-c}${dsp-t-addsub} ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_2_S1_INDIRECT_WITH_INDEX_2_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-madd.2-s1-indirect-with-index-2-dsp-src2-reg-acc-reg-addsub", "madd.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.2${dsp-c}${dsp-t-addsub} ${dsp-destA},${s1-imm7-2}(${s1-An}),${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_2_S1_INDIRECT_WITH_OFFSET_2_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-madd.2-s1-indirect-with-offset-2-dsp-src2-reg-acc-reg-addsub", "madd.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.2${dsp-c}${dsp-t-addsub} ${dsp-destA},(${s1-An}),${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_2_S1_INDIRECT_2_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-madd.2-s1-indirect-2-dsp-src2-reg-acc-reg-addsub", "madd.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.2${dsp-c}${dsp-t-addsub} ${dsp-destA},(${s1-An})${s1-i4-2}++,${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_2_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-madd.2-s1-indirect-with-post-increment-2-dsp-src2-reg-acc-reg-addsub", "madd.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.2${dsp-c}${dsp-t-addsub} ${dsp-destA},${s1-i4-2}(${s1-An})++,${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_2_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-madd.2-s1-indirect-with-pre-increment-2-dsp-src2-reg-acc-reg-addsub", "madd.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.2${dsp-c}${dsp-t-addsub} ${dsp-destA},${s1-direct-addr},#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_2_S1_DIRECT_DSP_IMM_BIT5_ADDSUB2, "dsp-madd.2-s1-direct-dsp-imm-bit5-addsub2", "madd.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.2${dsp-c}${dsp-t-addsub} ${dsp-destA},#${s1-imm8},#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_2_S1_IMMEDIATE_DSP_IMM_BIT5_ADDSUB2, "dsp-madd.2-s1-immediate-dsp-imm-bit5-addsub2", "madd.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.2${dsp-c}${dsp-t-addsub} ${dsp-destA},(${s1-An},${s1-r}),#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_2_S1_INDIRECT_WITH_INDEX_2_DSP_IMM_BIT5_ADDSUB2, "dsp-madd.2-s1-indirect-with-index-2-dsp-imm-bit5-addsub2", "madd.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.2${dsp-c}${dsp-t-addsub} ${dsp-destA},${s1-imm7-2}(${s1-An}),#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_2_S1_INDIRECT_WITH_OFFSET_2_DSP_IMM_BIT5_ADDSUB2, "dsp-madd.2-s1-indirect-with-offset-2-dsp-imm-bit5-addsub2", "madd.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.2${dsp-c}${dsp-t-addsub} ${dsp-destA},(${s1-An}),#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_2_S1_INDIRECT_2_DSP_IMM_BIT5_ADDSUB2, "dsp-madd.2-s1-indirect-2-dsp-imm-bit5-addsub2", "madd.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.2${dsp-c}${dsp-t-addsub} ${dsp-destA},(${s1-An})${s1-i4-2}++,#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_2_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_IMM_BIT5_ADDSUB2, "dsp-madd.2-s1-indirect-with-post-increment-2-dsp-imm-bit5-addsub2", "madd.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.2${dsp-c}${dsp-t-addsub} ${dsp-destA},${s1-i4-2}(${s1-An})++,#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_2_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_IMM_BIT5_ADDSUB2, "dsp-madd.2-s1-indirect-with-pre-increment-2-dsp-imm-bit5-addsub2", "madd.2", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.4${dsp-c} ${dsp-destA},${s1-direct-addr},${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_4_S1_DIRECT_DSP_SRC2_DATA_REG_ADDSUB, "dsp-madd.4-s1-direct-dsp-src2-data-reg-addsub", "madd.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.4${dsp-c} ${dsp-destA},#${s1-imm8},${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_4_S1_IMMEDIATE_DSP_SRC2_DATA_REG_ADDSUB, "dsp-madd.4-s1-immediate-dsp-src2-data-reg-addsub", "madd.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.4${dsp-c} ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_4_S1_INDIRECT_WITH_INDEX_4_DSP_SRC2_DATA_REG_ADDSUB, "dsp-madd.4-s1-indirect-with-index-4-dsp-src2-data-reg-addsub", "madd.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.4${dsp-c} ${dsp-destA},${s1-imm7-4}(${s1-An}),${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_4_S1_INDIRECT_WITH_OFFSET_4_DSP_SRC2_DATA_REG_ADDSUB, "dsp-madd.4-s1-indirect-with-offset-4-dsp-src2-data-reg-addsub", "madd.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.4${dsp-c} ${dsp-destA},(${s1-An}),${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_4_S1_INDIRECT_4_DSP_SRC2_DATA_REG_ADDSUB, "dsp-madd.4-s1-indirect-4-dsp-src2-data-reg-addsub", "madd.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.4${dsp-c} ${dsp-destA},(${s1-An})${s1-i4-4}++,${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_4_S1_INDIRECT_WITH_POST_INCREMENT_4_DSP_SRC2_DATA_REG_ADDSUB, "dsp-madd.4-s1-indirect-with-post-increment-4-dsp-src2-data-reg-addsub", "madd.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.4${dsp-c} ${dsp-destA},${s1-i4-4}(${s1-An})++,${dsp-S2-data-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_4_S1_INDIRECT_WITH_PRE_INCREMENT_4_DSP_SRC2_DATA_REG_ADDSUB, "dsp-madd.4-s1-indirect-with-pre-increment-4-dsp-src2-data-reg-addsub", "madd.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.4${dsp-c} ${dsp-destA},${s1-direct-addr},${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_4_S1_DIRECT_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-madd.4-s1-direct-dsp-src2-reg-acc-reg-addsub", "madd.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.4${dsp-c} ${dsp-destA},#${s1-imm8},${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_4_S1_IMMEDIATE_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-madd.4-s1-immediate-dsp-src2-reg-acc-reg-addsub", "madd.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.4${dsp-c} ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_4_S1_INDIRECT_WITH_INDEX_4_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-madd.4-s1-indirect-with-index-4-dsp-src2-reg-acc-reg-addsub", "madd.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.4${dsp-c} ${dsp-destA},${s1-imm7-4}(${s1-An}),${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_4_S1_INDIRECT_WITH_OFFSET_4_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-madd.4-s1-indirect-with-offset-4-dsp-src2-reg-acc-reg-addsub", "madd.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.4${dsp-c} ${dsp-destA},(${s1-An}),${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_4_S1_INDIRECT_4_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-madd.4-s1-indirect-4-dsp-src2-reg-acc-reg-addsub", "madd.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.4${dsp-c} ${dsp-destA},(${s1-An})${s1-i4-4}++,${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_4_S1_INDIRECT_WITH_POST_INCREMENT_4_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-madd.4-s1-indirect-with-post-increment-4-dsp-src2-reg-acc-reg-addsub", "madd.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.4${dsp-c} ${dsp-destA},${s1-i4-4}(${s1-An})++,${dsp-S2-acc-reg-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_4_S1_INDIRECT_WITH_PRE_INCREMENT_4_DSP_SRC2_REG_ACC_REG_ADDSUB, "dsp-madd.4-s1-indirect-with-pre-increment-4-dsp-src2-reg-acc-reg-addsub", "madd.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.4${dsp-c} ${dsp-destA},${s1-direct-addr},#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_4_S1_DIRECT_DSP_IMM_BIT5_ADDSUB, "dsp-madd.4-s1-direct-dsp-imm-bit5-addsub", "madd.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.4${dsp-c} ${dsp-destA},#${s1-imm8},#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_4_S1_IMMEDIATE_DSP_IMM_BIT5_ADDSUB, "dsp-madd.4-s1-immediate-dsp-imm-bit5-addsub", "madd.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.4${dsp-c} ${dsp-destA},(${s1-An},${s1-r}),#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_4_S1_INDIRECT_WITH_INDEX_4_DSP_IMM_BIT5_ADDSUB, "dsp-madd.4-s1-indirect-with-index-4-dsp-imm-bit5-addsub", "madd.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.4${dsp-c} ${dsp-destA},${s1-imm7-4}(${s1-An}),#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_4_S1_INDIRECT_WITH_OFFSET_4_DSP_IMM_BIT5_ADDSUB, "dsp-madd.4-s1-indirect-with-offset-4-dsp-imm-bit5-addsub", "madd.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.4${dsp-c} ${dsp-destA},(${s1-An}),#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_4_S1_INDIRECT_4_DSP_IMM_BIT5_ADDSUB, "dsp-madd.4-s1-indirect-4-dsp-imm-bit5-addsub", "madd.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.4${dsp-c} ${dsp-destA},(${s1-An})${s1-i4-4}++,#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_4_S1_INDIRECT_WITH_POST_INCREMENT_4_DSP_IMM_BIT5_ADDSUB, "dsp-madd.4-s1-indirect-with-post-increment-4-dsp-imm-bit5-addsub", "madd.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* madd.4${dsp-c} ${dsp-destA},${s1-i4-4}(${s1-An})++,#${bit5-addsub} */
+  {
+    UBI32_INSN_DSP_MADD_4_S1_INDIRECT_WITH_PRE_INCREMENT_4_DSP_IMM_BIT5_ADDSUB, "dsp-madd.4-s1-indirect-with-pre-increment-4-dsp-imm-bit5-addsub", "madd.4", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msuf${dsp-c}${dsp-t} ${dsp-destA},${s1-direct-addr},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MSUF_S1_DIRECT_DSP_SRC2_DATA_REG, "dsp-msuf-s1-direct-dsp-src2-data-reg", "msuf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msuf${dsp-c}${dsp-t} ${dsp-destA},#${s1-imm8},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MSUF_S1_IMMEDIATE_DSP_SRC2_DATA_REG, "dsp-msuf-s1-immediate-dsp-src2-data-reg", "msuf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msuf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MSUF_S1_INDIRECT_WITH_INDEX_2_DSP_SRC2_DATA_REG, "dsp-msuf-s1-indirect-with-index-2-dsp-src2-data-reg", "msuf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msuf${dsp-c}${dsp-t} ${dsp-destA},${s1-imm7-2}(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MSUF_S1_INDIRECT_WITH_OFFSET_2_DSP_SRC2_DATA_REG, "dsp-msuf-s1-indirect-with-offset-2-dsp-src2-data-reg", "msuf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msuf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MSUF_S1_INDIRECT_2_DSP_SRC2_DATA_REG, "dsp-msuf-s1-indirect-2-dsp-src2-data-reg", "msuf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msuf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An})${s1-i4-2}++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MSUF_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_SRC2_DATA_REG, "dsp-msuf-s1-indirect-with-post-increment-2-dsp-src2-data-reg", "msuf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msuf${dsp-c}${dsp-t} ${dsp-destA},${s1-i4-2}(${s1-An})++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MSUF_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_SRC2_DATA_REG, "dsp-msuf-s1-indirect-with-pre-increment-2-dsp-src2-data-reg", "msuf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msuf${dsp-c}${dsp-t} ${dsp-destA},${s1-direct-addr},${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MSUF_S1_DIRECT_DSP_SRC2_REG_ACC_REG_MUL, "dsp-msuf-s1-direct-dsp-src2-reg-acc-reg-mul", "msuf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msuf${dsp-c}${dsp-t} ${dsp-destA},#${s1-imm8},${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MSUF_S1_IMMEDIATE_DSP_SRC2_REG_ACC_REG_MUL, "dsp-msuf-s1-immediate-dsp-src2-reg-acc-reg-mul", "msuf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msuf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MSUF_S1_INDIRECT_WITH_INDEX_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-msuf-s1-indirect-with-index-2-dsp-src2-reg-acc-reg-mul", "msuf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msuf${dsp-c}${dsp-t} ${dsp-destA},${s1-imm7-2}(${s1-An}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MSUF_S1_INDIRECT_WITH_OFFSET_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-msuf-s1-indirect-with-offset-2-dsp-src2-reg-acc-reg-mul", "msuf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msuf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MSUF_S1_INDIRECT_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-msuf-s1-indirect-2-dsp-src2-reg-acc-reg-mul", "msuf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msuf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An})${s1-i4-2}++,${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MSUF_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-msuf-s1-indirect-with-post-increment-2-dsp-src2-reg-acc-reg-mul", "msuf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msuf${dsp-c}${dsp-t} ${dsp-destA},${s1-i4-2}(${s1-An})++,${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MSUF_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-msuf-s1-indirect-with-pre-increment-2-dsp-src2-reg-acc-reg-mul", "msuf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msuf${dsp-c}${dsp-t} ${dsp-destA},${s1-direct-addr},#${bit5} */
+  {
+    UBI32_INSN_DSP_MSUF_S1_DIRECT_DSP_IMM_BIT5, "dsp-msuf-s1-direct-dsp-imm-bit5", "msuf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msuf${dsp-c}${dsp-t} ${dsp-destA},#${s1-imm8},#${bit5} */
+  {
+    UBI32_INSN_DSP_MSUF_S1_IMMEDIATE_DSP_IMM_BIT5, "dsp-msuf-s1-immediate-dsp-imm-bit5", "msuf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msuf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An},${s1-r}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MSUF_S1_INDIRECT_WITH_INDEX_2_DSP_IMM_BIT5, "dsp-msuf-s1-indirect-with-index-2-dsp-imm-bit5", "msuf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msuf${dsp-c}${dsp-t} ${dsp-destA},${s1-imm7-2}(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MSUF_S1_INDIRECT_WITH_OFFSET_2_DSP_IMM_BIT5, "dsp-msuf-s1-indirect-with-offset-2-dsp-imm-bit5", "msuf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msuf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MSUF_S1_INDIRECT_2_DSP_IMM_BIT5, "dsp-msuf-s1-indirect-2-dsp-imm-bit5", "msuf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msuf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An})${s1-i4-2}++,#${bit5} */
+  {
+    UBI32_INSN_DSP_MSUF_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_IMM_BIT5, "dsp-msuf-s1-indirect-with-post-increment-2-dsp-imm-bit5", "msuf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* msuf${dsp-c}${dsp-t} ${dsp-destA},${s1-i4-2}(${s1-An})++,#${bit5} */
+  {
+    UBI32_INSN_DSP_MSUF_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_IMM_BIT5, "dsp-msuf-s1-indirect-with-pre-increment-2-dsp-imm-bit5", "msuf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macus${dsp-c}${dsp-t} ${dsp-destA},${s1-direct-addr},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACUS_S1_DIRECT_DSP_SRC2_DATA_REG, "dsp-macus-s1-direct-dsp-src2-data-reg", "macus", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macus${dsp-c}${dsp-t} ${dsp-destA},#${s1-imm8},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACUS_S1_IMMEDIATE_DSP_SRC2_DATA_REG, "dsp-macus-s1-immediate-dsp-src2-data-reg", "macus", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macus${dsp-c}${dsp-t} ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACUS_S1_INDIRECT_WITH_INDEX_2_DSP_SRC2_DATA_REG, "dsp-macus-s1-indirect-with-index-2-dsp-src2-data-reg", "macus", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macus${dsp-c}${dsp-t} ${dsp-destA},${s1-imm7-2}(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACUS_S1_INDIRECT_WITH_OFFSET_2_DSP_SRC2_DATA_REG, "dsp-macus-s1-indirect-with-offset-2-dsp-src2-data-reg", "macus", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macus${dsp-c}${dsp-t} ${dsp-destA},(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACUS_S1_INDIRECT_2_DSP_SRC2_DATA_REG, "dsp-macus-s1-indirect-2-dsp-src2-data-reg", "macus", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macus${dsp-c}${dsp-t} ${dsp-destA},(${s1-An})${s1-i4-2}++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACUS_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_SRC2_DATA_REG, "dsp-macus-s1-indirect-with-post-increment-2-dsp-src2-data-reg", "macus", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macus${dsp-c}${dsp-t} ${dsp-destA},${s1-i4-2}(${s1-An})++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACUS_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_SRC2_DATA_REG, "dsp-macus-s1-indirect-with-pre-increment-2-dsp-src2-data-reg", "macus", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macus${dsp-c}${dsp-t} ${dsp-destA},${s1-direct-addr},${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACUS_S1_DIRECT_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macus-s1-direct-dsp-src2-reg-acc-reg-mul", "macus", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macus${dsp-c}${dsp-t} ${dsp-destA},#${s1-imm8},${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACUS_S1_IMMEDIATE_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macus-s1-immediate-dsp-src2-reg-acc-reg-mul", "macus", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macus${dsp-c}${dsp-t} ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACUS_S1_INDIRECT_WITH_INDEX_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macus-s1-indirect-with-index-2-dsp-src2-reg-acc-reg-mul", "macus", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macus${dsp-c}${dsp-t} ${dsp-destA},${s1-imm7-2}(${s1-An}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACUS_S1_INDIRECT_WITH_OFFSET_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macus-s1-indirect-with-offset-2-dsp-src2-reg-acc-reg-mul", "macus", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macus${dsp-c}${dsp-t} ${dsp-destA},(${s1-An}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACUS_S1_INDIRECT_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macus-s1-indirect-2-dsp-src2-reg-acc-reg-mul", "macus", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macus${dsp-c}${dsp-t} ${dsp-destA},(${s1-An})${s1-i4-2}++,${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACUS_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macus-s1-indirect-with-post-increment-2-dsp-src2-reg-acc-reg-mul", "macus", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macus${dsp-c}${dsp-t} ${dsp-destA},${s1-i4-2}(${s1-An})++,${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACUS_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macus-s1-indirect-with-pre-increment-2-dsp-src2-reg-acc-reg-mul", "macus", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macus${dsp-c}${dsp-t} ${dsp-destA},${s1-direct-addr},#${bit5} */
+  {
+    UBI32_INSN_DSP_MACUS_S1_DIRECT_DSP_IMM_BIT5, "dsp-macus-s1-direct-dsp-imm-bit5", "macus", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macus${dsp-c}${dsp-t} ${dsp-destA},#${s1-imm8},#${bit5} */
+  {
+    UBI32_INSN_DSP_MACUS_S1_IMMEDIATE_DSP_IMM_BIT5, "dsp-macus-s1-immediate-dsp-imm-bit5", "macus", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macus${dsp-c}${dsp-t} ${dsp-destA},(${s1-An},${s1-r}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MACUS_S1_INDIRECT_WITH_INDEX_2_DSP_IMM_BIT5, "dsp-macus-s1-indirect-with-index-2-dsp-imm-bit5", "macus", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macus${dsp-c}${dsp-t} ${dsp-destA},${s1-imm7-2}(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MACUS_S1_INDIRECT_WITH_OFFSET_2_DSP_IMM_BIT5, "dsp-macus-s1-indirect-with-offset-2-dsp-imm-bit5", "macus", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macus${dsp-c}${dsp-t} ${dsp-destA},(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MACUS_S1_INDIRECT_2_DSP_IMM_BIT5, "dsp-macus-s1-indirect-2-dsp-imm-bit5", "macus", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macus${dsp-c}${dsp-t} ${dsp-destA},(${s1-An})${s1-i4-2}++,#${bit5} */
+  {
+    UBI32_INSN_DSP_MACUS_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_IMM_BIT5, "dsp-macus-s1-indirect-with-post-increment-2-dsp-imm-bit5", "macus", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macus${dsp-c}${dsp-t} ${dsp-destA},${s1-i4-2}(${s1-An})++,#${bit5} */
+  {
+    UBI32_INSN_DSP_MACUS_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_IMM_BIT5, "dsp-macus-s1-indirect-with-pre-increment-2-dsp-imm-bit5", "macus", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macf${dsp-c}${dsp-t} ${dsp-destA},${s1-direct-addr},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACF_S1_DIRECT_DSP_SRC2_DATA_REG, "dsp-macf-s1-direct-dsp-src2-data-reg", "macf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macf${dsp-c}${dsp-t} ${dsp-destA},#${s1-imm8},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACF_S1_IMMEDIATE_DSP_SRC2_DATA_REG, "dsp-macf-s1-immediate-dsp-src2-data-reg", "macf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACF_S1_INDIRECT_WITH_INDEX_2_DSP_SRC2_DATA_REG, "dsp-macf-s1-indirect-with-index-2-dsp-src2-data-reg", "macf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macf${dsp-c}${dsp-t} ${dsp-destA},${s1-imm7-2}(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACF_S1_INDIRECT_WITH_OFFSET_2_DSP_SRC2_DATA_REG, "dsp-macf-s1-indirect-with-offset-2-dsp-src2-data-reg", "macf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACF_S1_INDIRECT_2_DSP_SRC2_DATA_REG, "dsp-macf-s1-indirect-2-dsp-src2-data-reg", "macf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An})${s1-i4-2}++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACF_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_SRC2_DATA_REG, "dsp-macf-s1-indirect-with-post-increment-2-dsp-src2-data-reg", "macf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macf${dsp-c}${dsp-t} ${dsp-destA},${s1-i4-2}(${s1-An})++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACF_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_SRC2_DATA_REG, "dsp-macf-s1-indirect-with-pre-increment-2-dsp-src2-data-reg", "macf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macf${dsp-c}${dsp-t} ${dsp-destA},${s1-direct-addr},${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACF_S1_DIRECT_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macf-s1-direct-dsp-src2-reg-acc-reg-mul", "macf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macf${dsp-c}${dsp-t} ${dsp-destA},#${s1-imm8},${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACF_S1_IMMEDIATE_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macf-s1-immediate-dsp-src2-reg-acc-reg-mul", "macf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACF_S1_INDIRECT_WITH_INDEX_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macf-s1-indirect-with-index-2-dsp-src2-reg-acc-reg-mul", "macf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macf${dsp-c}${dsp-t} ${dsp-destA},${s1-imm7-2}(${s1-An}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACF_S1_INDIRECT_WITH_OFFSET_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macf-s1-indirect-with-offset-2-dsp-src2-reg-acc-reg-mul", "macf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACF_S1_INDIRECT_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macf-s1-indirect-2-dsp-src2-reg-acc-reg-mul", "macf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An})${s1-i4-2}++,${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACF_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macf-s1-indirect-with-post-increment-2-dsp-src2-reg-acc-reg-mul", "macf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macf${dsp-c}${dsp-t} ${dsp-destA},${s1-i4-2}(${s1-An})++,${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACF_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macf-s1-indirect-with-pre-increment-2-dsp-src2-reg-acc-reg-mul", "macf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macf${dsp-c}${dsp-t} ${dsp-destA},${s1-direct-addr},#${bit5} */
+  {
+    UBI32_INSN_DSP_MACF_S1_DIRECT_DSP_IMM_BIT5, "dsp-macf-s1-direct-dsp-imm-bit5", "macf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macf${dsp-c}${dsp-t} ${dsp-destA},#${s1-imm8},#${bit5} */
+  {
+    UBI32_INSN_DSP_MACF_S1_IMMEDIATE_DSP_IMM_BIT5, "dsp-macf-s1-immediate-dsp-imm-bit5", "macf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An},${s1-r}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MACF_S1_INDIRECT_WITH_INDEX_2_DSP_IMM_BIT5, "dsp-macf-s1-indirect-with-index-2-dsp-imm-bit5", "macf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macf${dsp-c}${dsp-t} ${dsp-destA},${s1-imm7-2}(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MACF_S1_INDIRECT_WITH_OFFSET_2_DSP_IMM_BIT5, "dsp-macf-s1-indirect-with-offset-2-dsp-imm-bit5", "macf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MACF_S1_INDIRECT_2_DSP_IMM_BIT5, "dsp-macf-s1-indirect-2-dsp-imm-bit5", "macf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An})${s1-i4-2}++,#${bit5} */
+  {
+    UBI32_INSN_DSP_MACF_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_IMM_BIT5, "dsp-macf-s1-indirect-with-post-increment-2-dsp-imm-bit5", "macf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macf${dsp-c}${dsp-t} ${dsp-destA},${s1-i4-2}(${s1-An})++,#${bit5} */
+  {
+    UBI32_INSN_DSP_MACF_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_IMM_BIT5, "dsp-macf-s1-indirect-with-pre-increment-2-dsp-imm-bit5", "macf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulf${dsp-c}${dsp-t} ${dsp-destA},${s1-direct-addr},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULF_S1_DIRECT_DSP_SRC2_DATA_REG, "dsp-mulf-s1-direct-dsp-src2-data-reg", "mulf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulf${dsp-c}${dsp-t} ${dsp-destA},#${s1-imm8},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULF_S1_IMMEDIATE_DSP_SRC2_DATA_REG, "dsp-mulf-s1-immediate-dsp-src2-data-reg", "mulf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULF_S1_INDIRECT_WITH_INDEX_2_DSP_SRC2_DATA_REG, "dsp-mulf-s1-indirect-with-index-2-dsp-src2-data-reg", "mulf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulf${dsp-c}${dsp-t} ${dsp-destA},${s1-imm7-2}(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULF_S1_INDIRECT_WITH_OFFSET_2_DSP_SRC2_DATA_REG, "dsp-mulf-s1-indirect-with-offset-2-dsp-src2-data-reg", "mulf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULF_S1_INDIRECT_2_DSP_SRC2_DATA_REG, "dsp-mulf-s1-indirect-2-dsp-src2-data-reg", "mulf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An})${s1-i4-2}++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULF_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_SRC2_DATA_REG, "dsp-mulf-s1-indirect-with-post-increment-2-dsp-src2-data-reg", "mulf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulf${dsp-c}${dsp-t} ${dsp-destA},${s1-i4-2}(${s1-An})++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULF_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_SRC2_DATA_REG, "dsp-mulf-s1-indirect-with-pre-increment-2-dsp-src2-data-reg", "mulf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulf${dsp-c}${dsp-t} ${dsp-destA},${s1-direct-addr},${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULF_S1_DIRECT_DSP_SRC2_REG_ACC_REG_MUL, "dsp-mulf-s1-direct-dsp-src2-reg-acc-reg-mul", "mulf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulf${dsp-c}${dsp-t} ${dsp-destA},#${s1-imm8},${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULF_S1_IMMEDIATE_DSP_SRC2_REG_ACC_REG_MUL, "dsp-mulf-s1-immediate-dsp-src2-reg-acc-reg-mul", "mulf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULF_S1_INDIRECT_WITH_INDEX_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-mulf-s1-indirect-with-index-2-dsp-src2-reg-acc-reg-mul", "mulf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulf${dsp-c}${dsp-t} ${dsp-destA},${s1-imm7-2}(${s1-An}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULF_S1_INDIRECT_WITH_OFFSET_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-mulf-s1-indirect-with-offset-2-dsp-src2-reg-acc-reg-mul", "mulf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULF_S1_INDIRECT_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-mulf-s1-indirect-2-dsp-src2-reg-acc-reg-mul", "mulf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An})${s1-i4-2}++,${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULF_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-mulf-s1-indirect-with-post-increment-2-dsp-src2-reg-acc-reg-mul", "mulf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulf${dsp-c}${dsp-t} ${dsp-destA},${s1-i4-2}(${s1-An})++,${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULF_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-mulf-s1-indirect-with-pre-increment-2-dsp-src2-reg-acc-reg-mul", "mulf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulf${dsp-c}${dsp-t} ${dsp-destA},${s1-direct-addr},#${bit5} */
+  {
+    UBI32_INSN_DSP_MULF_S1_DIRECT_DSP_IMM_BIT5, "dsp-mulf-s1-direct-dsp-imm-bit5", "mulf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulf${dsp-c}${dsp-t} ${dsp-destA},#${s1-imm8},#${bit5} */
+  {
+    UBI32_INSN_DSP_MULF_S1_IMMEDIATE_DSP_IMM_BIT5, "dsp-mulf-s1-immediate-dsp-imm-bit5", "mulf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An},${s1-r}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MULF_S1_INDIRECT_WITH_INDEX_2_DSP_IMM_BIT5, "dsp-mulf-s1-indirect-with-index-2-dsp-imm-bit5", "mulf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulf${dsp-c}${dsp-t} ${dsp-destA},${s1-imm7-2}(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MULF_S1_INDIRECT_WITH_OFFSET_2_DSP_IMM_BIT5, "dsp-mulf-s1-indirect-with-offset-2-dsp-imm-bit5", "mulf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MULF_S1_INDIRECT_2_DSP_IMM_BIT5, "dsp-mulf-s1-indirect-2-dsp-imm-bit5", "mulf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulf${dsp-c}${dsp-t} ${dsp-destA},(${s1-An})${s1-i4-2}++,#${bit5} */
+  {
+    UBI32_INSN_DSP_MULF_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_IMM_BIT5, "dsp-mulf-s1-indirect-with-post-increment-2-dsp-imm-bit5", "mulf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulf${dsp-c}${dsp-t} ${dsp-destA},${s1-i4-2}(${s1-An})++,#${bit5} */
+  {
+    UBI32_INSN_DSP_MULF_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_IMM_BIT5, "dsp-mulf-s1-indirect-with-pre-increment-2-dsp-imm-bit5", "mulf", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macu${dsp-c}${dsp-t} ${dsp-destA},${s1-direct-addr},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACU_S1_DIRECT_DSP_SRC2_DATA_REG, "dsp-macu-s1-direct-dsp-src2-data-reg", "macu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macu${dsp-c}${dsp-t} ${dsp-destA},#${s1-imm8},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACU_S1_IMMEDIATE_DSP_SRC2_DATA_REG, "dsp-macu-s1-immediate-dsp-src2-data-reg", "macu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macu${dsp-c}${dsp-t} ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACU_S1_INDIRECT_WITH_INDEX_2_DSP_SRC2_DATA_REG, "dsp-macu-s1-indirect-with-index-2-dsp-src2-data-reg", "macu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macu${dsp-c}${dsp-t} ${dsp-destA},${s1-imm7-2}(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACU_S1_INDIRECT_WITH_OFFSET_2_DSP_SRC2_DATA_REG, "dsp-macu-s1-indirect-with-offset-2-dsp-src2-data-reg", "macu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macu${dsp-c}${dsp-t} ${dsp-destA},(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACU_S1_INDIRECT_2_DSP_SRC2_DATA_REG, "dsp-macu-s1-indirect-2-dsp-src2-data-reg", "macu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macu${dsp-c}${dsp-t} ${dsp-destA},(${s1-An})${s1-i4-2}++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACU_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_SRC2_DATA_REG, "dsp-macu-s1-indirect-with-post-increment-2-dsp-src2-data-reg", "macu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macu${dsp-c}${dsp-t} ${dsp-destA},${s1-i4-2}(${s1-An})++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACU_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_SRC2_DATA_REG, "dsp-macu-s1-indirect-with-pre-increment-2-dsp-src2-data-reg", "macu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macu${dsp-c}${dsp-t} ${dsp-destA},${s1-direct-addr},${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACU_S1_DIRECT_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macu-s1-direct-dsp-src2-reg-acc-reg-mul", "macu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macu${dsp-c}${dsp-t} ${dsp-destA},#${s1-imm8},${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACU_S1_IMMEDIATE_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macu-s1-immediate-dsp-src2-reg-acc-reg-mul", "macu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macu${dsp-c}${dsp-t} ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACU_S1_INDIRECT_WITH_INDEX_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macu-s1-indirect-with-index-2-dsp-src2-reg-acc-reg-mul", "macu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macu${dsp-c}${dsp-t} ${dsp-destA},${s1-imm7-2}(${s1-An}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACU_S1_INDIRECT_WITH_OFFSET_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macu-s1-indirect-with-offset-2-dsp-src2-reg-acc-reg-mul", "macu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macu${dsp-c}${dsp-t} ${dsp-destA},(${s1-An}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACU_S1_INDIRECT_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macu-s1-indirect-2-dsp-src2-reg-acc-reg-mul", "macu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macu${dsp-c}${dsp-t} ${dsp-destA},(${s1-An})${s1-i4-2}++,${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACU_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macu-s1-indirect-with-post-increment-2-dsp-src2-reg-acc-reg-mul", "macu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macu${dsp-c}${dsp-t} ${dsp-destA},${s1-i4-2}(${s1-An})++,${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACU_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macu-s1-indirect-with-pre-increment-2-dsp-src2-reg-acc-reg-mul", "macu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macu${dsp-c}${dsp-t} ${dsp-destA},${s1-direct-addr},#${bit5} */
+  {
+    UBI32_INSN_DSP_MACU_S1_DIRECT_DSP_IMM_BIT5, "dsp-macu-s1-direct-dsp-imm-bit5", "macu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macu${dsp-c}${dsp-t} ${dsp-destA},#${s1-imm8},#${bit5} */
+  {
+    UBI32_INSN_DSP_MACU_S1_IMMEDIATE_DSP_IMM_BIT5, "dsp-macu-s1-immediate-dsp-imm-bit5", "macu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macu${dsp-c}${dsp-t} ${dsp-destA},(${s1-An},${s1-r}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MACU_S1_INDIRECT_WITH_INDEX_2_DSP_IMM_BIT5, "dsp-macu-s1-indirect-with-index-2-dsp-imm-bit5", "macu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macu${dsp-c}${dsp-t} ${dsp-destA},${s1-imm7-2}(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MACU_S1_INDIRECT_WITH_OFFSET_2_DSP_IMM_BIT5, "dsp-macu-s1-indirect-with-offset-2-dsp-imm-bit5", "macu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macu${dsp-c}${dsp-t} ${dsp-destA},(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MACU_S1_INDIRECT_2_DSP_IMM_BIT5, "dsp-macu-s1-indirect-2-dsp-imm-bit5", "macu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macu${dsp-c}${dsp-t} ${dsp-destA},(${s1-An})${s1-i4-2}++,#${bit5} */
+  {
+    UBI32_INSN_DSP_MACU_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_IMM_BIT5, "dsp-macu-s1-indirect-with-post-increment-2-dsp-imm-bit5", "macu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macu${dsp-c}${dsp-t} ${dsp-destA},${s1-i4-2}(${s1-An})++,#${bit5} */
+  {
+    UBI32_INSN_DSP_MACU_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_IMM_BIT5, "dsp-macu-s1-indirect-with-pre-increment-2-dsp-imm-bit5", "macu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macu.4 ${dsp-destA},${s1-direct-addr},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACU_4_S1_DIRECT_DSP_SRC2_DATA_REG, "dsp-macu.4-s1-direct-dsp-src2-data-reg", "macu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macu.4 ${dsp-destA},#${s1-imm8},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACU_4_S1_IMMEDIATE_DSP_SRC2_DATA_REG, "dsp-macu.4-s1-immediate-dsp-src2-data-reg", "macu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macu.4 ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACU_4_S1_INDIRECT_WITH_INDEX_4_DSP_SRC2_DATA_REG, "dsp-macu.4-s1-indirect-with-index-4-dsp-src2-data-reg", "macu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macu.4 ${dsp-destA},${s1-imm7-4}(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACU_4_S1_INDIRECT_WITH_OFFSET_4_DSP_SRC2_DATA_REG, "dsp-macu.4-s1-indirect-with-offset-4-dsp-src2-data-reg", "macu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macu.4 ${dsp-destA},(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACU_4_S1_INDIRECT_4_DSP_SRC2_DATA_REG, "dsp-macu.4-s1-indirect-4-dsp-src2-data-reg", "macu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macu.4 ${dsp-destA},(${s1-An})${s1-i4-4}++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACU_4_S1_INDIRECT_WITH_POST_INCREMENT_4_DSP_SRC2_DATA_REG, "dsp-macu.4-s1-indirect-with-post-increment-4-dsp-src2-data-reg", "macu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macu.4 ${dsp-destA},${s1-i4-4}(${s1-An})++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACU_4_S1_INDIRECT_WITH_PRE_INCREMENT_4_DSP_SRC2_DATA_REG, "dsp-macu.4-s1-indirect-with-pre-increment-4-dsp-src2-data-reg", "macu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macu.4 ${dsp-destA},${s1-direct-addr},${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACU_4_S1_DIRECT_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macu.4-s1-direct-dsp-src2-reg-acc-reg-mul", "macu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macu.4 ${dsp-destA},#${s1-imm8},${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACU_4_S1_IMMEDIATE_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macu.4-s1-immediate-dsp-src2-reg-acc-reg-mul", "macu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macu.4 ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACU_4_S1_INDIRECT_WITH_INDEX_4_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macu.4-s1-indirect-with-index-4-dsp-src2-reg-acc-reg-mul", "macu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macu.4 ${dsp-destA},${s1-imm7-4}(${s1-An}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACU_4_S1_INDIRECT_WITH_OFFSET_4_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macu.4-s1-indirect-with-offset-4-dsp-src2-reg-acc-reg-mul", "macu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macu.4 ${dsp-destA},(${s1-An}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACU_4_S1_INDIRECT_4_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macu.4-s1-indirect-4-dsp-src2-reg-acc-reg-mul", "macu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macu.4 ${dsp-destA},(${s1-An})${s1-i4-4}++,${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACU_4_S1_INDIRECT_WITH_POST_INCREMENT_4_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macu.4-s1-indirect-with-post-increment-4-dsp-src2-reg-acc-reg-mul", "macu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macu.4 ${dsp-destA},${s1-i4-4}(${s1-An})++,${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACU_4_S1_INDIRECT_WITH_PRE_INCREMENT_4_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macu.4-s1-indirect-with-pre-increment-4-dsp-src2-reg-acc-reg-mul", "macu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macu.4 ${dsp-destA},${s1-direct-addr},#${bit5} */
+  {
+    UBI32_INSN_DSP_MACU_4_S1_DIRECT_DSP_IMM_BIT5, "dsp-macu.4-s1-direct-dsp-imm-bit5", "macu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macu.4 ${dsp-destA},#${s1-imm8},#${bit5} */
+  {
+    UBI32_INSN_DSP_MACU_4_S1_IMMEDIATE_DSP_IMM_BIT5, "dsp-macu.4-s1-immediate-dsp-imm-bit5", "macu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macu.4 ${dsp-destA},(${s1-An},${s1-r}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MACU_4_S1_INDIRECT_WITH_INDEX_4_DSP_IMM_BIT5, "dsp-macu.4-s1-indirect-with-index-4-dsp-imm-bit5", "macu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macu.4 ${dsp-destA},${s1-imm7-4}(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MACU_4_S1_INDIRECT_WITH_OFFSET_4_DSP_IMM_BIT5, "dsp-macu.4-s1-indirect-with-offset-4-dsp-imm-bit5", "macu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macu.4 ${dsp-destA},(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MACU_4_S1_INDIRECT_4_DSP_IMM_BIT5, "dsp-macu.4-s1-indirect-4-dsp-imm-bit5", "macu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macu.4 ${dsp-destA},(${s1-An})${s1-i4-4}++,#${bit5} */
+  {
+    UBI32_INSN_DSP_MACU_4_S1_INDIRECT_WITH_POST_INCREMENT_4_DSP_IMM_BIT5, "dsp-macu.4-s1-indirect-with-post-increment-4-dsp-imm-bit5", "macu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macu.4 ${dsp-destA},${s1-i4-4}(${s1-An})++,#${bit5} */
+  {
+    UBI32_INSN_DSP_MACU_4_S1_INDIRECT_WITH_PRE_INCREMENT_4_DSP_IMM_BIT5, "dsp-macu.4-s1-indirect-with-pre-increment-4-dsp-imm-bit5", "macu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* mulu.4 ${dsp-destA},${s1-direct-addr},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULU_4_S1_DIRECT_DSP_SRC2_DATA_REG, "dsp-mulu.4-s1-direct-dsp-src2-data-reg", "mulu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* mulu.4 ${dsp-destA},#${s1-imm8},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULU_4_S1_IMMEDIATE_DSP_SRC2_DATA_REG, "dsp-mulu.4-s1-immediate-dsp-src2-data-reg", "mulu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* mulu.4 ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULU_4_S1_INDIRECT_WITH_INDEX_4_DSP_SRC2_DATA_REG, "dsp-mulu.4-s1-indirect-with-index-4-dsp-src2-data-reg", "mulu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* mulu.4 ${dsp-destA},${s1-imm7-4}(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULU_4_S1_INDIRECT_WITH_OFFSET_4_DSP_SRC2_DATA_REG, "dsp-mulu.4-s1-indirect-with-offset-4-dsp-src2-data-reg", "mulu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* mulu.4 ${dsp-destA},(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULU_4_S1_INDIRECT_4_DSP_SRC2_DATA_REG, "dsp-mulu.4-s1-indirect-4-dsp-src2-data-reg", "mulu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* mulu.4 ${dsp-destA},(${s1-An})${s1-i4-4}++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULU_4_S1_INDIRECT_WITH_POST_INCREMENT_4_DSP_SRC2_DATA_REG, "dsp-mulu.4-s1-indirect-with-post-increment-4-dsp-src2-data-reg", "mulu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* mulu.4 ${dsp-destA},${s1-i4-4}(${s1-An})++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULU_4_S1_INDIRECT_WITH_PRE_INCREMENT_4_DSP_SRC2_DATA_REG, "dsp-mulu.4-s1-indirect-with-pre-increment-4-dsp-src2-data-reg", "mulu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* mulu.4 ${dsp-destA},${s1-direct-addr},${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULU_4_S1_DIRECT_DSP_SRC2_REG_ACC_REG_MUL, "dsp-mulu.4-s1-direct-dsp-src2-reg-acc-reg-mul", "mulu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* mulu.4 ${dsp-destA},#${s1-imm8},${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULU_4_S1_IMMEDIATE_DSP_SRC2_REG_ACC_REG_MUL, "dsp-mulu.4-s1-immediate-dsp-src2-reg-acc-reg-mul", "mulu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* mulu.4 ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULU_4_S1_INDIRECT_WITH_INDEX_4_DSP_SRC2_REG_ACC_REG_MUL, "dsp-mulu.4-s1-indirect-with-index-4-dsp-src2-reg-acc-reg-mul", "mulu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* mulu.4 ${dsp-destA},${s1-imm7-4}(${s1-An}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULU_4_S1_INDIRECT_WITH_OFFSET_4_DSP_SRC2_REG_ACC_REG_MUL, "dsp-mulu.4-s1-indirect-with-offset-4-dsp-src2-reg-acc-reg-mul", "mulu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* mulu.4 ${dsp-destA},(${s1-An}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULU_4_S1_INDIRECT_4_DSP_SRC2_REG_ACC_REG_MUL, "dsp-mulu.4-s1-indirect-4-dsp-src2-reg-acc-reg-mul", "mulu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* mulu.4 ${dsp-destA},(${s1-An})${s1-i4-4}++,${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULU_4_S1_INDIRECT_WITH_POST_INCREMENT_4_DSP_SRC2_REG_ACC_REG_MUL, "dsp-mulu.4-s1-indirect-with-post-increment-4-dsp-src2-reg-acc-reg-mul", "mulu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* mulu.4 ${dsp-destA},${s1-i4-4}(${s1-An})++,${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULU_4_S1_INDIRECT_WITH_PRE_INCREMENT_4_DSP_SRC2_REG_ACC_REG_MUL, "dsp-mulu.4-s1-indirect-with-pre-increment-4-dsp-src2-reg-acc-reg-mul", "mulu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* mulu.4 ${dsp-destA},${s1-direct-addr},#${bit5} */
+  {
+    UBI32_INSN_DSP_MULU_4_S1_DIRECT_DSP_IMM_BIT5, "dsp-mulu.4-s1-direct-dsp-imm-bit5", "mulu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* mulu.4 ${dsp-destA},#${s1-imm8},#${bit5} */
+  {
+    UBI32_INSN_DSP_MULU_4_S1_IMMEDIATE_DSP_IMM_BIT5, "dsp-mulu.4-s1-immediate-dsp-imm-bit5", "mulu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* mulu.4 ${dsp-destA},(${s1-An},${s1-r}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MULU_4_S1_INDIRECT_WITH_INDEX_4_DSP_IMM_BIT5, "dsp-mulu.4-s1-indirect-with-index-4-dsp-imm-bit5", "mulu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* mulu.4 ${dsp-destA},${s1-imm7-4}(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MULU_4_S1_INDIRECT_WITH_OFFSET_4_DSP_IMM_BIT5, "dsp-mulu.4-s1-indirect-with-offset-4-dsp-imm-bit5", "mulu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* mulu.4 ${dsp-destA},(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MULU_4_S1_INDIRECT_4_DSP_IMM_BIT5, "dsp-mulu.4-s1-indirect-4-dsp-imm-bit5", "mulu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* mulu.4 ${dsp-destA},(${s1-An})${s1-i4-4}++,#${bit5} */
+  {
+    UBI32_INSN_DSP_MULU_4_S1_INDIRECT_WITH_POST_INCREMENT_4_DSP_IMM_BIT5, "dsp-mulu.4-s1-indirect-with-post-increment-4-dsp-imm-bit5", "mulu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* mulu.4 ${dsp-destA},${s1-i4-4}(${s1-An})++,#${bit5} */
+  {
+    UBI32_INSN_DSP_MULU_4_S1_INDIRECT_WITH_PRE_INCREMENT_4_DSP_IMM_BIT5, "dsp-mulu.4-s1-indirect-with-pre-increment-4-dsp-imm-bit5", "mulu.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* mulu${dsp-t} ${dsp-destA},${s1-direct-addr},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULU_S1_DIRECT_DSP_SRC2_DATA_REG, "dsp-mulu-s1-direct-dsp-src2-data-reg", "mulu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulu${dsp-t} ${dsp-destA},#${s1-imm8},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULU_S1_IMMEDIATE_DSP_SRC2_DATA_REG, "dsp-mulu-s1-immediate-dsp-src2-data-reg", "mulu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulu${dsp-t} ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULU_S1_INDIRECT_WITH_INDEX_2_DSP_SRC2_DATA_REG, "dsp-mulu-s1-indirect-with-index-2-dsp-src2-data-reg", "mulu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulu${dsp-t} ${dsp-destA},${s1-imm7-2}(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULU_S1_INDIRECT_WITH_OFFSET_2_DSP_SRC2_DATA_REG, "dsp-mulu-s1-indirect-with-offset-2-dsp-src2-data-reg", "mulu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulu${dsp-t} ${dsp-destA},(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULU_S1_INDIRECT_2_DSP_SRC2_DATA_REG, "dsp-mulu-s1-indirect-2-dsp-src2-data-reg", "mulu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulu${dsp-t} ${dsp-destA},(${s1-An})${s1-i4-2}++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULU_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_SRC2_DATA_REG, "dsp-mulu-s1-indirect-with-post-increment-2-dsp-src2-data-reg", "mulu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulu${dsp-t} ${dsp-destA},${s1-i4-2}(${s1-An})++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULU_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_SRC2_DATA_REG, "dsp-mulu-s1-indirect-with-pre-increment-2-dsp-src2-data-reg", "mulu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulu${dsp-t} ${dsp-destA},${s1-direct-addr},${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULU_S1_DIRECT_DSP_SRC2_REG_ACC_REG_MUL, "dsp-mulu-s1-direct-dsp-src2-reg-acc-reg-mul", "mulu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulu${dsp-t} ${dsp-destA},#${s1-imm8},${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULU_S1_IMMEDIATE_DSP_SRC2_REG_ACC_REG_MUL, "dsp-mulu-s1-immediate-dsp-src2-reg-acc-reg-mul", "mulu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulu${dsp-t} ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULU_S1_INDIRECT_WITH_INDEX_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-mulu-s1-indirect-with-index-2-dsp-src2-reg-acc-reg-mul", "mulu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulu${dsp-t} ${dsp-destA},${s1-imm7-2}(${s1-An}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULU_S1_INDIRECT_WITH_OFFSET_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-mulu-s1-indirect-with-offset-2-dsp-src2-reg-acc-reg-mul", "mulu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulu${dsp-t} ${dsp-destA},(${s1-An}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULU_S1_INDIRECT_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-mulu-s1-indirect-2-dsp-src2-reg-acc-reg-mul", "mulu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulu${dsp-t} ${dsp-destA},(${s1-An})${s1-i4-2}++,${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULU_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-mulu-s1-indirect-with-post-increment-2-dsp-src2-reg-acc-reg-mul", "mulu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulu${dsp-t} ${dsp-destA},${s1-i4-2}(${s1-An})++,${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULU_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-mulu-s1-indirect-with-pre-increment-2-dsp-src2-reg-acc-reg-mul", "mulu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulu${dsp-t} ${dsp-destA},${s1-direct-addr},#${bit5} */
+  {
+    UBI32_INSN_DSP_MULU_S1_DIRECT_DSP_IMM_BIT5, "dsp-mulu-s1-direct-dsp-imm-bit5", "mulu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulu${dsp-t} ${dsp-destA},#${s1-imm8},#${bit5} */
+  {
+    UBI32_INSN_DSP_MULU_S1_IMMEDIATE_DSP_IMM_BIT5, "dsp-mulu-s1-immediate-dsp-imm-bit5", "mulu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulu${dsp-t} ${dsp-destA},(${s1-An},${s1-r}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MULU_S1_INDIRECT_WITH_INDEX_2_DSP_IMM_BIT5, "dsp-mulu-s1-indirect-with-index-2-dsp-imm-bit5", "mulu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulu${dsp-t} ${dsp-destA},${s1-imm7-2}(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MULU_S1_INDIRECT_WITH_OFFSET_2_DSP_IMM_BIT5, "dsp-mulu-s1-indirect-with-offset-2-dsp-imm-bit5", "mulu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulu${dsp-t} ${dsp-destA},(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MULU_S1_INDIRECT_2_DSP_IMM_BIT5, "dsp-mulu-s1-indirect-2-dsp-imm-bit5", "mulu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulu${dsp-t} ${dsp-destA},(${s1-An})${s1-i4-2}++,#${bit5} */
+  {
+    UBI32_INSN_DSP_MULU_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_IMM_BIT5, "dsp-mulu-s1-indirect-with-post-increment-2-dsp-imm-bit5", "mulu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* mulu${dsp-t} ${dsp-destA},${s1-i4-2}(${s1-An})++,#${bit5} */
+  {
+    UBI32_INSN_DSP_MULU_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_IMM_BIT5, "dsp-mulu-s1-indirect-with-pre-increment-2-dsp-imm-bit5", "mulu", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macs${dsp-c}${dsp-t} ${dsp-destA},${s1-direct-addr},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACS_S1_DIRECT_DSP_SRC2_DATA_REG, "dsp-macs-s1-direct-dsp-src2-data-reg", "macs", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macs${dsp-c}${dsp-t} ${dsp-destA},#${s1-imm8},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACS_S1_IMMEDIATE_DSP_SRC2_DATA_REG, "dsp-macs-s1-immediate-dsp-src2-data-reg", "macs", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macs${dsp-c}${dsp-t} ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACS_S1_INDIRECT_WITH_INDEX_2_DSP_SRC2_DATA_REG, "dsp-macs-s1-indirect-with-index-2-dsp-src2-data-reg", "macs", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macs${dsp-c}${dsp-t} ${dsp-destA},${s1-imm7-2}(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACS_S1_INDIRECT_WITH_OFFSET_2_DSP_SRC2_DATA_REG, "dsp-macs-s1-indirect-with-offset-2-dsp-src2-data-reg", "macs", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macs${dsp-c}${dsp-t} ${dsp-destA},(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACS_S1_INDIRECT_2_DSP_SRC2_DATA_REG, "dsp-macs-s1-indirect-2-dsp-src2-data-reg", "macs", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macs${dsp-c}${dsp-t} ${dsp-destA},(${s1-An})${s1-i4-2}++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACS_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_SRC2_DATA_REG, "dsp-macs-s1-indirect-with-post-increment-2-dsp-src2-data-reg", "macs", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macs${dsp-c}${dsp-t} ${dsp-destA},${s1-i4-2}(${s1-An})++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACS_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_SRC2_DATA_REG, "dsp-macs-s1-indirect-with-pre-increment-2-dsp-src2-data-reg", "macs", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macs${dsp-c}${dsp-t} ${dsp-destA},${s1-direct-addr},${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACS_S1_DIRECT_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macs-s1-direct-dsp-src2-reg-acc-reg-mul", "macs", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macs${dsp-c}${dsp-t} ${dsp-destA},#${s1-imm8},${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACS_S1_IMMEDIATE_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macs-s1-immediate-dsp-src2-reg-acc-reg-mul", "macs", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macs${dsp-c}${dsp-t} ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACS_S1_INDIRECT_WITH_INDEX_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macs-s1-indirect-with-index-2-dsp-src2-reg-acc-reg-mul", "macs", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macs${dsp-c}${dsp-t} ${dsp-destA},${s1-imm7-2}(${s1-An}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACS_S1_INDIRECT_WITH_OFFSET_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macs-s1-indirect-with-offset-2-dsp-src2-reg-acc-reg-mul", "macs", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macs${dsp-c}${dsp-t} ${dsp-destA},(${s1-An}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACS_S1_INDIRECT_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macs-s1-indirect-2-dsp-src2-reg-acc-reg-mul", "macs", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macs${dsp-c}${dsp-t} ${dsp-destA},(${s1-An})${s1-i4-2}++,${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACS_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macs-s1-indirect-with-post-increment-2-dsp-src2-reg-acc-reg-mul", "macs", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macs${dsp-c}${dsp-t} ${dsp-destA},${s1-i4-2}(${s1-An})++,${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACS_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macs-s1-indirect-with-pre-increment-2-dsp-src2-reg-acc-reg-mul", "macs", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macs${dsp-c}${dsp-t} ${dsp-destA},${s1-direct-addr},#${bit5} */
+  {
+    UBI32_INSN_DSP_MACS_S1_DIRECT_DSP_IMM_BIT5, "dsp-macs-s1-direct-dsp-imm-bit5", "macs", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macs${dsp-c}${dsp-t} ${dsp-destA},#${s1-imm8},#${bit5} */
+  {
+    UBI32_INSN_DSP_MACS_S1_IMMEDIATE_DSP_IMM_BIT5, "dsp-macs-s1-immediate-dsp-imm-bit5", "macs", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macs${dsp-c}${dsp-t} ${dsp-destA},(${s1-An},${s1-r}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MACS_S1_INDIRECT_WITH_INDEX_2_DSP_IMM_BIT5, "dsp-macs-s1-indirect-with-index-2-dsp-imm-bit5", "macs", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macs${dsp-c}${dsp-t} ${dsp-destA},${s1-imm7-2}(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MACS_S1_INDIRECT_WITH_OFFSET_2_DSP_IMM_BIT5, "dsp-macs-s1-indirect-with-offset-2-dsp-imm-bit5", "macs", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macs${dsp-c}${dsp-t} ${dsp-destA},(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MACS_S1_INDIRECT_2_DSP_IMM_BIT5, "dsp-macs-s1-indirect-2-dsp-imm-bit5", "macs", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macs${dsp-c}${dsp-t} ${dsp-destA},(${s1-An})${s1-i4-2}++,#${bit5} */
+  {
+    UBI32_INSN_DSP_MACS_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_IMM_BIT5, "dsp-macs-s1-indirect-with-post-increment-2-dsp-imm-bit5", "macs", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macs${dsp-c}${dsp-t} ${dsp-destA},${s1-i4-2}(${s1-An})++,#${bit5} */
+  {
+    UBI32_INSN_DSP_MACS_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_IMM_BIT5, "dsp-macs-s1-indirect-with-pre-increment-2-dsp-imm-bit5", "macs", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* macs.4 ${dsp-destA},${s1-direct-addr},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACS_4_S1_DIRECT_DSP_SRC2_DATA_REG, "dsp-macs.4-s1-direct-dsp-src2-data-reg", "macs.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macs.4 ${dsp-destA},#${s1-imm8},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACS_4_S1_IMMEDIATE_DSP_SRC2_DATA_REG, "dsp-macs.4-s1-immediate-dsp-src2-data-reg", "macs.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macs.4 ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACS_4_S1_INDIRECT_WITH_INDEX_4_DSP_SRC2_DATA_REG, "dsp-macs.4-s1-indirect-with-index-4-dsp-src2-data-reg", "macs.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macs.4 ${dsp-destA},${s1-imm7-4}(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACS_4_S1_INDIRECT_WITH_OFFSET_4_DSP_SRC2_DATA_REG, "dsp-macs.4-s1-indirect-with-offset-4-dsp-src2-data-reg", "macs.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macs.4 ${dsp-destA},(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACS_4_S1_INDIRECT_4_DSP_SRC2_DATA_REG, "dsp-macs.4-s1-indirect-4-dsp-src2-data-reg", "macs.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macs.4 ${dsp-destA},(${s1-An})${s1-i4-4}++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACS_4_S1_INDIRECT_WITH_POST_INCREMENT_4_DSP_SRC2_DATA_REG, "dsp-macs.4-s1-indirect-with-post-increment-4-dsp-src2-data-reg", "macs.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macs.4 ${dsp-destA},${s1-i4-4}(${s1-An})++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MACS_4_S1_INDIRECT_WITH_PRE_INCREMENT_4_DSP_SRC2_DATA_REG, "dsp-macs.4-s1-indirect-with-pre-increment-4-dsp-src2-data-reg", "macs.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macs.4 ${dsp-destA},${s1-direct-addr},${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACS_4_S1_DIRECT_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macs.4-s1-direct-dsp-src2-reg-acc-reg-mul", "macs.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macs.4 ${dsp-destA},#${s1-imm8},${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACS_4_S1_IMMEDIATE_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macs.4-s1-immediate-dsp-src2-reg-acc-reg-mul", "macs.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macs.4 ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACS_4_S1_INDIRECT_WITH_INDEX_4_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macs.4-s1-indirect-with-index-4-dsp-src2-reg-acc-reg-mul", "macs.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macs.4 ${dsp-destA},${s1-imm7-4}(${s1-An}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACS_4_S1_INDIRECT_WITH_OFFSET_4_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macs.4-s1-indirect-with-offset-4-dsp-src2-reg-acc-reg-mul", "macs.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macs.4 ${dsp-destA},(${s1-An}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACS_4_S1_INDIRECT_4_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macs.4-s1-indirect-4-dsp-src2-reg-acc-reg-mul", "macs.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macs.4 ${dsp-destA},(${s1-An})${s1-i4-4}++,${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACS_4_S1_INDIRECT_WITH_POST_INCREMENT_4_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macs.4-s1-indirect-with-post-increment-4-dsp-src2-reg-acc-reg-mul", "macs.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macs.4 ${dsp-destA},${s1-i4-4}(${s1-An})++,${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MACS_4_S1_INDIRECT_WITH_PRE_INCREMENT_4_DSP_SRC2_REG_ACC_REG_MUL, "dsp-macs.4-s1-indirect-with-pre-increment-4-dsp-src2-reg-acc-reg-mul", "macs.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macs.4 ${dsp-destA},${s1-direct-addr},#${bit5} */
+  {
+    UBI32_INSN_DSP_MACS_4_S1_DIRECT_DSP_IMM_BIT5, "dsp-macs.4-s1-direct-dsp-imm-bit5", "macs.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macs.4 ${dsp-destA},#${s1-imm8},#${bit5} */
+  {
+    UBI32_INSN_DSP_MACS_4_S1_IMMEDIATE_DSP_IMM_BIT5, "dsp-macs.4-s1-immediate-dsp-imm-bit5", "macs.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macs.4 ${dsp-destA},(${s1-An},${s1-r}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MACS_4_S1_INDIRECT_WITH_INDEX_4_DSP_IMM_BIT5, "dsp-macs.4-s1-indirect-with-index-4-dsp-imm-bit5", "macs.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macs.4 ${dsp-destA},${s1-imm7-4}(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MACS_4_S1_INDIRECT_WITH_OFFSET_4_DSP_IMM_BIT5, "dsp-macs.4-s1-indirect-with-offset-4-dsp-imm-bit5", "macs.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macs.4 ${dsp-destA},(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MACS_4_S1_INDIRECT_4_DSP_IMM_BIT5, "dsp-macs.4-s1-indirect-4-dsp-imm-bit5", "macs.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macs.4 ${dsp-destA},(${s1-An})${s1-i4-4}++,#${bit5} */
+  {
+    UBI32_INSN_DSP_MACS_4_S1_INDIRECT_WITH_POST_INCREMENT_4_DSP_IMM_BIT5, "dsp-macs.4-s1-indirect-with-post-increment-4-dsp-imm-bit5", "macs.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* macs.4 ${dsp-destA},${s1-i4-4}(${s1-An})++,#${bit5} */
+  {
+    UBI32_INSN_DSP_MACS_4_S1_INDIRECT_WITH_PRE_INCREMENT_4_DSP_IMM_BIT5, "dsp-macs.4-s1-indirect-with-pre-increment-4-dsp-imm-bit5", "macs.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* muls.4 ${dsp-destA},${s1-direct-addr},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULS_4_S1_DIRECT_DSP_SRC2_DATA_REG, "dsp-muls.4-s1-direct-dsp-src2-data-reg", "muls.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* muls.4 ${dsp-destA},#${s1-imm8},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULS_4_S1_IMMEDIATE_DSP_SRC2_DATA_REG, "dsp-muls.4-s1-immediate-dsp-src2-data-reg", "muls.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* muls.4 ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULS_4_S1_INDIRECT_WITH_INDEX_4_DSP_SRC2_DATA_REG, "dsp-muls.4-s1-indirect-with-index-4-dsp-src2-data-reg", "muls.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* muls.4 ${dsp-destA},${s1-imm7-4}(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULS_4_S1_INDIRECT_WITH_OFFSET_4_DSP_SRC2_DATA_REG, "dsp-muls.4-s1-indirect-with-offset-4-dsp-src2-data-reg", "muls.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* muls.4 ${dsp-destA},(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULS_4_S1_INDIRECT_4_DSP_SRC2_DATA_REG, "dsp-muls.4-s1-indirect-4-dsp-src2-data-reg", "muls.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* muls.4 ${dsp-destA},(${s1-An})${s1-i4-4}++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULS_4_S1_INDIRECT_WITH_POST_INCREMENT_4_DSP_SRC2_DATA_REG, "dsp-muls.4-s1-indirect-with-post-increment-4-dsp-src2-data-reg", "muls.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* muls.4 ${dsp-destA},${s1-i4-4}(${s1-An})++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULS_4_S1_INDIRECT_WITH_PRE_INCREMENT_4_DSP_SRC2_DATA_REG, "dsp-muls.4-s1-indirect-with-pre-increment-4-dsp-src2-data-reg", "muls.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* muls.4 ${dsp-destA},${s1-direct-addr},${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULS_4_S1_DIRECT_DSP_SRC2_REG_ACC_REG_MUL, "dsp-muls.4-s1-direct-dsp-src2-reg-acc-reg-mul", "muls.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* muls.4 ${dsp-destA},#${s1-imm8},${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULS_4_S1_IMMEDIATE_DSP_SRC2_REG_ACC_REG_MUL, "dsp-muls.4-s1-immediate-dsp-src2-reg-acc-reg-mul", "muls.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* muls.4 ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULS_4_S1_INDIRECT_WITH_INDEX_4_DSP_SRC2_REG_ACC_REG_MUL, "dsp-muls.4-s1-indirect-with-index-4-dsp-src2-reg-acc-reg-mul", "muls.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* muls.4 ${dsp-destA},${s1-imm7-4}(${s1-An}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULS_4_S1_INDIRECT_WITH_OFFSET_4_DSP_SRC2_REG_ACC_REG_MUL, "dsp-muls.4-s1-indirect-with-offset-4-dsp-src2-reg-acc-reg-mul", "muls.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* muls.4 ${dsp-destA},(${s1-An}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULS_4_S1_INDIRECT_4_DSP_SRC2_REG_ACC_REG_MUL, "dsp-muls.4-s1-indirect-4-dsp-src2-reg-acc-reg-mul", "muls.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* muls.4 ${dsp-destA},(${s1-An})${s1-i4-4}++,${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULS_4_S1_INDIRECT_WITH_POST_INCREMENT_4_DSP_SRC2_REG_ACC_REG_MUL, "dsp-muls.4-s1-indirect-with-post-increment-4-dsp-src2-reg-acc-reg-mul", "muls.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* muls.4 ${dsp-destA},${s1-i4-4}(${s1-An})++,${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULS_4_S1_INDIRECT_WITH_PRE_INCREMENT_4_DSP_SRC2_REG_ACC_REG_MUL, "dsp-muls.4-s1-indirect-with-pre-increment-4-dsp-src2-reg-acc-reg-mul", "muls.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* muls.4 ${dsp-destA},${s1-direct-addr},#${bit5} */
+  {
+    UBI32_INSN_DSP_MULS_4_S1_DIRECT_DSP_IMM_BIT5, "dsp-muls.4-s1-direct-dsp-imm-bit5", "muls.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* muls.4 ${dsp-destA},#${s1-imm8},#${bit5} */
+  {
+    UBI32_INSN_DSP_MULS_4_S1_IMMEDIATE_DSP_IMM_BIT5, "dsp-muls.4-s1-immediate-dsp-imm-bit5", "muls.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* muls.4 ${dsp-destA},(${s1-An},${s1-r}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MULS_4_S1_INDIRECT_WITH_INDEX_4_DSP_IMM_BIT5, "dsp-muls.4-s1-indirect-with-index-4-dsp-imm-bit5", "muls.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* muls.4 ${dsp-destA},${s1-imm7-4}(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MULS_4_S1_INDIRECT_WITH_OFFSET_4_DSP_IMM_BIT5, "dsp-muls.4-s1-indirect-with-offset-4-dsp-imm-bit5", "muls.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* muls.4 ${dsp-destA},(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MULS_4_S1_INDIRECT_4_DSP_IMM_BIT5, "dsp-muls.4-s1-indirect-4-dsp-imm-bit5", "muls.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* muls.4 ${dsp-destA},(${s1-An})${s1-i4-4}++,#${bit5} */
+  {
+    UBI32_INSN_DSP_MULS_4_S1_INDIRECT_WITH_POST_INCREMENT_4_DSP_IMM_BIT5, "dsp-muls.4-s1-indirect-with-post-increment-4-dsp-imm-bit5", "muls.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* muls.4 ${dsp-destA},${s1-i4-4}(${s1-An})++,#${bit5} */
+  {
+    UBI32_INSN_DSP_MULS_4_S1_INDIRECT_WITH_PRE_INCREMENT_4_DSP_IMM_BIT5, "dsp-muls.4-s1-indirect-with-pre-increment-4-dsp-imm-bit5", "muls.4", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* muls${dsp-t} ${dsp-destA},${s1-direct-addr},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULS_S1_DIRECT_DSP_SRC2_DATA_REG, "dsp-muls-s1-direct-dsp-src2-data-reg", "muls", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* muls${dsp-t} ${dsp-destA},#${s1-imm8},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULS_S1_IMMEDIATE_DSP_SRC2_DATA_REG, "dsp-muls-s1-immediate-dsp-src2-data-reg", "muls", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* muls${dsp-t} ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULS_S1_INDIRECT_WITH_INDEX_2_DSP_SRC2_DATA_REG, "dsp-muls-s1-indirect-with-index-2-dsp-src2-data-reg", "muls", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* muls${dsp-t} ${dsp-destA},${s1-imm7-2}(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULS_S1_INDIRECT_WITH_OFFSET_2_DSP_SRC2_DATA_REG, "dsp-muls-s1-indirect-with-offset-2-dsp-src2-data-reg", "muls", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* muls${dsp-t} ${dsp-destA},(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULS_S1_INDIRECT_2_DSP_SRC2_DATA_REG, "dsp-muls-s1-indirect-2-dsp-src2-data-reg", "muls", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* muls${dsp-t} ${dsp-destA},(${s1-An})${s1-i4-2}++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULS_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_SRC2_DATA_REG, "dsp-muls-s1-indirect-with-post-increment-2-dsp-src2-data-reg", "muls", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* muls${dsp-t} ${dsp-destA},${s1-i4-2}(${s1-An})++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_DSP_MULS_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_SRC2_DATA_REG, "dsp-muls-s1-indirect-with-pre-increment-2-dsp-src2-data-reg", "muls", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* muls${dsp-t} ${dsp-destA},${s1-direct-addr},${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULS_S1_DIRECT_DSP_SRC2_REG_ACC_REG_MUL, "dsp-muls-s1-direct-dsp-src2-reg-acc-reg-mul", "muls", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* muls${dsp-t} ${dsp-destA},#${s1-imm8},${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULS_S1_IMMEDIATE_DSP_SRC2_REG_ACC_REG_MUL, "dsp-muls-s1-immediate-dsp-src2-reg-acc-reg-mul", "muls", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* muls${dsp-t} ${dsp-destA},(${s1-An},${s1-r}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULS_S1_INDIRECT_WITH_INDEX_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-muls-s1-indirect-with-index-2-dsp-src2-reg-acc-reg-mul", "muls", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* muls${dsp-t} ${dsp-destA},${s1-imm7-2}(${s1-An}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULS_S1_INDIRECT_WITH_OFFSET_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-muls-s1-indirect-with-offset-2-dsp-src2-reg-acc-reg-mul", "muls", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* muls${dsp-t} ${dsp-destA},(${s1-An}),${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULS_S1_INDIRECT_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-muls-s1-indirect-2-dsp-src2-reg-acc-reg-mul", "muls", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* muls${dsp-t} ${dsp-destA},(${s1-An})${s1-i4-2}++,${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULS_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-muls-s1-indirect-with-post-increment-2-dsp-src2-reg-acc-reg-mul", "muls", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* muls${dsp-t} ${dsp-destA},${s1-i4-2}(${s1-An})++,${dsp-S2-acc-reg-mul} */
+  {
+    UBI32_INSN_DSP_MULS_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_SRC2_REG_ACC_REG_MUL, "dsp-muls-s1-indirect-with-pre-increment-2-dsp-src2-reg-acc-reg-mul", "muls", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* muls${dsp-t} ${dsp-destA},${s1-direct-addr},#${bit5} */
+  {
+    UBI32_INSN_DSP_MULS_S1_DIRECT_DSP_IMM_BIT5, "dsp-muls-s1-direct-dsp-imm-bit5", "muls", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* muls${dsp-t} ${dsp-destA},#${s1-imm8},#${bit5} */
+  {
+    UBI32_INSN_DSP_MULS_S1_IMMEDIATE_DSP_IMM_BIT5, "dsp-muls-s1-immediate-dsp-imm-bit5", "muls", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* muls${dsp-t} ${dsp-destA},(${s1-An},${s1-r}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MULS_S1_INDIRECT_WITH_INDEX_2_DSP_IMM_BIT5, "dsp-muls-s1-indirect-with-index-2-dsp-imm-bit5", "muls", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* muls${dsp-t} ${dsp-destA},${s1-imm7-2}(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MULS_S1_INDIRECT_WITH_OFFSET_2_DSP_IMM_BIT5, "dsp-muls-s1-indirect-with-offset-2-dsp-imm-bit5", "muls", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* muls${dsp-t} ${dsp-destA},(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_DSP_MULS_S1_INDIRECT_2_DSP_IMM_BIT5, "dsp-muls-s1-indirect-2-dsp-imm-bit5", "muls", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* muls${dsp-t} ${dsp-destA},(${s1-An})${s1-i4-2}++,#${bit5} */
+  {
+    UBI32_INSN_DSP_MULS_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_IMM_BIT5, "dsp-muls-s1-indirect-with-post-increment-2-dsp-imm-bit5", "muls", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* muls${dsp-t} ${dsp-destA},${s1-i4-2}(${s1-An})++,#${bit5} */
+  {
+    UBI32_INSN_DSP_MULS_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_IMM_BIT5, "dsp-muls-s1-indirect-with-pre-increment-2-dsp-imm-bit5", "muls", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
 /* sysret ${d-direct-addr},${s1-direct-addr} */
   {
     UBI32_INSN_SYSRET_D_DIRECT_S1_DIRECT, "sysret-d-direct-s1-direct", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret #${d-imm8},${s1-direct-addr} */
   {
     UBI32_INSN_SYSRET_D_IMMEDIATE_4_S1_DIRECT, "sysret-d-immediate-4-s1-direct", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret (${d-An},${d-r}),${s1-direct-addr} */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_INDEX_4_S1_DIRECT, "sysret-d-indirect-with-index-4-s1-direct", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret ${d-imm7-4}(${d-An}),${s1-direct-addr} */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_OFFSET_4_S1_DIRECT, "sysret-d-indirect-with-offset-4-s1-direct", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret (${d-An}),${s1-direct-addr} */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_4_S1_DIRECT, "sysret-d-indirect-4-s1-direct", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret (${d-An})${d-i4-4}++,${s1-direct-addr} */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_POST_INCREMENT_4_S1_DIRECT, "sysret-d-indirect-with-post-increment-4-s1-direct", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret ${d-i4-4}(${d-An})++,${s1-direct-addr} */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_DIRECT, "sysret-d-indirect-with-pre-increment-4-s1-direct", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret ${d-direct-addr},#${s1-imm8} */
   {
     UBI32_INSN_SYSRET_D_DIRECT_S1_IMMEDIATE, "sysret-d-direct-s1-immediate", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret #${d-imm8},#${s1-imm8} */
   {
     UBI32_INSN_SYSRET_D_IMMEDIATE_4_S1_IMMEDIATE, "sysret-d-immediate-4-s1-immediate", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret (${d-An},${d-r}),#${s1-imm8} */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_INDEX_4_S1_IMMEDIATE, "sysret-d-indirect-with-index-4-s1-immediate", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret ${d-imm7-4}(${d-An}),#${s1-imm8} */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_OFFSET_4_S1_IMMEDIATE, "sysret-d-indirect-with-offset-4-s1-immediate", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret (${d-An}),#${s1-imm8} */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_4_S1_IMMEDIATE, "sysret-d-indirect-4-s1-immediate", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret (${d-An})${d-i4-4}++,#${s1-imm8} */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_POST_INCREMENT_4_S1_IMMEDIATE, "sysret-d-indirect-with-post-increment-4-s1-immediate", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret ${d-i4-4}(${d-An})++,#${s1-imm8} */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_IMMEDIATE, "sysret-d-indirect-with-pre-increment-4-s1-immediate", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret ${d-direct-addr},(${s1-An},${s1-r}) */
   {
     UBI32_INSN_SYSRET_D_DIRECT_S1_INDIRECT_WITH_INDEX_4, "sysret-d-direct-s1-indirect-with-index-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret #${d-imm8},(${s1-An},${s1-r}) */
   {
     UBI32_INSN_SYSRET_D_IMMEDIATE_4_S1_INDIRECT_WITH_INDEX_4, "sysret-d-immediate-4-s1-indirect-with-index-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret (${d-An},${d-r}),(${s1-An},${s1-r}) */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_INDEX_4, "sysret-d-indirect-with-index-4-s1-indirect-with-index-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret ${d-imm7-4}(${d-An}),(${s1-An},${s1-r}) */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_INDEX_4, "sysret-d-indirect-with-offset-4-s1-indirect-with-index-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret (${d-An}),(${s1-An},${s1-r}) */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_4_S1_INDIRECT_WITH_INDEX_4, "sysret-d-indirect-4-s1-indirect-with-index-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret (${d-An})${d-i4-4}++,(${s1-An},${s1-r}) */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_INDEX_4, "sysret-d-indirect-with-post-increment-4-s1-indirect-with-index-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret ${d-i4-4}(${d-An})++,(${s1-An},${s1-r}) */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_INDEX_4, "sysret-d-indirect-with-pre-increment-4-s1-indirect-with-index-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret ${d-direct-addr},${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_SYSRET_D_DIRECT_S1_INDIRECT_WITH_OFFSET_4, "sysret-d-direct-s1-indirect-with-offset-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret #${d-imm8},${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_SYSRET_D_IMMEDIATE_4_S1_INDIRECT_WITH_OFFSET_4, "sysret-d-immediate-4-s1-indirect-with-offset-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret (${d-An},${d-r}),${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_OFFSET_4, "sysret-d-indirect-with-index-4-s1-indirect-with-offset-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret ${d-imm7-4}(${d-An}),${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_OFFSET_4, "sysret-d-indirect-with-offset-4-s1-indirect-with-offset-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret (${d-An}),${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_4_S1_INDIRECT_WITH_OFFSET_4, "sysret-d-indirect-4-s1-indirect-with-offset-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret (${d-An})${d-i4-4}++,${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_OFFSET_4, "sysret-d-indirect-with-post-increment-4-s1-indirect-with-offset-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret ${d-i4-4}(${d-An})++,${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_OFFSET_4, "sysret-d-indirect-with-pre-increment-4-s1-indirect-with-offset-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret ${d-direct-addr},(${s1-An}) */
   {
     UBI32_INSN_SYSRET_D_DIRECT_S1_INDIRECT_4, "sysret-d-direct-s1-indirect-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret #${d-imm8},(${s1-An}) */
   {
     UBI32_INSN_SYSRET_D_IMMEDIATE_4_S1_INDIRECT_4, "sysret-d-immediate-4-s1-indirect-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret (${d-An},${d-r}),(${s1-An}) */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_4, "sysret-d-indirect-with-index-4-s1-indirect-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret ${d-imm7-4}(${d-An}),(${s1-An}) */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_4, "sysret-d-indirect-with-offset-4-s1-indirect-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret (${d-An}),(${s1-An}) */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_4_S1_INDIRECT_4, "sysret-d-indirect-4-s1-indirect-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret (${d-An})${d-i4-4}++,(${s1-An}) */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_4, "sysret-d-indirect-with-post-increment-4-s1-indirect-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret ${d-i4-4}(${d-An})++,(${s1-An}) */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_4, "sysret-d-indirect-with-pre-increment-4-s1-indirect-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret ${d-direct-addr},(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_SYSRET_D_DIRECT_S1_INDIRECT_WITH_POST_INCREMENT_4, "sysret-d-direct-s1-indirect-with-post-increment-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret #${d-imm8},(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_SYSRET_D_IMMEDIATE_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "sysret-d-immediate-4-s1-indirect-with-post-increment-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret (${d-An},${d-r}),(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "sysret-d-indirect-with-index-4-s1-indirect-with-post-increment-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret ${d-imm7-4}(${d-An}),(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "sysret-d-indirect-with-offset-4-s1-indirect-with-post-increment-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret (${d-An}),(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "sysret-d-indirect-4-s1-indirect-with-post-increment-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret (${d-An})${d-i4-4}++,(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "sysret-d-indirect-with-post-increment-4-s1-indirect-with-post-increment-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret ${d-i4-4}(${d-An})++,(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "sysret-d-indirect-with-pre-increment-4-s1-indirect-with-post-increment-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret ${d-direct-addr},${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_SYSRET_D_DIRECT_S1_INDIRECT_WITH_PRE_INCREMENT_4, "sysret-d-direct-s1-indirect-with-pre-increment-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret #${d-imm8},${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_SYSRET_D_IMMEDIATE_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "sysret-d-immediate-4-s1-indirect-with-pre-increment-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret (${d-An},${d-r}),${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "sysret-d-indirect-with-index-4-s1-indirect-with-pre-increment-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret ${d-imm7-4}(${d-An}),${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "sysret-d-indirect-with-offset-4-s1-indirect-with-pre-increment-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret (${d-An}),${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "sysret-d-indirect-4-s1-indirect-with-pre-increment-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret (${d-An})${d-i4-4}++,${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "sysret-d-indirect-with-post-increment-4-s1-indirect-with-pre-increment-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sysret ${d-i4-4}(${d-An})++,${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_SYSRET_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "sysret-d-indirect-with-pre-increment-4-s1-indirect-with-pre-increment-4", "sysret", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* syscall ${d-direct-addr} */
   {
     UBI32_INSN_SYSCALL_D_DIRECT, "syscall-d-direct", "syscall", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* syscall #${d-imm8} */
   {
     UBI32_INSN_SYSCALL_D_IMMEDIATE_4, "syscall-d-immediate-4", "syscall", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* syscall (${d-An},${d-r}) */
   {
     UBI32_INSN_SYSCALL_D_INDIRECT_WITH_INDEX_4, "syscall-d-indirect-with-index-4", "syscall", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* syscall ${d-imm7-4}(${d-An}) */
   {
     UBI32_INSN_SYSCALL_D_INDIRECT_WITH_OFFSET_4, "syscall-d-indirect-with-offset-4", "syscall", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* syscall (${d-An}) */
   {
     UBI32_INSN_SYSCALL_D_INDIRECT_4, "syscall-d-indirect-4", "syscall", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* syscall (${d-An})${d-i4-4}++ */
   {
     UBI32_INSN_SYSCALL_D_INDIRECT_WITH_POST_INCREMENT_4, "syscall-d-indirect-with-post-increment-4", "syscall", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* syscall ${d-i4-4}(${d-An})++ */
   {
     UBI32_INSN_SYSCALL_D_INDIRECT_WITH_PRE_INCREMENT_4, "syscall-d-indirect-with-pre-increment-4", "syscall", 32,
-    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0|A(UNCOND_CTI), { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* prefetch ${d-direct-addr} */
   {
     UBI32_INSN_PREFETCH_D_DIRECT, "prefetch-d-direct", "prefetch", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* prefetch #${d-imm8} */
   {
     UBI32_INSN_PREFETCH_D_IMMEDIATE_4, "prefetch-d-immediate-4", "prefetch", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* prefetch (${d-An},${d-r}) */
   {
     UBI32_INSN_PREFETCH_D_INDIRECT_WITH_INDEX_4, "prefetch-d-indirect-with-index-4", "prefetch", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* prefetch ${d-imm7-4}(${d-An}) */
   {
     UBI32_INSN_PREFETCH_D_INDIRECT_WITH_OFFSET_4, "prefetch-d-indirect-with-offset-4", "prefetch", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* prefetch (${d-An}) */
   {
     UBI32_INSN_PREFETCH_D_INDIRECT_4, "prefetch-d-indirect-4", "prefetch", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* prefetch (${d-An})${d-i4-4}++ */
   {
     UBI32_INSN_PREFETCH_D_INDIRECT_WITH_POST_INCREMENT_4, "prefetch-d-indirect-with-post-increment-4", "prefetch", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* prefetch ${d-i4-4}(${d-An})++ */
   {
     UBI32_INSN_PREFETCH_D_INDIRECT_WITH_PRE_INCREMENT_4, "prefetch-d-indirect-with-pre-increment-4", "prefetch", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sync ${d-direct-addr} */
   {
     UBI32_INSN_SYNC_D_DIRECT, "sync-d-direct", "sync", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sync #${d-imm8} */
   {
     UBI32_INSN_SYNC_D_IMMEDIATE_4, "sync-d-immediate-4", "sync", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sync (${d-An},${d-r}) */
   {
     UBI32_INSN_SYNC_D_INDIRECT_WITH_INDEX_4, "sync-d-indirect-with-index-4", "sync", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sync ${d-imm7-4}(${d-An}) */
   {
     UBI32_INSN_SYNC_D_INDIRECT_WITH_OFFSET_4, "sync-d-indirect-with-offset-4", "sync", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sync (${d-An}) */
   {
     UBI32_INSN_SYNC_D_INDIRECT_4, "sync-d-indirect-4", "sync", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sync (${d-An})${d-i4-4}++ */
   {
     UBI32_INSN_SYNC_D_INDIRECT_WITH_POST_INCREMENT_4, "sync-d-indirect-with-post-increment-4", "sync", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sync ${d-i4-4}(${d-An})++ */
   {
     UBI32_INSN_SYNC_D_INDIRECT_WITH_PRE_INCREMENT_4, "sync-d-indirect-with-pre-increment-4", "sync", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* inval ${d-direct-addr} */
   {
     UBI32_INSN_INVAL_D_DIRECT, "inval-d-direct", "inval", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* inval #${d-imm8} */
   {
     UBI32_INSN_INVAL_D_IMMEDIATE_4, "inval-d-immediate-4", "inval", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* inval (${d-An},${d-r}) */
   {
     UBI32_INSN_INVAL_D_INDIRECT_WITH_INDEX_4, "inval-d-indirect-with-index-4", "inval", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* inval ${d-imm7-4}(${d-An}) */
   {
     UBI32_INSN_INVAL_D_INDIRECT_WITH_OFFSET_4, "inval-d-indirect-with-offset-4", "inval", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* inval (${d-An}) */
   {
     UBI32_INSN_INVAL_D_INDIRECT_4, "inval-d-indirect-4", "inval", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* inval (${d-An})${d-i4-4}++ */
   {
     UBI32_INSN_INVAL_D_INDIRECT_WITH_POST_INCREMENT_4, "inval-d-indirect-with-post-increment-4", "inval", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* inval ${d-i4-4}(${d-An})++ */
   {
     UBI32_INSN_INVAL_D_INDIRECT_WITH_PRE_INCREMENT_4, "inval-d-indirect-with-pre-increment-4", "inval", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* flushni ${d-direct-addr} */
   {
     UBI32_INSN_FLUSHNI_D_DIRECT, "flushni-d-direct", "flushni", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* flushni #${d-imm8} */
   {
     UBI32_INSN_FLUSHNI_D_IMMEDIATE_4, "flushni-d-immediate-4", "flushni", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* flushni (${d-An},${d-r}) */
   {
     UBI32_INSN_FLUSHNI_D_INDIRECT_WITH_INDEX_4, "flushni-d-indirect-with-index-4", "flushni", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* flushni ${d-imm7-4}(${d-An}) */
   {
     UBI32_INSN_FLUSHNI_D_INDIRECT_WITH_OFFSET_4, "flushni-d-indirect-with-offset-4", "flushni", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* flushni (${d-An}) */
   {
     UBI32_INSN_FLUSHNI_D_INDIRECT_4, "flushni-d-indirect-4", "flushni", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* flushni (${d-An})${d-i4-4}++ */
   {
     UBI32_INSN_FLUSHNI_D_INDIRECT_WITH_POST_INCREMENT_4, "flushni-d-indirect-with-post-increment-4", "flushni", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* flushni ${d-i4-4}(${d-An})++ */
   {
     UBI32_INSN_FLUSHNI_D_INDIRECT_WITH_PRE_INCREMENT_4, "flushni-d-indirect-with-pre-increment-4", "flushni", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* flush ${d-direct-addr} */
   {
     UBI32_INSN_FLUSH_D_DIRECT, "flush-d-direct", "flush", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* flush #${d-imm8} */
   {
     UBI32_INSN_FLUSH_D_IMMEDIATE_4, "flush-d-immediate-4", "flush", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* flush (${d-An},${d-r}) */
   {
     UBI32_INSN_FLUSH_D_INDIRECT_WITH_INDEX_4, "flush-d-indirect-with-index-4", "flush", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* flush ${d-imm7-4}(${d-An}) */
   {
     UBI32_INSN_FLUSH_D_INDIRECT_WITH_OFFSET_4, "flush-d-indirect-with-offset-4", "flush", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* flush (${d-An}) */
   {
     UBI32_INSN_FLUSH_D_INDIRECT_4, "flush-d-indirect-4", "flush", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* flush (${d-An})${d-i4-4}++ */
   {
     UBI32_INSN_FLUSH_D_INDIRECT_WITH_POST_INCREMENT_4, "flush-d-indirect-with-post-increment-4", "flush", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* flush ${d-i4-4}(${d-An})++ */
   {
     UBI32_INSN_FLUSH_D_INDIRECT_WITH_PRE_INCREMENT_4, "flush-d-indirect-with-pre-increment-4", "flush", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* iread (${s1-An}) */
+  {
+    UBI32_INSN_IREAD_S1_EA_INDIRECT, "iread-s1-ea-indirect", "iread", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iread (${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_IREAD_S1_EA_INDIRECT_WITH_INDEX_4, "iread-s1-ea-indirect-with-index-4", "iread", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iread (${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_IREAD_S1_EA_INDIRECT_WITH_POST_INCREMENT_4, "iread-s1-ea-indirect-with-post-increment-4", "iread", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iread ${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_IREAD_S1_EA_INDIRECT_WITH_PRE_INCREMENT_4, "iread-s1-ea-indirect-with-pre-increment-4", "iread", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iread ${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_IREAD_S1_EA_INDIRECT_WITH_OFFSET_4, "iread-s1-ea-indirect-with-offset-4", "iread", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite (${d-An},${d-r}),${s1-direct-addr} */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_INDEX_S1_DIRECT, "iwrite-d-pea-indirect-with-index-s1-direct", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite ${d-imm7-4}(${d-An}),${s1-direct-addr} */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_OFFSET_S1_DIRECT, "iwrite-d-pea-indirect-with-offset-s1-direct", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite (${d-An}),${s1-direct-addr} */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_S1_DIRECT, "iwrite-d-pea-indirect-s1-direct", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite (${d-An})${d-i4-4}++,${s1-direct-addr} */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_POST_INCREMENT_S1_DIRECT, "iwrite-d-pea-indirect-with-post-increment-s1-direct", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite ${d-i4-4}(${d-An})++,${s1-direct-addr} */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_PRE_INCREMENT_S1_DIRECT, "iwrite-d-pea-indirect-with-pre-increment-s1-direct", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite (${d-An},${d-r}),#${s1-imm8} */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_INDEX_S1_IMMEDIATE, "iwrite-d-pea-indirect-with-index-s1-immediate", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite ${d-imm7-4}(${d-An}),#${s1-imm8} */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_OFFSET_S1_IMMEDIATE, "iwrite-d-pea-indirect-with-offset-s1-immediate", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite (${d-An}),#${s1-imm8} */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_S1_IMMEDIATE, "iwrite-d-pea-indirect-s1-immediate", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite (${d-An})${d-i4-4}++,#${s1-imm8} */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_POST_INCREMENT_S1_IMMEDIATE, "iwrite-d-pea-indirect-with-post-increment-s1-immediate", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite ${d-i4-4}(${d-An})++,#${s1-imm8} */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_PRE_INCREMENT_S1_IMMEDIATE, "iwrite-d-pea-indirect-with-pre-increment-s1-immediate", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite (${d-An},${d-r}),(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_INDEX_S1_INDIRECT_WITH_INDEX_4, "iwrite-d-pea-indirect-with-index-s1-indirect-with-index-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite ${d-imm7-4}(${d-An}),(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_OFFSET_S1_INDIRECT_WITH_INDEX_4, "iwrite-d-pea-indirect-with-offset-s1-indirect-with-index-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite (${d-An}),(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_S1_INDIRECT_WITH_INDEX_4, "iwrite-d-pea-indirect-s1-indirect-with-index-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite (${d-An})${d-i4-4}++,(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_POST_INCREMENT_S1_INDIRECT_WITH_INDEX_4, "iwrite-d-pea-indirect-with-post-increment-s1-indirect-with-index-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite ${d-i4-4}(${d-An})++,(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_PRE_INCREMENT_S1_INDIRECT_WITH_INDEX_4, "iwrite-d-pea-indirect-with-pre-increment-s1-indirect-with-index-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite (${d-An},${d-r}),${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_INDEX_S1_INDIRECT_WITH_OFFSET_4, "iwrite-d-pea-indirect-with-index-s1-indirect-with-offset-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite ${d-imm7-4}(${d-An}),${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_OFFSET_S1_INDIRECT_WITH_OFFSET_4, "iwrite-d-pea-indirect-with-offset-s1-indirect-with-offset-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite (${d-An}),${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_S1_INDIRECT_WITH_OFFSET_4, "iwrite-d-pea-indirect-s1-indirect-with-offset-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite (${d-An})${d-i4-4}++,${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_POST_INCREMENT_S1_INDIRECT_WITH_OFFSET_4, "iwrite-d-pea-indirect-with-post-increment-s1-indirect-with-offset-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite ${d-i4-4}(${d-An})++,${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_PRE_INCREMENT_S1_INDIRECT_WITH_OFFSET_4, "iwrite-d-pea-indirect-with-pre-increment-s1-indirect-with-offset-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite (${d-An},${d-r}),(${s1-An}) */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_INDEX_S1_INDIRECT_4, "iwrite-d-pea-indirect-with-index-s1-indirect-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite ${d-imm7-4}(${d-An}),(${s1-An}) */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_OFFSET_S1_INDIRECT_4, "iwrite-d-pea-indirect-with-offset-s1-indirect-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite (${d-An}),(${s1-An}) */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_S1_INDIRECT_4, "iwrite-d-pea-indirect-s1-indirect-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite (${d-An})${d-i4-4}++,(${s1-An}) */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_POST_INCREMENT_S1_INDIRECT_4, "iwrite-d-pea-indirect-with-post-increment-s1-indirect-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite ${d-i4-4}(${d-An})++,(${s1-An}) */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_PRE_INCREMENT_S1_INDIRECT_4, "iwrite-d-pea-indirect-with-pre-increment-s1-indirect-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite (${d-An},${d-r}),(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_INDEX_S1_INDIRECT_WITH_POST_INCREMENT_4, "iwrite-d-pea-indirect-with-index-s1-indirect-with-post-increment-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite ${d-imm7-4}(${d-An}),(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_OFFSET_S1_INDIRECT_WITH_POST_INCREMENT_4, "iwrite-d-pea-indirect-with-offset-s1-indirect-with-post-increment-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite (${d-An}),(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_S1_INDIRECT_WITH_POST_INCREMENT_4, "iwrite-d-pea-indirect-s1-indirect-with-post-increment-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite (${d-An})${d-i4-4}++,(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_POST_INCREMENT_S1_INDIRECT_WITH_POST_INCREMENT_4, "iwrite-d-pea-indirect-with-post-increment-s1-indirect-with-post-increment-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite ${d-i4-4}(${d-An})++,(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_PRE_INCREMENT_S1_INDIRECT_WITH_POST_INCREMENT_4, "iwrite-d-pea-indirect-with-pre-increment-s1-indirect-with-post-increment-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite (${d-An},${d-r}),${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_INDEX_S1_INDIRECT_WITH_PRE_INCREMENT_4, "iwrite-d-pea-indirect-with-index-s1-indirect-with-pre-increment-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite ${d-imm7-4}(${d-An}),${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_OFFSET_S1_INDIRECT_WITH_PRE_INCREMENT_4, "iwrite-d-pea-indirect-with-offset-s1-indirect-with-pre-increment-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite (${d-An}),${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_S1_INDIRECT_WITH_PRE_INCREMENT_4, "iwrite-d-pea-indirect-s1-indirect-with-pre-increment-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite (${d-An})${d-i4-4}++,${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_POST_INCREMENT_S1_INDIRECT_WITH_PRE_INCREMENT_4, "iwrite-d-pea-indirect-with-post-increment-s1-indirect-with-pre-increment-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* iwrite ${d-i4-4}(${d-An})++,${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_IWRITE_D_PEA_INDIRECT_WITH_PRE_INCREMENT_S1_INDIRECT_WITH_PRE_INCREMENT_4, "iwrite-d-pea-indirect-with-pre-increment-s1-indirect-with-pre-increment-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
   },
 /* tbrest ${d-direct-addr},${s1-direct-addr} */
   {
@@ -1615,492 +4350,492 @@ static const CGEN_IBASE ubi32_cgen_insn_table[MAX_INSNS] =
 /* tbclr ${d-direct-addr},${s1-direct-addr} */
   {
     UBI32_INSN_TBCLR_D_DIRECT_S1_DIRECT, "tbclr-d-direct-s1-direct", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr #${d-imm8},${s1-direct-addr} */
   {
     UBI32_INSN_TBCLR_D_IMMEDIATE_4_S1_DIRECT, "tbclr-d-immediate-4-s1-direct", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr (${d-An},${d-r}),${s1-direct-addr} */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_INDEX_4_S1_DIRECT, "tbclr-d-indirect-with-index-4-s1-direct", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr ${d-imm7-4}(${d-An}),${s1-direct-addr} */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_OFFSET_4_S1_DIRECT, "tbclr-d-indirect-with-offset-4-s1-direct", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr (${d-An}),${s1-direct-addr} */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_4_S1_DIRECT, "tbclr-d-indirect-4-s1-direct", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr (${d-An})${d-i4-4}++,${s1-direct-addr} */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_POST_INCREMENT_4_S1_DIRECT, "tbclr-d-indirect-with-post-increment-4-s1-direct", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr ${d-i4-4}(${d-An})++,${s1-direct-addr} */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_DIRECT, "tbclr-d-indirect-with-pre-increment-4-s1-direct", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr ${d-direct-addr},#${s1-imm8} */
   {
     UBI32_INSN_TBCLR_D_DIRECT_S1_IMMEDIATE, "tbclr-d-direct-s1-immediate", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr #${d-imm8},#${s1-imm8} */
   {
     UBI32_INSN_TBCLR_D_IMMEDIATE_4_S1_IMMEDIATE, "tbclr-d-immediate-4-s1-immediate", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr (${d-An},${d-r}),#${s1-imm8} */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_INDEX_4_S1_IMMEDIATE, "tbclr-d-indirect-with-index-4-s1-immediate", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr ${d-imm7-4}(${d-An}),#${s1-imm8} */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_OFFSET_4_S1_IMMEDIATE, "tbclr-d-indirect-with-offset-4-s1-immediate", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr (${d-An}),#${s1-imm8} */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_4_S1_IMMEDIATE, "tbclr-d-indirect-4-s1-immediate", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr (${d-An})${d-i4-4}++,#${s1-imm8} */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_POST_INCREMENT_4_S1_IMMEDIATE, "tbclr-d-indirect-with-post-increment-4-s1-immediate", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr ${d-i4-4}(${d-An})++,#${s1-imm8} */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_IMMEDIATE, "tbclr-d-indirect-with-pre-increment-4-s1-immediate", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr ${d-direct-addr},(${s1-An},${s1-r}) */
   {
     UBI32_INSN_TBCLR_D_DIRECT_S1_INDIRECT_WITH_INDEX_4, "tbclr-d-direct-s1-indirect-with-index-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr #${d-imm8},(${s1-An},${s1-r}) */
   {
     UBI32_INSN_TBCLR_D_IMMEDIATE_4_S1_INDIRECT_WITH_INDEX_4, "tbclr-d-immediate-4-s1-indirect-with-index-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr (${d-An},${d-r}),(${s1-An},${s1-r}) */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_INDEX_4, "tbclr-d-indirect-with-index-4-s1-indirect-with-index-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr ${d-imm7-4}(${d-An}),(${s1-An},${s1-r}) */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_INDEX_4, "tbclr-d-indirect-with-offset-4-s1-indirect-with-index-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr (${d-An}),(${s1-An},${s1-r}) */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_4_S1_INDIRECT_WITH_INDEX_4, "tbclr-d-indirect-4-s1-indirect-with-index-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr (${d-An})${d-i4-4}++,(${s1-An},${s1-r}) */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_INDEX_4, "tbclr-d-indirect-with-post-increment-4-s1-indirect-with-index-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr ${d-i4-4}(${d-An})++,(${s1-An},${s1-r}) */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_INDEX_4, "tbclr-d-indirect-with-pre-increment-4-s1-indirect-with-index-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr ${d-direct-addr},${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_TBCLR_D_DIRECT_S1_INDIRECT_WITH_OFFSET_4, "tbclr-d-direct-s1-indirect-with-offset-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr #${d-imm8},${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_TBCLR_D_IMMEDIATE_4_S1_INDIRECT_WITH_OFFSET_4, "tbclr-d-immediate-4-s1-indirect-with-offset-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr (${d-An},${d-r}),${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_OFFSET_4, "tbclr-d-indirect-with-index-4-s1-indirect-with-offset-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr ${d-imm7-4}(${d-An}),${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_OFFSET_4, "tbclr-d-indirect-with-offset-4-s1-indirect-with-offset-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr (${d-An}),${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_4_S1_INDIRECT_WITH_OFFSET_4, "tbclr-d-indirect-4-s1-indirect-with-offset-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr (${d-An})${d-i4-4}++,${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_OFFSET_4, "tbclr-d-indirect-with-post-increment-4-s1-indirect-with-offset-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr ${d-i4-4}(${d-An})++,${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_OFFSET_4, "tbclr-d-indirect-with-pre-increment-4-s1-indirect-with-offset-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr ${d-direct-addr},(${s1-An}) */
   {
     UBI32_INSN_TBCLR_D_DIRECT_S1_INDIRECT_4, "tbclr-d-direct-s1-indirect-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr #${d-imm8},(${s1-An}) */
   {
     UBI32_INSN_TBCLR_D_IMMEDIATE_4_S1_INDIRECT_4, "tbclr-d-immediate-4-s1-indirect-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr (${d-An},${d-r}),(${s1-An}) */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_4, "tbclr-d-indirect-with-index-4-s1-indirect-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr ${d-imm7-4}(${d-An}),(${s1-An}) */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_4, "tbclr-d-indirect-with-offset-4-s1-indirect-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr (${d-An}),(${s1-An}) */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_4_S1_INDIRECT_4, "tbclr-d-indirect-4-s1-indirect-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr (${d-An})${d-i4-4}++,(${s1-An}) */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_4, "tbclr-d-indirect-with-post-increment-4-s1-indirect-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr ${d-i4-4}(${d-An})++,(${s1-An}) */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_4, "tbclr-d-indirect-with-pre-increment-4-s1-indirect-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr ${d-direct-addr},(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_TBCLR_D_DIRECT_S1_INDIRECT_WITH_POST_INCREMENT_4, "tbclr-d-direct-s1-indirect-with-post-increment-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr #${d-imm8},(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_TBCLR_D_IMMEDIATE_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "tbclr-d-immediate-4-s1-indirect-with-post-increment-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr (${d-An},${d-r}),(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "tbclr-d-indirect-with-index-4-s1-indirect-with-post-increment-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr ${d-imm7-4}(${d-An}),(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "tbclr-d-indirect-with-offset-4-s1-indirect-with-post-increment-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr (${d-An}),(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "tbclr-d-indirect-4-s1-indirect-with-post-increment-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr (${d-An})${d-i4-4}++,(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "tbclr-d-indirect-with-post-increment-4-s1-indirect-with-post-increment-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr ${d-i4-4}(${d-An})++,(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "tbclr-d-indirect-with-pre-increment-4-s1-indirect-with-post-increment-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr ${d-direct-addr},${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_TBCLR_D_DIRECT_S1_INDIRECT_WITH_PRE_INCREMENT_4, "tbclr-d-direct-s1-indirect-with-pre-increment-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr #${d-imm8},${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_TBCLR_D_IMMEDIATE_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "tbclr-d-immediate-4-s1-indirect-with-pre-increment-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr (${d-An},${d-r}),${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "tbclr-d-indirect-with-index-4-s1-indirect-with-pre-increment-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr ${d-imm7-4}(${d-An}),${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "tbclr-d-indirect-with-offset-4-s1-indirect-with-pre-increment-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr (${d-An}),${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "tbclr-d-indirect-4-s1-indirect-with-pre-increment-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr (${d-An})${d-i4-4}++,${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "tbclr-d-indirect-with-post-increment-4-s1-indirect-with-pre-increment-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbclr ${d-i4-4}(${d-An})++,${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_TBCLR_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "tbclr-d-indirect-with-pre-increment-4-s1-indirect-with-pre-increment-4", "tbclr", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset ${d-direct-addr},${s1-direct-addr} */
   {
     UBI32_INSN_TBSET_D_DIRECT_S1_DIRECT, "tbset-d-direct-s1-direct", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset #${d-imm8},${s1-direct-addr} */
   {
     UBI32_INSN_TBSET_D_IMMEDIATE_4_S1_DIRECT, "tbset-d-immediate-4-s1-direct", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset (${d-An},${d-r}),${s1-direct-addr} */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_INDEX_4_S1_DIRECT, "tbset-d-indirect-with-index-4-s1-direct", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset ${d-imm7-4}(${d-An}),${s1-direct-addr} */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_OFFSET_4_S1_DIRECT, "tbset-d-indirect-with-offset-4-s1-direct", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset (${d-An}),${s1-direct-addr} */
   {
     UBI32_INSN_TBSET_D_INDIRECT_4_S1_DIRECT, "tbset-d-indirect-4-s1-direct", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset (${d-An})${d-i4-4}++,${s1-direct-addr} */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_POST_INCREMENT_4_S1_DIRECT, "tbset-d-indirect-with-post-increment-4-s1-direct", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset ${d-i4-4}(${d-An})++,${s1-direct-addr} */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_DIRECT, "tbset-d-indirect-with-pre-increment-4-s1-direct", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset ${d-direct-addr},#${s1-imm8} */
   {
     UBI32_INSN_TBSET_D_DIRECT_S1_IMMEDIATE, "tbset-d-direct-s1-immediate", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset #${d-imm8},#${s1-imm8} */
   {
     UBI32_INSN_TBSET_D_IMMEDIATE_4_S1_IMMEDIATE, "tbset-d-immediate-4-s1-immediate", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset (${d-An},${d-r}),#${s1-imm8} */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_INDEX_4_S1_IMMEDIATE, "tbset-d-indirect-with-index-4-s1-immediate", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset ${d-imm7-4}(${d-An}),#${s1-imm8} */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_OFFSET_4_S1_IMMEDIATE, "tbset-d-indirect-with-offset-4-s1-immediate", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset (${d-An}),#${s1-imm8} */
   {
     UBI32_INSN_TBSET_D_INDIRECT_4_S1_IMMEDIATE, "tbset-d-indirect-4-s1-immediate", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset (${d-An})${d-i4-4}++,#${s1-imm8} */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_POST_INCREMENT_4_S1_IMMEDIATE, "tbset-d-indirect-with-post-increment-4-s1-immediate", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset ${d-i4-4}(${d-An})++,#${s1-imm8} */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_IMMEDIATE, "tbset-d-indirect-with-pre-increment-4-s1-immediate", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset ${d-direct-addr},(${s1-An},${s1-r}) */
   {
     UBI32_INSN_TBSET_D_DIRECT_S1_INDIRECT_WITH_INDEX_4, "tbset-d-direct-s1-indirect-with-index-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset #${d-imm8},(${s1-An},${s1-r}) */
   {
     UBI32_INSN_TBSET_D_IMMEDIATE_4_S1_INDIRECT_WITH_INDEX_4, "tbset-d-immediate-4-s1-indirect-with-index-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset (${d-An},${d-r}),(${s1-An},${s1-r}) */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_INDEX_4, "tbset-d-indirect-with-index-4-s1-indirect-with-index-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset ${d-imm7-4}(${d-An}),(${s1-An},${s1-r}) */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_INDEX_4, "tbset-d-indirect-with-offset-4-s1-indirect-with-index-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset (${d-An}),(${s1-An},${s1-r}) */
   {
     UBI32_INSN_TBSET_D_INDIRECT_4_S1_INDIRECT_WITH_INDEX_4, "tbset-d-indirect-4-s1-indirect-with-index-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset (${d-An})${d-i4-4}++,(${s1-An},${s1-r}) */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_INDEX_4, "tbset-d-indirect-with-post-increment-4-s1-indirect-with-index-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset ${d-i4-4}(${d-An})++,(${s1-An},${s1-r}) */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_INDEX_4, "tbset-d-indirect-with-pre-increment-4-s1-indirect-with-index-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset ${d-direct-addr},${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_TBSET_D_DIRECT_S1_INDIRECT_WITH_OFFSET_4, "tbset-d-direct-s1-indirect-with-offset-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset #${d-imm8},${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_TBSET_D_IMMEDIATE_4_S1_INDIRECT_WITH_OFFSET_4, "tbset-d-immediate-4-s1-indirect-with-offset-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset (${d-An},${d-r}),${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_OFFSET_4, "tbset-d-indirect-with-index-4-s1-indirect-with-offset-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset ${d-imm7-4}(${d-An}),${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_OFFSET_4, "tbset-d-indirect-with-offset-4-s1-indirect-with-offset-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset (${d-An}),${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_TBSET_D_INDIRECT_4_S1_INDIRECT_WITH_OFFSET_4, "tbset-d-indirect-4-s1-indirect-with-offset-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset (${d-An})${d-i4-4}++,${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_OFFSET_4, "tbset-d-indirect-with-post-increment-4-s1-indirect-with-offset-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset ${d-i4-4}(${d-An})++,${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_OFFSET_4, "tbset-d-indirect-with-pre-increment-4-s1-indirect-with-offset-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset ${d-direct-addr},(${s1-An}) */
   {
     UBI32_INSN_TBSET_D_DIRECT_S1_INDIRECT_4, "tbset-d-direct-s1-indirect-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset #${d-imm8},(${s1-An}) */
   {
     UBI32_INSN_TBSET_D_IMMEDIATE_4_S1_INDIRECT_4, "tbset-d-immediate-4-s1-indirect-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset (${d-An},${d-r}),(${s1-An}) */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_4, "tbset-d-indirect-with-index-4-s1-indirect-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset ${d-imm7-4}(${d-An}),(${s1-An}) */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_4, "tbset-d-indirect-with-offset-4-s1-indirect-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset (${d-An}),(${s1-An}) */
   {
     UBI32_INSN_TBSET_D_INDIRECT_4_S1_INDIRECT_4, "tbset-d-indirect-4-s1-indirect-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset (${d-An})${d-i4-4}++,(${s1-An}) */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_4, "tbset-d-indirect-with-post-increment-4-s1-indirect-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset ${d-i4-4}(${d-An})++,(${s1-An}) */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_4, "tbset-d-indirect-with-pre-increment-4-s1-indirect-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset ${d-direct-addr},(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_TBSET_D_DIRECT_S1_INDIRECT_WITH_POST_INCREMENT_4, "tbset-d-direct-s1-indirect-with-post-increment-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset #${d-imm8},(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_TBSET_D_IMMEDIATE_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "tbset-d-immediate-4-s1-indirect-with-post-increment-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset (${d-An},${d-r}),(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "tbset-d-indirect-with-index-4-s1-indirect-with-post-increment-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset ${d-imm7-4}(${d-An}),(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "tbset-d-indirect-with-offset-4-s1-indirect-with-post-increment-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset (${d-An}),(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_TBSET_D_INDIRECT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "tbset-d-indirect-4-s1-indirect-with-post-increment-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset (${d-An})${d-i4-4}++,(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "tbset-d-indirect-with-post-increment-4-s1-indirect-with-post-increment-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset ${d-i4-4}(${d-An})++,(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "tbset-d-indirect-with-pre-increment-4-s1-indirect-with-post-increment-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset ${d-direct-addr},${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_TBSET_D_DIRECT_S1_INDIRECT_WITH_PRE_INCREMENT_4, "tbset-d-direct-s1-indirect-with-pre-increment-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset #${d-imm8},${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_TBSET_D_IMMEDIATE_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "tbset-d-immediate-4-s1-indirect-with-pre-increment-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset (${d-An},${d-r}),${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "tbset-d-indirect-with-index-4-s1-indirect-with-pre-increment-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset ${d-imm7-4}(${d-An}),${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "tbset-d-indirect-with-offset-4-s1-indirect-with-pre-increment-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset (${d-An}),${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_TBSET_D_INDIRECT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "tbset-d-indirect-4-s1-indirect-with-pre-increment-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset (${d-An})${d-i4-4}++,${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "tbset-d-indirect-with-post-increment-4-s1-indirect-with-pre-increment-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* tbset ${d-i4-4}(${d-An})++,${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_TBSET_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "tbset-d-indirect-with-pre-increment-4-s1-indirect-with-pre-increment-4", "tbset", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER5)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* setcsr ${s1-direct-addr} */
   {
@@ -3680,247 +6415,247 @@ static const CGEN_IBASE ubi32_cgen_insn_table[MAX_INSNS] =
 /* movea ${d-direct-addr},${s1-direct-addr} */
   {
     UBI32_INSN_MOVEA_D_DIRECT_S1_DIRECT, "movea-d-direct-s1-direct", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea #${d-imm8},${s1-direct-addr} */
   {
     UBI32_INSN_MOVEA_D_IMMEDIATE_4_S1_DIRECT, "movea-d-immediate-4-s1-direct", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea (${d-An},${d-r}),${s1-direct-addr} */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_INDEX_4_S1_DIRECT, "movea-d-indirect-with-index-4-s1-direct", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea ${d-imm7-4}(${d-An}),${s1-direct-addr} */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_OFFSET_4_S1_DIRECT, "movea-d-indirect-with-offset-4-s1-direct", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea (${d-An}),${s1-direct-addr} */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_4_S1_DIRECT, "movea-d-indirect-4-s1-direct", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea (${d-An})${d-i4-4}++,${s1-direct-addr} */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_POST_INCREMENT_4_S1_DIRECT, "movea-d-indirect-with-post-increment-4-s1-direct", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea ${d-i4-4}(${d-An})++,${s1-direct-addr} */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_DIRECT, "movea-d-indirect-with-pre-increment-4-s1-direct", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea ${d-direct-addr},#${s1-imm8} */
   {
     UBI32_INSN_MOVEA_D_DIRECT_S1_IMMEDIATE, "movea-d-direct-s1-immediate", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea #${d-imm8},#${s1-imm8} */
   {
     UBI32_INSN_MOVEA_D_IMMEDIATE_4_S1_IMMEDIATE, "movea-d-immediate-4-s1-immediate", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea (${d-An},${d-r}),#${s1-imm8} */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_INDEX_4_S1_IMMEDIATE, "movea-d-indirect-with-index-4-s1-immediate", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea ${d-imm7-4}(${d-An}),#${s1-imm8} */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_OFFSET_4_S1_IMMEDIATE, "movea-d-indirect-with-offset-4-s1-immediate", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea (${d-An}),#${s1-imm8} */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_4_S1_IMMEDIATE, "movea-d-indirect-4-s1-immediate", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea (${d-An})${d-i4-4}++,#${s1-imm8} */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_POST_INCREMENT_4_S1_IMMEDIATE, "movea-d-indirect-with-post-increment-4-s1-immediate", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea ${d-i4-4}(${d-An})++,#${s1-imm8} */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_IMMEDIATE, "movea-d-indirect-with-pre-increment-4-s1-immediate", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea ${d-direct-addr},(${s1-An},${s1-r}) */
   {
     UBI32_INSN_MOVEA_D_DIRECT_S1_INDIRECT_WITH_INDEX_4, "movea-d-direct-s1-indirect-with-index-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea #${d-imm8},(${s1-An},${s1-r}) */
   {
     UBI32_INSN_MOVEA_D_IMMEDIATE_4_S1_INDIRECT_WITH_INDEX_4, "movea-d-immediate-4-s1-indirect-with-index-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea (${d-An},${d-r}),(${s1-An},${s1-r}) */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_INDEX_4, "movea-d-indirect-with-index-4-s1-indirect-with-index-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea ${d-imm7-4}(${d-An}),(${s1-An},${s1-r}) */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_INDEX_4, "movea-d-indirect-with-offset-4-s1-indirect-with-index-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea (${d-An}),(${s1-An},${s1-r}) */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_4_S1_INDIRECT_WITH_INDEX_4, "movea-d-indirect-4-s1-indirect-with-index-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea (${d-An})${d-i4-4}++,(${s1-An},${s1-r}) */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_INDEX_4, "movea-d-indirect-with-post-increment-4-s1-indirect-with-index-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea ${d-i4-4}(${d-An})++,(${s1-An},${s1-r}) */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_INDEX_4, "movea-d-indirect-with-pre-increment-4-s1-indirect-with-index-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea ${d-direct-addr},${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_MOVEA_D_DIRECT_S1_INDIRECT_WITH_OFFSET_4, "movea-d-direct-s1-indirect-with-offset-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea #${d-imm8},${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_MOVEA_D_IMMEDIATE_4_S1_INDIRECT_WITH_OFFSET_4, "movea-d-immediate-4-s1-indirect-with-offset-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea (${d-An},${d-r}),${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_OFFSET_4, "movea-d-indirect-with-index-4-s1-indirect-with-offset-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea ${d-imm7-4}(${d-An}),${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_OFFSET_4, "movea-d-indirect-with-offset-4-s1-indirect-with-offset-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea (${d-An}),${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_4_S1_INDIRECT_WITH_OFFSET_4, "movea-d-indirect-4-s1-indirect-with-offset-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea (${d-An})${d-i4-4}++,${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_OFFSET_4, "movea-d-indirect-with-post-increment-4-s1-indirect-with-offset-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea ${d-i4-4}(${d-An})++,${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_OFFSET_4, "movea-d-indirect-with-pre-increment-4-s1-indirect-with-offset-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea ${d-direct-addr},(${s1-An}) */
   {
     UBI32_INSN_MOVEA_D_DIRECT_S1_INDIRECT_4, "movea-d-direct-s1-indirect-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea #${d-imm8},(${s1-An}) */
   {
     UBI32_INSN_MOVEA_D_IMMEDIATE_4_S1_INDIRECT_4, "movea-d-immediate-4-s1-indirect-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea (${d-An},${d-r}),(${s1-An}) */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_4, "movea-d-indirect-with-index-4-s1-indirect-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea ${d-imm7-4}(${d-An}),(${s1-An}) */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_4, "movea-d-indirect-with-offset-4-s1-indirect-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea (${d-An}),(${s1-An}) */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_4_S1_INDIRECT_4, "movea-d-indirect-4-s1-indirect-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea (${d-An})${d-i4-4}++,(${s1-An}) */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_4, "movea-d-indirect-with-post-increment-4-s1-indirect-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea ${d-i4-4}(${d-An})++,(${s1-An}) */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_4, "movea-d-indirect-with-pre-increment-4-s1-indirect-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea ${d-direct-addr},(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_MOVEA_D_DIRECT_S1_INDIRECT_WITH_POST_INCREMENT_4, "movea-d-direct-s1-indirect-with-post-increment-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea #${d-imm8},(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_MOVEA_D_IMMEDIATE_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "movea-d-immediate-4-s1-indirect-with-post-increment-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea (${d-An},${d-r}),(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "movea-d-indirect-with-index-4-s1-indirect-with-post-increment-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea ${d-imm7-4}(${d-An}),(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "movea-d-indirect-with-offset-4-s1-indirect-with-post-increment-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea (${d-An}),(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "movea-d-indirect-4-s1-indirect-with-post-increment-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea (${d-An})${d-i4-4}++,(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "movea-d-indirect-with-post-increment-4-s1-indirect-with-post-increment-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea ${d-i4-4}(${d-An})++,(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "movea-d-indirect-with-pre-increment-4-s1-indirect-with-post-increment-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea ${d-direct-addr},${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_MOVEA_D_DIRECT_S1_INDIRECT_WITH_PRE_INCREMENT_4, "movea-d-direct-s1-indirect-with-pre-increment-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea #${d-imm8},${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_MOVEA_D_IMMEDIATE_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "movea-d-immediate-4-s1-indirect-with-pre-increment-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea (${d-An},${d-r}),${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "movea-d-indirect-with-index-4-s1-indirect-with-pre-increment-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea ${d-imm7-4}(${d-An}),${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "movea-d-indirect-with-offset-4-s1-indirect-with-pre-increment-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea (${d-An}),${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "movea-d-indirect-4-s1-indirect-with-pre-increment-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea (${d-An})${d-i4-4}++,${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "movea-d-indirect-with-post-increment-4-s1-indirect-with-pre-increment-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* movea ${d-i4-4}(${d-An})++,${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_MOVEA_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "movea-d-indirect-with-pre-increment-4-s1-indirect-with-pre-increment-4", "movea", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* move.4 ${d-direct-addr},${s1-direct-addr} */
   {
@@ -4166,6 +6901,206 @@ static const CGEN_IBASE ubi32_cgen_insn_table[MAX_INSNS] =
   {
     UBI32_INSN_MOVE_4_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "move.4-d-indirect-with-pre-increment-4-s1-indirect-with-pre-increment-4", "move.4", 32,
     { 0, { { { (1<<MACH_BASE), 0 } } } }
+  },
+/* iread (${s1-An}) */
+  {
+    UBI32_INSN_COMPATIBILITY_IREAD_S1_EA_INDIRECT, "compatibility-iread-s1-ea-indirect", "iread", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iread (${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_COMPATIBILITY_IREAD_S1_EA_INDIRECT_WITH_INDEX_4, "compatibility-iread-s1-ea-indirect-with-index-4", "iread", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iread (${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_COMPATIBILITY_IREAD_S1_EA_INDIRECT_WITH_POST_INCREMENT_4, "compatibility-iread-s1-ea-indirect-with-post-increment-4", "iread", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iread ${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_COMPATIBILITY_IREAD_S1_EA_INDIRECT_WITH_PRE_INCREMENT_4, "compatibility-iread-s1-ea-indirect-with-pre-increment-4", "iread", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iread ${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_COMPATIBILITY_IREAD_S1_EA_INDIRECT_WITH_OFFSET_4, "compatibility-iread-s1-ea-indirect-with-offset-4", "iread", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite (${d-An},${d-r}),${s1-direct-addr} */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_INDEX_S1_DIRECT, "compatibility-iwrite-d-pea-indirect-with-index-s1-direct", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite ${d-imm7-4}(${d-An}),${s1-direct-addr} */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_OFFSET_S1_DIRECT, "compatibility-iwrite-d-pea-indirect-with-offset-s1-direct", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite (${d-An}),${s1-direct-addr} */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_S1_DIRECT, "compatibility-iwrite-d-pea-indirect-s1-direct", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite (${d-An})${d-i4-4}++,${s1-direct-addr} */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_POST_INCREMENT_S1_DIRECT, "compatibility-iwrite-d-pea-indirect-with-post-increment-s1-direct", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite ${d-i4-4}(${d-An})++,${s1-direct-addr} */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_PRE_INCREMENT_S1_DIRECT, "compatibility-iwrite-d-pea-indirect-with-pre-increment-s1-direct", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite (${d-An},${d-r}),#${s1-imm8} */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_INDEX_S1_IMMEDIATE, "compatibility-iwrite-d-pea-indirect-with-index-s1-immediate", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite ${d-imm7-4}(${d-An}),#${s1-imm8} */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_OFFSET_S1_IMMEDIATE, "compatibility-iwrite-d-pea-indirect-with-offset-s1-immediate", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite (${d-An}),#${s1-imm8} */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_S1_IMMEDIATE, "compatibility-iwrite-d-pea-indirect-s1-immediate", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite (${d-An})${d-i4-4}++,#${s1-imm8} */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_POST_INCREMENT_S1_IMMEDIATE, "compatibility-iwrite-d-pea-indirect-with-post-increment-s1-immediate", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite ${d-i4-4}(${d-An})++,#${s1-imm8} */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_PRE_INCREMENT_S1_IMMEDIATE, "compatibility-iwrite-d-pea-indirect-with-pre-increment-s1-immediate", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite (${d-An},${d-r}),(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_INDEX_S1_INDIRECT_WITH_INDEX_4, "compatibility-iwrite-d-pea-indirect-with-index-s1-indirect-with-index-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite ${d-imm7-4}(${d-An}),(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_OFFSET_S1_INDIRECT_WITH_INDEX_4, "compatibility-iwrite-d-pea-indirect-with-offset-s1-indirect-with-index-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite (${d-An}),(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_S1_INDIRECT_WITH_INDEX_4, "compatibility-iwrite-d-pea-indirect-s1-indirect-with-index-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite (${d-An})${d-i4-4}++,(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_POST_INCREMENT_S1_INDIRECT_WITH_INDEX_4, "compatibility-iwrite-d-pea-indirect-with-post-increment-s1-indirect-with-index-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite ${d-i4-4}(${d-An})++,(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_PRE_INCREMENT_S1_INDIRECT_WITH_INDEX_4, "compatibility-iwrite-d-pea-indirect-with-pre-increment-s1-indirect-with-index-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite (${d-An},${d-r}),${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_INDEX_S1_INDIRECT_WITH_OFFSET_4, "compatibility-iwrite-d-pea-indirect-with-index-s1-indirect-with-offset-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite ${d-imm7-4}(${d-An}),${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_OFFSET_S1_INDIRECT_WITH_OFFSET_4, "compatibility-iwrite-d-pea-indirect-with-offset-s1-indirect-with-offset-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite (${d-An}),${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_S1_INDIRECT_WITH_OFFSET_4, "compatibility-iwrite-d-pea-indirect-s1-indirect-with-offset-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite (${d-An})${d-i4-4}++,${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_POST_INCREMENT_S1_INDIRECT_WITH_OFFSET_4, "compatibility-iwrite-d-pea-indirect-with-post-increment-s1-indirect-with-offset-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite ${d-i4-4}(${d-An})++,${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_PRE_INCREMENT_S1_INDIRECT_WITH_OFFSET_4, "compatibility-iwrite-d-pea-indirect-with-pre-increment-s1-indirect-with-offset-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite (${d-An},${d-r}),(${s1-An}) */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_INDEX_S1_INDIRECT_4, "compatibility-iwrite-d-pea-indirect-with-index-s1-indirect-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite ${d-imm7-4}(${d-An}),(${s1-An}) */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_OFFSET_S1_INDIRECT_4, "compatibility-iwrite-d-pea-indirect-with-offset-s1-indirect-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite (${d-An}),(${s1-An}) */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_S1_INDIRECT_4, "compatibility-iwrite-d-pea-indirect-s1-indirect-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite (${d-An})${d-i4-4}++,(${s1-An}) */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_POST_INCREMENT_S1_INDIRECT_4, "compatibility-iwrite-d-pea-indirect-with-post-increment-s1-indirect-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite ${d-i4-4}(${d-An})++,(${s1-An}) */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_PRE_INCREMENT_S1_INDIRECT_4, "compatibility-iwrite-d-pea-indirect-with-pre-increment-s1-indirect-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite (${d-An},${d-r}),(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_INDEX_S1_INDIRECT_WITH_POST_INCREMENT_4, "compatibility-iwrite-d-pea-indirect-with-index-s1-indirect-with-post-increment-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite ${d-imm7-4}(${d-An}),(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_OFFSET_S1_INDIRECT_WITH_POST_INCREMENT_4, "compatibility-iwrite-d-pea-indirect-with-offset-s1-indirect-with-post-increment-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite (${d-An}),(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_S1_INDIRECT_WITH_POST_INCREMENT_4, "compatibility-iwrite-d-pea-indirect-s1-indirect-with-post-increment-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite (${d-An})${d-i4-4}++,(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_POST_INCREMENT_S1_INDIRECT_WITH_POST_INCREMENT_4, "compatibility-iwrite-d-pea-indirect-with-post-increment-s1-indirect-with-post-increment-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite ${d-i4-4}(${d-An})++,(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_PRE_INCREMENT_S1_INDIRECT_WITH_POST_INCREMENT_4, "compatibility-iwrite-d-pea-indirect-with-pre-increment-s1-indirect-with-post-increment-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite (${d-An},${d-r}),${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_INDEX_S1_INDIRECT_WITH_PRE_INCREMENT_4, "compatibility-iwrite-d-pea-indirect-with-index-s1-indirect-with-pre-increment-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite ${d-imm7-4}(${d-An}),${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_OFFSET_S1_INDIRECT_WITH_PRE_INCREMENT_4, "compatibility-iwrite-d-pea-indirect-with-offset-s1-indirect-with-pre-increment-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite (${d-An}),${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_S1_INDIRECT_WITH_PRE_INCREMENT_4, "compatibility-iwrite-d-pea-indirect-s1-indirect-with-pre-increment-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite (${d-An})${d-i4-4}++,${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_POST_INCREMENT_S1_INDIRECT_WITH_PRE_INCREMENT_4, "compatibility-iwrite-d-pea-indirect-with-post-increment-s1-indirect-with-pre-increment-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* iwrite ${d-i4-4}(${d-An})++,${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_COMPATIBILITY_IWRITE_D_PEA_INDIRECT_WITH_PRE_INCREMENT_S1_INDIRECT_WITH_PRE_INCREMENT_4, "compatibility-iwrite-d-pea-indirect-with-pre-increment-s1-indirect-with-pre-increment-4", "iwrite", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
   },
 /* move.2 ${d-direct-addr},${s1-direct-addr} */
   {
@@ -5882,6 +8817,76 @@ static const CGEN_IBASE ubi32_cgen_insn_table[MAX_INSNS] =
     UBI32_INSN_SHMRG_1_DYN_REG_S1_INDIRECT_WITH_PRE_INCREMENT_1, "shmrg.1-dyn-reg-s1-indirect-with-pre-increment-1", "shmrg.1", 32,
     { 0, { { { (1<<MACH_BASE), 0 } } } }
   },
+/* crcgen ${s1-direct-addr},#${bit5} */
+  {
+    UBI32_INSN_CRCGEN_S1_DIRECT_IMM_BIT5, "crcgen-s1-direct-imm-bit5", "crcgen", 32,
+    { 0, { { { (1<<MACH_UBI32DSP), 0 } } } }
+  },
+/* crcgen #${s1-imm8},#${bit5} */
+  {
+    UBI32_INSN_CRCGEN_S1_IMMEDIATE_IMM_BIT5, "crcgen-s1-immediate-imm-bit5", "crcgen", 32,
+    { 0, { { { (1<<MACH_UBI32DSP), 0 } } } }
+  },
+/* crcgen (${s1-An},${s1-r}),#${bit5} */
+  {
+    UBI32_INSN_CRCGEN_S1_INDIRECT_WITH_INDEX_1_IMM_BIT5, "crcgen-s1-indirect-with-index-1-imm-bit5", "crcgen", 32,
+    { 0, { { { (1<<MACH_UBI32DSP), 0 } } } }
+  },
+/* crcgen ${s1-imm7-1}(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_CRCGEN_S1_INDIRECT_WITH_OFFSET_1_IMM_BIT5, "crcgen-s1-indirect-with-offset-1-imm-bit5", "crcgen", 32,
+    { 0, { { { (1<<MACH_UBI32DSP), 0 } } } }
+  },
+/* crcgen (${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_CRCGEN_S1_INDIRECT_1_IMM_BIT5, "crcgen-s1-indirect-1-imm-bit5", "crcgen", 32,
+    { 0, { { { (1<<MACH_UBI32DSP), 0 } } } }
+  },
+/* crcgen (${s1-An})${s1-i4-1}++,#${bit5} */
+  {
+    UBI32_INSN_CRCGEN_S1_INDIRECT_WITH_POST_INCREMENT_1_IMM_BIT5, "crcgen-s1-indirect-with-post-increment-1-imm-bit5", "crcgen", 32,
+    { 0, { { { (1<<MACH_UBI32DSP), 0 } } } }
+  },
+/* crcgen ${s1-i4-1}(${s1-An})++,#${bit5} */
+  {
+    UBI32_INSN_CRCGEN_S1_INDIRECT_WITH_PRE_INCREMENT_1_IMM_BIT5, "crcgen-s1-indirect-with-pre-increment-1-imm-bit5", "crcgen", 32,
+    { 0, { { { (1<<MACH_UBI32DSP), 0 } } } }
+  },
+/* crcgen ${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_CRCGEN_S1_DIRECT_DYN_REG, "crcgen-s1-direct-dyn-reg", "crcgen", 32,
+    { 0, { { { (1<<MACH_UBI32DSP), 0 } } } }
+  },
+/* crcgen #${s1-imm8},${s2} */
+  {
+    UBI32_INSN_CRCGEN_S1_IMMEDIATE_DYN_REG, "crcgen-s1-immediate-dyn-reg", "crcgen", 32,
+    { 0, { { { (1<<MACH_UBI32DSP), 0 } } } }
+  },
+/* crcgen (${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_CRCGEN_S1_INDIRECT_WITH_INDEX_1_DYN_REG, "crcgen-s1-indirect-with-index-1-dyn-reg", "crcgen", 32,
+    { 0, { { { (1<<MACH_UBI32DSP), 0 } } } }
+  },
+/* crcgen ${s1-imm7-1}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_CRCGEN_S1_INDIRECT_WITH_OFFSET_1_DYN_REG, "crcgen-s1-indirect-with-offset-1-dyn-reg", "crcgen", 32,
+    { 0, { { { (1<<MACH_UBI32DSP), 0 } } } }
+  },
+/* crcgen (${s1-An}),${s2} */
+  {
+    UBI32_INSN_CRCGEN_S1_INDIRECT_1_DYN_REG, "crcgen-s1-indirect-1-dyn-reg", "crcgen", 32,
+    { 0, { { { (1<<MACH_UBI32DSP), 0 } } } }
+  },
+/* crcgen (${s1-An})${s1-i4-1}++,${s2} */
+  {
+    UBI32_INSN_CRCGEN_S1_INDIRECT_WITH_POST_INCREMENT_1_DYN_REG, "crcgen-s1-indirect-with-post-increment-1-dyn-reg", "crcgen", 32,
+    { 0, { { { (1<<MACH_UBI32DSP), 0 } } } }
+  },
+/* crcgen ${s1-i4-1}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_CRCGEN_S1_INDIRECT_WITH_PRE_INCREMENT_1_DYN_REG, "crcgen-s1-indirect-with-pre-increment-1-dyn-reg", "crcgen", 32,
+    { 0, { { { (1<<MACH_UBI32DSP), 0 } } } }
+  },
 /* bfextu ${Dn},${s1-direct-addr},#${bit5} */
   {
     UBI32_INSN_BFEXTU_S1_DIRECT_IMM_BIT5, "bfextu-s1-direct-imm-bit5", "bfextu", 32,
@@ -6165,212 +9170,212 @@ static const CGEN_IBASE ubi32_cgen_insn_table[MAX_INSNS] =
 /* asr.1 ${Dn},${s1-direct-addr},#${bit5} */
   {
     UBI32_INSN_ASR_1_IMM_BIT5_S1_DIRECT, "asr.1-imm-bit5-s1-direct", "asr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* asr.1 ${Dn},${s1-direct-addr},${s2} */
   {
     UBI32_INSN_ASR_1_DYN_REG_S1_DIRECT, "asr.1-dyn-reg-s1-direct", "asr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* asr.1 ${Dn},#${s1-imm8},#${bit5} */
   {
     UBI32_INSN_ASR_1_IMM_BIT5_S1_IMMEDIATE, "asr.1-imm-bit5-s1-immediate", "asr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* asr.1 ${Dn},#${s1-imm8},${s2} */
   {
     UBI32_INSN_ASR_1_DYN_REG_S1_IMMEDIATE, "asr.1-dyn-reg-s1-immediate", "asr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* asr.1 ${Dn},(${s1-An},${s1-r}),#${bit5} */
   {
     UBI32_INSN_ASR_1_IMM_BIT5_S1_INDIRECT_WITH_INDEX_1, "asr.1-imm-bit5-s1-indirect-with-index-1", "asr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* asr.1 ${Dn},(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_ASR_1_DYN_REG_S1_INDIRECT_WITH_INDEX_1, "asr.1-dyn-reg-s1-indirect-with-index-1", "asr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* asr.1 ${Dn},${s1-imm7-1}(${s1-An}),#${bit5} */
   {
     UBI32_INSN_ASR_1_IMM_BIT5_S1_INDIRECT_WITH_OFFSET_1, "asr.1-imm-bit5-s1-indirect-with-offset-1", "asr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* asr.1 ${Dn},${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_ASR_1_DYN_REG_S1_INDIRECT_WITH_OFFSET_1, "asr.1-dyn-reg-s1-indirect-with-offset-1", "asr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* asr.1 ${Dn},(${s1-An}),#${bit5} */
   {
     UBI32_INSN_ASR_1_IMM_BIT5_S1_INDIRECT_1, "asr.1-imm-bit5-s1-indirect-1", "asr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* asr.1 ${Dn},(${s1-An}),${s2} */
   {
     UBI32_INSN_ASR_1_DYN_REG_S1_INDIRECT_1, "asr.1-dyn-reg-s1-indirect-1", "asr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* asr.1 ${Dn},(${s1-An})${s1-i4-1}++,#${bit5} */
   {
     UBI32_INSN_ASR_1_IMM_BIT5_S1_INDIRECT_WITH_POST_INCREMENT_1, "asr.1-imm-bit5-s1-indirect-with-post-increment-1", "asr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* asr.1 ${Dn},(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_ASR_1_DYN_REG_S1_INDIRECT_WITH_POST_INCREMENT_1, "asr.1-dyn-reg-s1-indirect-with-post-increment-1", "asr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* asr.1 ${Dn},${s1-i4-1}(${s1-An})++,#${bit5} */
   {
     UBI32_INSN_ASR_1_IMM_BIT5_S1_INDIRECT_WITH_PRE_INCREMENT_1, "asr.1-imm-bit5-s1-indirect-with-pre-increment-1", "asr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* asr.1 ${Dn},${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_ASR_1_DYN_REG_S1_INDIRECT_WITH_PRE_INCREMENT_1, "asr.1-dyn-reg-s1-indirect-with-pre-increment-1", "asr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsl.1 ${Dn},${s1-direct-addr},#${bit5} */
   {
     UBI32_INSN_LSL_1_IMM_BIT5_S1_DIRECT, "lsl.1-imm-bit5-s1-direct", "lsl.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsl.1 ${Dn},${s1-direct-addr},${s2} */
   {
     UBI32_INSN_LSL_1_DYN_REG_S1_DIRECT, "lsl.1-dyn-reg-s1-direct", "lsl.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsl.1 ${Dn},#${s1-imm8},#${bit5} */
   {
     UBI32_INSN_LSL_1_IMM_BIT5_S1_IMMEDIATE, "lsl.1-imm-bit5-s1-immediate", "lsl.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsl.1 ${Dn},#${s1-imm8},${s2} */
   {
     UBI32_INSN_LSL_1_DYN_REG_S1_IMMEDIATE, "lsl.1-dyn-reg-s1-immediate", "lsl.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsl.1 ${Dn},(${s1-An},${s1-r}),#${bit5} */
   {
     UBI32_INSN_LSL_1_IMM_BIT5_S1_INDIRECT_WITH_INDEX_1, "lsl.1-imm-bit5-s1-indirect-with-index-1", "lsl.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsl.1 ${Dn},(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_LSL_1_DYN_REG_S1_INDIRECT_WITH_INDEX_1, "lsl.1-dyn-reg-s1-indirect-with-index-1", "lsl.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsl.1 ${Dn},${s1-imm7-1}(${s1-An}),#${bit5} */
   {
     UBI32_INSN_LSL_1_IMM_BIT5_S1_INDIRECT_WITH_OFFSET_1, "lsl.1-imm-bit5-s1-indirect-with-offset-1", "lsl.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsl.1 ${Dn},${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_LSL_1_DYN_REG_S1_INDIRECT_WITH_OFFSET_1, "lsl.1-dyn-reg-s1-indirect-with-offset-1", "lsl.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsl.1 ${Dn},(${s1-An}),#${bit5} */
   {
     UBI32_INSN_LSL_1_IMM_BIT5_S1_INDIRECT_1, "lsl.1-imm-bit5-s1-indirect-1", "lsl.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsl.1 ${Dn},(${s1-An}),${s2} */
   {
     UBI32_INSN_LSL_1_DYN_REG_S1_INDIRECT_1, "lsl.1-dyn-reg-s1-indirect-1", "lsl.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsl.1 ${Dn},(${s1-An})${s1-i4-1}++,#${bit5} */
   {
     UBI32_INSN_LSL_1_IMM_BIT5_S1_INDIRECT_WITH_POST_INCREMENT_1, "lsl.1-imm-bit5-s1-indirect-with-post-increment-1", "lsl.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsl.1 ${Dn},(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_LSL_1_DYN_REG_S1_INDIRECT_WITH_POST_INCREMENT_1, "lsl.1-dyn-reg-s1-indirect-with-post-increment-1", "lsl.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsl.1 ${Dn},${s1-i4-1}(${s1-An})++,#${bit5} */
   {
     UBI32_INSN_LSL_1_IMM_BIT5_S1_INDIRECT_WITH_PRE_INCREMENT_1, "lsl.1-imm-bit5-s1-indirect-with-pre-increment-1", "lsl.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsl.1 ${Dn},${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_LSL_1_DYN_REG_S1_INDIRECT_WITH_PRE_INCREMENT_1, "lsl.1-dyn-reg-s1-indirect-with-pre-increment-1", "lsl.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsr.1 ${Dn},${s1-direct-addr},#${bit5} */
   {
     UBI32_INSN_LSR_1_IMM_BIT5_S1_DIRECT, "lsr.1-imm-bit5-s1-direct", "lsr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsr.1 ${Dn},${s1-direct-addr},${s2} */
   {
     UBI32_INSN_LSR_1_DYN_REG_S1_DIRECT, "lsr.1-dyn-reg-s1-direct", "lsr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsr.1 ${Dn},#${s1-imm8},#${bit5} */
   {
     UBI32_INSN_LSR_1_IMM_BIT5_S1_IMMEDIATE, "lsr.1-imm-bit5-s1-immediate", "lsr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsr.1 ${Dn},#${s1-imm8},${s2} */
   {
     UBI32_INSN_LSR_1_DYN_REG_S1_IMMEDIATE, "lsr.1-dyn-reg-s1-immediate", "lsr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsr.1 ${Dn},(${s1-An},${s1-r}),#${bit5} */
   {
     UBI32_INSN_LSR_1_IMM_BIT5_S1_INDIRECT_WITH_INDEX_1, "lsr.1-imm-bit5-s1-indirect-with-index-1", "lsr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsr.1 ${Dn},(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_LSR_1_DYN_REG_S1_INDIRECT_WITH_INDEX_1, "lsr.1-dyn-reg-s1-indirect-with-index-1", "lsr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsr.1 ${Dn},${s1-imm7-1}(${s1-An}),#${bit5} */
   {
     UBI32_INSN_LSR_1_IMM_BIT5_S1_INDIRECT_WITH_OFFSET_1, "lsr.1-imm-bit5-s1-indirect-with-offset-1", "lsr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsr.1 ${Dn},${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_LSR_1_DYN_REG_S1_INDIRECT_WITH_OFFSET_1, "lsr.1-dyn-reg-s1-indirect-with-offset-1", "lsr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsr.1 ${Dn},(${s1-An}),#${bit5} */
   {
     UBI32_INSN_LSR_1_IMM_BIT5_S1_INDIRECT_1, "lsr.1-imm-bit5-s1-indirect-1", "lsr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsr.1 ${Dn},(${s1-An}),${s2} */
   {
     UBI32_INSN_LSR_1_DYN_REG_S1_INDIRECT_1, "lsr.1-dyn-reg-s1-indirect-1", "lsr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsr.1 ${Dn},(${s1-An})${s1-i4-1}++,#${bit5} */
   {
     UBI32_INSN_LSR_1_IMM_BIT5_S1_INDIRECT_WITH_POST_INCREMENT_1, "lsr.1-imm-bit5-s1-indirect-with-post-increment-1", "lsr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsr.1 ${Dn},(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_LSR_1_DYN_REG_S1_INDIRECT_WITH_POST_INCREMENT_1, "lsr.1-dyn-reg-s1-indirect-with-post-increment-1", "lsr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsr.1 ${Dn},${s1-i4-1}(${s1-An})++,#${bit5} */
   {
     UBI32_INSN_LSR_1_IMM_BIT5_S1_INDIRECT_WITH_PRE_INCREMENT_1, "lsr.1-imm-bit5-s1-indirect-with-pre-increment-1", "lsr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* lsr.1 ${Dn},${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_LSR_1_DYN_REG_S1_INDIRECT_WITH_PRE_INCREMENT_1, "lsr.1-dyn-reg-s1-indirect-with-pre-increment-1", "lsr.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* asr.2 ${Dn},${s1-direct-addr},#${bit5} */
   {
@@ -6792,495 +9797,1055 @@ static const CGEN_IBASE ubi32_cgen_insn_table[MAX_INSNS] =
     UBI32_INSN_LSR_4_DYN_REG_S1_INDIRECT_WITH_PRE_INCREMENT_4, "lsr.4-dyn-reg-s1-indirect-with-pre-increment-4", "lsr.4", 32,
     { 0, { { { (1<<MACH_BASE), 0 } } } }
   },
+/* mac ${s1-direct-addr},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MAC_S1_DIRECT_DSP_SRC2_DATA_REG, "compatibility-mac-s1-direct-dsp-src2-data-reg", "mac", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mac #${s1-imm8},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MAC_S1_IMMEDIATE_DSP_SRC2_DATA_REG, "compatibility-mac-s1-immediate-dsp-src2-data-reg", "mac", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mac (${s1-An},${s1-r}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MAC_S1_INDIRECT_WITH_INDEX_2_DSP_SRC2_DATA_REG, "compatibility-mac-s1-indirect-with-index-2-dsp-src2-data-reg", "mac", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mac ${s1-imm7-2}(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MAC_S1_INDIRECT_WITH_OFFSET_2_DSP_SRC2_DATA_REG, "compatibility-mac-s1-indirect-with-offset-2-dsp-src2-data-reg", "mac", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mac (${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MAC_S1_INDIRECT_2_DSP_SRC2_DATA_REG, "compatibility-mac-s1-indirect-2-dsp-src2-data-reg", "mac", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mac (${s1-An})${s1-i4-2}++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MAC_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_SRC2_DATA_REG, "compatibility-mac-s1-indirect-with-post-increment-2-dsp-src2-data-reg", "mac", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mac ${s1-i4-2}(${s1-An})++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MAC_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_SRC2_DATA_REG, "compatibility-mac-s1-indirect-with-pre-increment-2-dsp-src2-data-reg", "mac", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mac ${s1-direct-addr},#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MAC_S1_DIRECT_DSP_IMM_BIT5, "compatibility-mac-s1-direct-dsp-imm-bit5", "mac", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mac #${s1-imm8},#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MAC_S1_IMMEDIATE_DSP_IMM_BIT5, "compatibility-mac-s1-immediate-dsp-imm-bit5", "mac", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mac (${s1-An},${s1-r}),#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MAC_S1_INDIRECT_WITH_INDEX_2_DSP_IMM_BIT5, "compatibility-mac-s1-indirect-with-index-2-dsp-imm-bit5", "mac", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mac ${s1-imm7-2}(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MAC_S1_INDIRECT_WITH_OFFSET_2_DSP_IMM_BIT5, "compatibility-mac-s1-indirect-with-offset-2-dsp-imm-bit5", "mac", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mac (${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MAC_S1_INDIRECT_2_DSP_IMM_BIT5, "compatibility-mac-s1-indirect-2-dsp-imm-bit5", "mac", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mac (${s1-An})${s1-i4-2}++,#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MAC_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_IMM_BIT5, "compatibility-mac-s1-indirect-with-post-increment-2-dsp-imm-bit5", "mac", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mac ${s1-i4-2}(${s1-An})++,#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MAC_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_IMM_BIT5, "compatibility-mac-s1-indirect-with-pre-increment-2-dsp-imm-bit5", "mac", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mac ${s1-direct-addr},#${bit5} */
+  {
+    UBI32_INSN_MAC_S1_DIRECT_IMM_BIT5, "mac-s1-direct-imm-bit5", "mac", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mac #${s1-imm8},#${bit5} */
+  {
+    UBI32_INSN_MAC_S1_IMMEDIATE_IMM_BIT5, "mac-s1-immediate-imm-bit5", "mac", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mac (${s1-An},${s1-r}),#${bit5} */
+  {
+    UBI32_INSN_MAC_S1_INDIRECT_WITH_INDEX_2_IMM_BIT5, "mac-s1-indirect-with-index-2-imm-bit5", "mac", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mac ${s1-imm7-2}(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_MAC_S1_INDIRECT_WITH_OFFSET_2_IMM_BIT5, "mac-s1-indirect-with-offset-2-imm-bit5", "mac", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mac (${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_MAC_S1_INDIRECT_2_IMM_BIT5, "mac-s1-indirect-2-imm-bit5", "mac", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mac (${s1-An})${s1-i4-2}++,#${bit5} */
+  {
+    UBI32_INSN_MAC_S1_INDIRECT_WITH_POST_INCREMENT_2_IMM_BIT5, "mac-s1-indirect-with-post-increment-2-imm-bit5", "mac", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mac ${s1-i4-2}(${s1-An})++,#${bit5} */
+  {
+    UBI32_INSN_MAC_S1_INDIRECT_WITH_PRE_INCREMENT_2_IMM_BIT5, "mac-s1-indirect-with-pre-increment-2-imm-bit5", "mac", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mac ${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_MAC_S1_DIRECT_DYN_REG, "mac-s1-direct-dyn-reg", "mac", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mac #${s1-imm8},${s2} */
+  {
+    UBI32_INSN_MAC_S1_IMMEDIATE_DYN_REG, "mac-s1-immediate-dyn-reg", "mac", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mac (${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_MAC_S1_INDIRECT_WITH_INDEX_2_DYN_REG, "mac-s1-indirect-with-index-2-dyn-reg", "mac", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mac ${s1-imm7-2}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_MAC_S1_INDIRECT_WITH_OFFSET_2_DYN_REG, "mac-s1-indirect-with-offset-2-dyn-reg", "mac", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mac (${s1-An}),${s2} */
+  {
+    UBI32_INSN_MAC_S1_INDIRECT_2_DYN_REG, "mac-s1-indirect-2-dyn-reg", "mac", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mac (${s1-An})${s1-i4-2}++,${s2} */
+  {
+    UBI32_INSN_MAC_S1_INDIRECT_WITH_POST_INCREMENT_2_DYN_REG, "mac-s1-indirect-with-post-increment-2-dyn-reg", "mac", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mac ${s1-i4-2}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_MAC_S1_INDIRECT_WITH_PRE_INCREMENT_2_DYN_REG, "mac-s1-indirect-with-pre-increment-2-dyn-reg", "mac", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulf ${s1-direct-addr},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULF_S1_DIRECT_DSP_SRC2_DATA_REG, "compatibility-mulf-s1-direct-dsp-src2-data-reg", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulf #${s1-imm8},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULF_S1_IMMEDIATE_DSP_SRC2_DATA_REG, "compatibility-mulf-s1-immediate-dsp-src2-data-reg", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulf (${s1-An},${s1-r}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULF_S1_INDIRECT_WITH_INDEX_2_DSP_SRC2_DATA_REG, "compatibility-mulf-s1-indirect-with-index-2-dsp-src2-data-reg", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulf ${s1-imm7-2}(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULF_S1_INDIRECT_WITH_OFFSET_2_DSP_SRC2_DATA_REG, "compatibility-mulf-s1-indirect-with-offset-2-dsp-src2-data-reg", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulf (${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULF_S1_INDIRECT_2_DSP_SRC2_DATA_REG, "compatibility-mulf-s1-indirect-2-dsp-src2-data-reg", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulf (${s1-An})${s1-i4-2}++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULF_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_SRC2_DATA_REG, "compatibility-mulf-s1-indirect-with-post-increment-2-dsp-src2-data-reg", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulf ${s1-i4-2}(${s1-An})++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULF_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_SRC2_DATA_REG, "compatibility-mulf-s1-indirect-with-pre-increment-2-dsp-src2-data-reg", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulf ${s1-direct-addr},#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULF_S1_DIRECT_DSP_IMM_BIT5, "compatibility-mulf-s1-direct-dsp-imm-bit5", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulf #${s1-imm8},#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULF_S1_IMMEDIATE_DSP_IMM_BIT5, "compatibility-mulf-s1-immediate-dsp-imm-bit5", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulf (${s1-An},${s1-r}),#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULF_S1_INDIRECT_WITH_INDEX_2_DSP_IMM_BIT5, "compatibility-mulf-s1-indirect-with-index-2-dsp-imm-bit5", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulf ${s1-imm7-2}(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULF_S1_INDIRECT_WITH_OFFSET_2_DSP_IMM_BIT5, "compatibility-mulf-s1-indirect-with-offset-2-dsp-imm-bit5", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulf (${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULF_S1_INDIRECT_2_DSP_IMM_BIT5, "compatibility-mulf-s1-indirect-2-dsp-imm-bit5", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulf (${s1-An})${s1-i4-2}++,#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULF_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_IMM_BIT5, "compatibility-mulf-s1-indirect-with-post-increment-2-dsp-imm-bit5", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulf ${s1-i4-2}(${s1-An})++,#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULF_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_IMM_BIT5, "compatibility-mulf-s1-indirect-with-pre-increment-2-dsp-imm-bit5", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulf ${s1-direct-addr},#${bit5} */
+  {
+    UBI32_INSN_MULF_S1_DIRECT_IMM_BIT5, "mulf-s1-direct-imm-bit5", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulf #${s1-imm8},#${bit5} */
+  {
+    UBI32_INSN_MULF_S1_IMMEDIATE_IMM_BIT5, "mulf-s1-immediate-imm-bit5", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulf (${s1-An},${s1-r}),#${bit5} */
+  {
+    UBI32_INSN_MULF_S1_INDIRECT_WITH_INDEX_2_IMM_BIT5, "mulf-s1-indirect-with-index-2-imm-bit5", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulf ${s1-imm7-2}(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_MULF_S1_INDIRECT_WITH_OFFSET_2_IMM_BIT5, "mulf-s1-indirect-with-offset-2-imm-bit5", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulf (${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_MULF_S1_INDIRECT_2_IMM_BIT5, "mulf-s1-indirect-2-imm-bit5", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulf (${s1-An})${s1-i4-2}++,#${bit5} */
+  {
+    UBI32_INSN_MULF_S1_INDIRECT_WITH_POST_INCREMENT_2_IMM_BIT5, "mulf-s1-indirect-with-post-increment-2-imm-bit5", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulf ${s1-i4-2}(${s1-An})++,#${bit5} */
+  {
+    UBI32_INSN_MULF_S1_INDIRECT_WITH_PRE_INCREMENT_2_IMM_BIT5, "mulf-s1-indirect-with-pre-increment-2-imm-bit5", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulf ${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_MULF_S1_DIRECT_DYN_REG, "mulf-s1-direct-dyn-reg", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulf #${s1-imm8},${s2} */
+  {
+    UBI32_INSN_MULF_S1_IMMEDIATE_DYN_REG, "mulf-s1-immediate-dyn-reg", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulf (${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_MULF_S1_INDIRECT_WITH_INDEX_2_DYN_REG, "mulf-s1-indirect-with-index-2-dyn-reg", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulf ${s1-imm7-2}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_MULF_S1_INDIRECT_WITH_OFFSET_2_DYN_REG, "mulf-s1-indirect-with-offset-2-dyn-reg", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulf (${s1-An}),${s2} */
+  {
+    UBI32_INSN_MULF_S1_INDIRECT_2_DYN_REG, "mulf-s1-indirect-2-dyn-reg", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulf (${s1-An})${s1-i4-2}++,${s2} */
+  {
+    UBI32_INSN_MULF_S1_INDIRECT_WITH_POST_INCREMENT_2_DYN_REG, "mulf-s1-indirect-with-post-increment-2-dyn-reg", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulf ${s1-i4-2}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_MULF_S1_INDIRECT_WITH_PRE_INCREMENT_2_DYN_REG, "mulf-s1-indirect-with-pre-increment-2-dyn-reg", "mulf", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulu ${s1-direct-addr},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULU_S1_DIRECT_DSP_SRC2_DATA_REG, "compatibility-mulu-s1-direct-dsp-src2-data-reg", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulu #${s1-imm8},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULU_S1_IMMEDIATE_DSP_SRC2_DATA_REG, "compatibility-mulu-s1-immediate-dsp-src2-data-reg", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulu (${s1-An},${s1-r}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULU_S1_INDIRECT_WITH_INDEX_2_DSP_SRC2_DATA_REG, "compatibility-mulu-s1-indirect-with-index-2-dsp-src2-data-reg", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulu ${s1-imm7-2}(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULU_S1_INDIRECT_WITH_OFFSET_2_DSP_SRC2_DATA_REG, "compatibility-mulu-s1-indirect-with-offset-2-dsp-src2-data-reg", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulu (${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULU_S1_INDIRECT_2_DSP_SRC2_DATA_REG, "compatibility-mulu-s1-indirect-2-dsp-src2-data-reg", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulu (${s1-An})${s1-i4-2}++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULU_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_SRC2_DATA_REG, "compatibility-mulu-s1-indirect-with-post-increment-2-dsp-src2-data-reg", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulu ${s1-i4-2}(${s1-An})++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULU_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_SRC2_DATA_REG, "compatibility-mulu-s1-indirect-with-pre-increment-2-dsp-src2-data-reg", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulu ${s1-direct-addr},#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULU_S1_DIRECT_DSP_IMM_BIT5, "compatibility-mulu-s1-direct-dsp-imm-bit5", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulu #${s1-imm8},#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULU_S1_IMMEDIATE_DSP_IMM_BIT5, "compatibility-mulu-s1-immediate-dsp-imm-bit5", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulu (${s1-An},${s1-r}),#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULU_S1_INDIRECT_WITH_INDEX_2_DSP_IMM_BIT5, "compatibility-mulu-s1-indirect-with-index-2-dsp-imm-bit5", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulu ${s1-imm7-2}(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULU_S1_INDIRECT_WITH_OFFSET_2_DSP_IMM_BIT5, "compatibility-mulu-s1-indirect-with-offset-2-dsp-imm-bit5", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulu (${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULU_S1_INDIRECT_2_DSP_IMM_BIT5, "compatibility-mulu-s1-indirect-2-dsp-imm-bit5", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulu (${s1-An})${s1-i4-2}++,#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULU_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_IMM_BIT5, "compatibility-mulu-s1-indirect-with-post-increment-2-dsp-imm-bit5", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulu ${s1-i4-2}(${s1-An})++,#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULU_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_IMM_BIT5, "compatibility-mulu-s1-indirect-with-pre-increment-2-dsp-imm-bit5", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* mulu ${s1-direct-addr},#${bit5} */
+  {
+    UBI32_INSN_MULU_S1_DIRECT_IMM_BIT5, "mulu-s1-direct-imm-bit5", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulu #${s1-imm8},#${bit5} */
+  {
+    UBI32_INSN_MULU_S1_IMMEDIATE_IMM_BIT5, "mulu-s1-immediate-imm-bit5", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulu (${s1-An},${s1-r}),#${bit5} */
+  {
+    UBI32_INSN_MULU_S1_INDIRECT_WITH_INDEX_2_IMM_BIT5, "mulu-s1-indirect-with-index-2-imm-bit5", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulu ${s1-imm7-2}(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_MULU_S1_INDIRECT_WITH_OFFSET_2_IMM_BIT5, "mulu-s1-indirect-with-offset-2-imm-bit5", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulu (${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_MULU_S1_INDIRECT_2_IMM_BIT5, "mulu-s1-indirect-2-imm-bit5", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulu (${s1-An})${s1-i4-2}++,#${bit5} */
+  {
+    UBI32_INSN_MULU_S1_INDIRECT_WITH_POST_INCREMENT_2_IMM_BIT5, "mulu-s1-indirect-with-post-increment-2-imm-bit5", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulu ${s1-i4-2}(${s1-An})++,#${bit5} */
+  {
+    UBI32_INSN_MULU_S1_INDIRECT_WITH_PRE_INCREMENT_2_IMM_BIT5, "mulu-s1-indirect-with-pre-increment-2-imm-bit5", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulu ${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_MULU_S1_DIRECT_DYN_REG, "mulu-s1-direct-dyn-reg", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulu #${s1-imm8},${s2} */
+  {
+    UBI32_INSN_MULU_S1_IMMEDIATE_DYN_REG, "mulu-s1-immediate-dyn-reg", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulu (${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_MULU_S1_INDIRECT_WITH_INDEX_2_DYN_REG, "mulu-s1-indirect-with-index-2-dyn-reg", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulu ${s1-imm7-2}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_MULU_S1_INDIRECT_WITH_OFFSET_2_DYN_REG, "mulu-s1-indirect-with-offset-2-dyn-reg", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulu (${s1-An}),${s2} */
+  {
+    UBI32_INSN_MULU_S1_INDIRECT_2_DYN_REG, "mulu-s1-indirect-2-dyn-reg", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulu (${s1-An})${s1-i4-2}++,${s2} */
+  {
+    UBI32_INSN_MULU_S1_INDIRECT_WITH_POST_INCREMENT_2_DYN_REG, "mulu-s1-indirect-with-post-increment-2-dyn-reg", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* mulu ${s1-i4-2}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_MULU_S1_INDIRECT_WITH_PRE_INCREMENT_2_DYN_REG, "mulu-s1-indirect-with-pre-increment-2-dyn-reg", "mulu", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* muls ${s1-direct-addr},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULS_S1_DIRECT_DSP_SRC2_DATA_REG, "compatibility-muls-s1-direct-dsp-src2-data-reg", "muls", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* muls #${s1-imm8},${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULS_S1_IMMEDIATE_DSP_SRC2_DATA_REG, "compatibility-muls-s1-immediate-dsp-src2-data-reg", "muls", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* muls (${s1-An},${s1-r}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULS_S1_INDIRECT_WITH_INDEX_2_DSP_SRC2_DATA_REG, "compatibility-muls-s1-indirect-with-index-2-dsp-src2-data-reg", "muls", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* muls ${s1-imm7-2}(${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULS_S1_INDIRECT_WITH_OFFSET_2_DSP_SRC2_DATA_REG, "compatibility-muls-s1-indirect-with-offset-2-dsp-src2-data-reg", "muls", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* muls (${s1-An}),${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULS_S1_INDIRECT_2_DSP_SRC2_DATA_REG, "compatibility-muls-s1-indirect-2-dsp-src2-data-reg", "muls", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* muls (${s1-An})${s1-i4-2}++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULS_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_SRC2_DATA_REG, "compatibility-muls-s1-indirect-with-post-increment-2-dsp-src2-data-reg", "muls", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* muls ${s1-i4-2}(${s1-An})++,${dsp-S2-data-reg} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULS_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_SRC2_DATA_REG, "compatibility-muls-s1-indirect-with-pre-increment-2-dsp-src2-data-reg", "muls", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* muls ${s1-direct-addr},#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULS_S1_DIRECT_DSP_IMM_BIT5, "compatibility-muls-s1-direct-dsp-imm-bit5", "muls", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* muls #${s1-imm8},#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULS_S1_IMMEDIATE_DSP_IMM_BIT5, "compatibility-muls-s1-immediate-dsp-imm-bit5", "muls", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* muls (${s1-An},${s1-r}),#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULS_S1_INDIRECT_WITH_INDEX_2_DSP_IMM_BIT5, "compatibility-muls-s1-indirect-with-index-2-dsp-imm-bit5", "muls", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* muls ${s1-imm7-2}(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULS_S1_INDIRECT_WITH_OFFSET_2_DSP_IMM_BIT5, "compatibility-muls-s1-indirect-with-offset-2-dsp-imm-bit5", "muls", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* muls (${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULS_S1_INDIRECT_2_DSP_IMM_BIT5, "compatibility-muls-s1-indirect-2-dsp-imm-bit5", "muls", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* muls (${s1-An})${s1-i4-2}++,#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULS_S1_INDIRECT_WITH_POST_INCREMENT_2_DSP_IMM_BIT5, "compatibility-muls-s1-indirect-with-post-increment-2-dsp-imm-bit5", "muls", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* muls ${s1-i4-2}(${s1-An})++,#${bit5} */
+  {
+    UBI32_INSN_COMPATIBILITY_MULS_S1_INDIRECT_WITH_PRE_INCREMENT_2_DSP_IMM_BIT5, "compatibility-muls-s1-indirect-with-pre-increment-2-dsp-imm-bit5", "muls", 32,
+    { 0, { { { (1<<MACH_IP3023COMPATIBILITY), 0 } } } }
+  },
+/* muls ${s1-direct-addr},#${bit5} */
+  {
+    UBI32_INSN_MULS_S1_DIRECT_IMM_BIT5, "muls-s1-direct-imm-bit5", "muls", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* muls #${s1-imm8},#${bit5} */
+  {
+    UBI32_INSN_MULS_S1_IMMEDIATE_IMM_BIT5, "muls-s1-immediate-imm-bit5", "muls", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* muls (${s1-An},${s1-r}),#${bit5} */
+  {
+    UBI32_INSN_MULS_S1_INDIRECT_WITH_INDEX_2_IMM_BIT5, "muls-s1-indirect-with-index-2-imm-bit5", "muls", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* muls ${s1-imm7-2}(${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_MULS_S1_INDIRECT_WITH_OFFSET_2_IMM_BIT5, "muls-s1-indirect-with-offset-2-imm-bit5", "muls", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* muls (${s1-An}),#${bit5} */
+  {
+    UBI32_INSN_MULS_S1_INDIRECT_2_IMM_BIT5, "muls-s1-indirect-2-imm-bit5", "muls", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* muls (${s1-An})${s1-i4-2}++,#${bit5} */
+  {
+    UBI32_INSN_MULS_S1_INDIRECT_WITH_POST_INCREMENT_2_IMM_BIT5, "muls-s1-indirect-with-post-increment-2-imm-bit5", "muls", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* muls ${s1-i4-2}(${s1-An})++,#${bit5} */
+  {
+    UBI32_INSN_MULS_S1_INDIRECT_WITH_PRE_INCREMENT_2_IMM_BIT5, "muls-s1-indirect-with-pre-increment-2-imm-bit5", "muls", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* muls ${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_MULS_S1_DIRECT_DYN_REG, "muls-s1-direct-dyn-reg", "muls", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* muls #${s1-imm8},${s2} */
+  {
+    UBI32_INSN_MULS_S1_IMMEDIATE_DYN_REG, "muls-s1-immediate-dyn-reg", "muls", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* muls (${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_MULS_S1_INDIRECT_WITH_INDEX_2_DYN_REG, "muls-s1-indirect-with-index-2-dyn-reg", "muls", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* muls ${s1-imm7-2}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_MULS_S1_INDIRECT_WITH_OFFSET_2_DYN_REG, "muls-s1-indirect-with-offset-2-dyn-reg", "muls", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* muls (${s1-An}),${s2} */
+  {
+    UBI32_INSN_MULS_S1_INDIRECT_2_DYN_REG, "muls-s1-indirect-2-dyn-reg", "muls", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* muls (${s1-An})${s1-i4-2}++,${s2} */
+  {
+    UBI32_INSN_MULS_S1_INDIRECT_WITH_POST_INCREMENT_2_DYN_REG, "muls-s1-indirect-with-post-increment-2-dyn-reg", "muls", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
+/* muls ${s1-i4-2}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_MULS_S1_INDIRECT_WITH_PRE_INCREMENT_2_DYN_REG, "muls-s1-indirect-with-pre-increment-2-dyn-reg", "muls", 32,
+    { 0, { { { (1<<MACH_IP3035), 0 } } } }
+  },
 /* swapb.4 ${d-direct-addr},${s1-direct-addr} */
   {
     UBI32_INSN_SWAPB_4_D_DIRECT_S1_DIRECT, "swapb.4-d-direct-s1-direct", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 #${d-imm8},${s1-direct-addr} */
   {
     UBI32_INSN_SWAPB_4_D_IMMEDIATE_4_S1_DIRECT, "swapb.4-d-immediate-4-s1-direct", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 (${d-An},${d-r}),${s1-direct-addr} */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_INDEX_4_S1_DIRECT, "swapb.4-d-indirect-with-index-4-s1-direct", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 ${d-imm7-4}(${d-An}),${s1-direct-addr} */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_OFFSET_4_S1_DIRECT, "swapb.4-d-indirect-with-offset-4-s1-direct", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 (${d-An}),${s1-direct-addr} */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_4_S1_DIRECT, "swapb.4-d-indirect-4-s1-direct", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 (${d-An})${d-i4-4}++,${s1-direct-addr} */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_POST_INCREMENT_4_S1_DIRECT, "swapb.4-d-indirect-with-post-increment-4-s1-direct", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 ${d-i4-4}(${d-An})++,${s1-direct-addr} */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_DIRECT, "swapb.4-d-indirect-with-pre-increment-4-s1-direct", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 ${d-direct-addr},#${s1-imm8} */
   {
     UBI32_INSN_SWAPB_4_D_DIRECT_S1_IMMEDIATE, "swapb.4-d-direct-s1-immediate", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 #${d-imm8},#${s1-imm8} */
   {
     UBI32_INSN_SWAPB_4_D_IMMEDIATE_4_S1_IMMEDIATE, "swapb.4-d-immediate-4-s1-immediate", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 (${d-An},${d-r}),#${s1-imm8} */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_INDEX_4_S1_IMMEDIATE, "swapb.4-d-indirect-with-index-4-s1-immediate", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 ${d-imm7-4}(${d-An}),#${s1-imm8} */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_OFFSET_4_S1_IMMEDIATE, "swapb.4-d-indirect-with-offset-4-s1-immediate", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 (${d-An}),#${s1-imm8} */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_4_S1_IMMEDIATE, "swapb.4-d-indirect-4-s1-immediate", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 (${d-An})${d-i4-4}++,#${s1-imm8} */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_POST_INCREMENT_4_S1_IMMEDIATE, "swapb.4-d-indirect-with-post-increment-4-s1-immediate", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 ${d-i4-4}(${d-An})++,#${s1-imm8} */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_IMMEDIATE, "swapb.4-d-indirect-with-pre-increment-4-s1-immediate", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 ${d-direct-addr},(${s1-An},${s1-r}) */
   {
     UBI32_INSN_SWAPB_4_D_DIRECT_S1_INDIRECT_WITH_INDEX_4, "swapb.4-d-direct-s1-indirect-with-index-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 #${d-imm8},(${s1-An},${s1-r}) */
   {
     UBI32_INSN_SWAPB_4_D_IMMEDIATE_4_S1_INDIRECT_WITH_INDEX_4, "swapb.4-d-immediate-4-s1-indirect-with-index-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 (${d-An},${d-r}),(${s1-An},${s1-r}) */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_INDEX_4, "swapb.4-d-indirect-with-index-4-s1-indirect-with-index-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 ${d-imm7-4}(${d-An}),(${s1-An},${s1-r}) */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_INDEX_4, "swapb.4-d-indirect-with-offset-4-s1-indirect-with-index-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 (${d-An}),(${s1-An},${s1-r}) */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_4_S1_INDIRECT_WITH_INDEX_4, "swapb.4-d-indirect-4-s1-indirect-with-index-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 (${d-An})${d-i4-4}++,(${s1-An},${s1-r}) */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_INDEX_4, "swapb.4-d-indirect-with-post-increment-4-s1-indirect-with-index-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 ${d-i4-4}(${d-An})++,(${s1-An},${s1-r}) */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_INDEX_4, "swapb.4-d-indirect-with-pre-increment-4-s1-indirect-with-index-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 ${d-direct-addr},${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_SWAPB_4_D_DIRECT_S1_INDIRECT_WITH_OFFSET_4, "swapb.4-d-direct-s1-indirect-with-offset-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 #${d-imm8},${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_SWAPB_4_D_IMMEDIATE_4_S1_INDIRECT_WITH_OFFSET_4, "swapb.4-d-immediate-4-s1-indirect-with-offset-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 (${d-An},${d-r}),${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_OFFSET_4, "swapb.4-d-indirect-with-index-4-s1-indirect-with-offset-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 ${d-imm7-4}(${d-An}),${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_OFFSET_4, "swapb.4-d-indirect-with-offset-4-s1-indirect-with-offset-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 (${d-An}),${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_4_S1_INDIRECT_WITH_OFFSET_4, "swapb.4-d-indirect-4-s1-indirect-with-offset-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 (${d-An})${d-i4-4}++,${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_OFFSET_4, "swapb.4-d-indirect-with-post-increment-4-s1-indirect-with-offset-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 ${d-i4-4}(${d-An})++,${s1-imm7-4}(${s1-An}) */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_OFFSET_4, "swapb.4-d-indirect-with-pre-increment-4-s1-indirect-with-offset-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 ${d-direct-addr},(${s1-An}) */
   {
     UBI32_INSN_SWAPB_4_D_DIRECT_S1_INDIRECT_4, "swapb.4-d-direct-s1-indirect-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 #${d-imm8},(${s1-An}) */
   {
     UBI32_INSN_SWAPB_4_D_IMMEDIATE_4_S1_INDIRECT_4, "swapb.4-d-immediate-4-s1-indirect-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 (${d-An},${d-r}),(${s1-An}) */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_4, "swapb.4-d-indirect-with-index-4-s1-indirect-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 ${d-imm7-4}(${d-An}),(${s1-An}) */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_4, "swapb.4-d-indirect-with-offset-4-s1-indirect-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 (${d-An}),(${s1-An}) */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_4_S1_INDIRECT_4, "swapb.4-d-indirect-4-s1-indirect-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 (${d-An})${d-i4-4}++,(${s1-An}) */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_4, "swapb.4-d-indirect-with-post-increment-4-s1-indirect-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 ${d-i4-4}(${d-An})++,(${s1-An}) */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_4, "swapb.4-d-indirect-with-pre-increment-4-s1-indirect-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 ${d-direct-addr},(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_SWAPB_4_D_DIRECT_S1_INDIRECT_WITH_POST_INCREMENT_4, "swapb.4-d-direct-s1-indirect-with-post-increment-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 #${d-imm8},(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_SWAPB_4_D_IMMEDIATE_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "swapb.4-d-immediate-4-s1-indirect-with-post-increment-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 (${d-An},${d-r}),(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "swapb.4-d-indirect-with-index-4-s1-indirect-with-post-increment-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 ${d-imm7-4}(${d-An}),(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "swapb.4-d-indirect-with-offset-4-s1-indirect-with-post-increment-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 (${d-An}),(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "swapb.4-d-indirect-4-s1-indirect-with-post-increment-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 (${d-An})${d-i4-4}++,(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "swapb.4-d-indirect-with-post-increment-4-s1-indirect-with-post-increment-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 ${d-i4-4}(${d-An})++,(${s1-An})${s1-i4-4}++ */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "swapb.4-d-indirect-with-pre-increment-4-s1-indirect-with-post-increment-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 ${d-direct-addr},${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_SWAPB_4_D_DIRECT_S1_INDIRECT_WITH_PRE_INCREMENT_4, "swapb.4-d-direct-s1-indirect-with-pre-increment-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 #${d-imm8},${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_SWAPB_4_D_IMMEDIATE_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "swapb.4-d-immediate-4-s1-indirect-with-pre-increment-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 (${d-An},${d-r}),${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "swapb.4-d-indirect-with-index-4-s1-indirect-with-pre-increment-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 ${d-imm7-4}(${d-An}),${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "swapb.4-d-indirect-with-offset-4-s1-indirect-with-pre-increment-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 (${d-An}),${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "swapb.4-d-indirect-4-s1-indirect-with-pre-increment-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 (${d-An})${d-i4-4}++,${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "swapb.4-d-indirect-with-post-increment-4-s1-indirect-with-pre-increment-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.4 ${d-i4-4}(${d-An})++,${s1-i4-4}(${s1-An})++ */
   {
     UBI32_INSN_SWAPB_4_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "swapb.4-d-indirect-with-pre-increment-4-s1-indirect-with-pre-increment-4", "swapb.4", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 ${d-direct-addr},${s1-direct-addr} */
   {
     UBI32_INSN_SWAPB_2_D_DIRECT_S1_DIRECT, "swapb.2-d-direct-s1-direct", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 #${d-imm8},${s1-direct-addr} */
   {
     UBI32_INSN_SWAPB_2_D_IMMEDIATE_2_S1_DIRECT, "swapb.2-d-immediate-2-s1-direct", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 (${d-An},${d-r}),${s1-direct-addr} */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_INDEX_2_S1_DIRECT, "swapb.2-d-indirect-with-index-2-s1-direct", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 ${d-imm7-2}(${d-An}),${s1-direct-addr} */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_OFFSET_2_S1_DIRECT, "swapb.2-d-indirect-with-offset-2-s1-direct", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 (${d-An}),${s1-direct-addr} */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_2_S1_DIRECT, "swapb.2-d-indirect-2-s1-direct", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 (${d-An})${d-i4-2}++,${s1-direct-addr} */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_POST_INCREMENT_2_S1_DIRECT, "swapb.2-d-indirect-with-post-increment-2-s1-direct", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 ${d-i4-2}(${d-An})++,${s1-direct-addr} */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_DIRECT, "swapb.2-d-indirect-with-pre-increment-2-s1-direct", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 ${d-direct-addr},#${s1-imm8} */
   {
     UBI32_INSN_SWAPB_2_D_DIRECT_S1_IMMEDIATE, "swapb.2-d-direct-s1-immediate", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 #${d-imm8},#${s1-imm8} */
   {
     UBI32_INSN_SWAPB_2_D_IMMEDIATE_2_S1_IMMEDIATE, "swapb.2-d-immediate-2-s1-immediate", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 (${d-An},${d-r}),#${s1-imm8} */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_INDEX_2_S1_IMMEDIATE, "swapb.2-d-indirect-with-index-2-s1-immediate", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 ${d-imm7-2}(${d-An}),#${s1-imm8} */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_OFFSET_2_S1_IMMEDIATE, "swapb.2-d-indirect-with-offset-2-s1-immediate", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 (${d-An}),#${s1-imm8} */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_2_S1_IMMEDIATE, "swapb.2-d-indirect-2-s1-immediate", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 (${d-An})${d-i4-2}++,#${s1-imm8} */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_POST_INCREMENT_2_S1_IMMEDIATE, "swapb.2-d-indirect-with-post-increment-2-s1-immediate", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 ${d-i4-2}(${d-An})++,#${s1-imm8} */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_IMMEDIATE, "swapb.2-d-indirect-with-pre-increment-2-s1-immediate", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 ${d-direct-addr},(${s1-An},${s1-r}) */
   {
     UBI32_INSN_SWAPB_2_D_DIRECT_S1_INDIRECT_WITH_INDEX_2, "swapb.2-d-direct-s1-indirect-with-index-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 #${d-imm8},(${s1-An},${s1-r}) */
   {
     UBI32_INSN_SWAPB_2_D_IMMEDIATE_2_S1_INDIRECT_WITH_INDEX_2, "swapb.2-d-immediate-2-s1-indirect-with-index-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 (${d-An},${d-r}),(${s1-An},${s1-r}) */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_INDEX_2_S1_INDIRECT_WITH_INDEX_2, "swapb.2-d-indirect-with-index-2-s1-indirect-with-index-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 ${d-imm7-2}(${d-An}),(${s1-An},${s1-r}) */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_OFFSET_2_S1_INDIRECT_WITH_INDEX_2, "swapb.2-d-indirect-with-offset-2-s1-indirect-with-index-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 (${d-An}),(${s1-An},${s1-r}) */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_2_S1_INDIRECT_WITH_INDEX_2, "swapb.2-d-indirect-2-s1-indirect-with-index-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 (${d-An})${d-i4-2}++,(${s1-An},${s1-r}) */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_POST_INCREMENT_2_S1_INDIRECT_WITH_INDEX_2, "swapb.2-d-indirect-with-post-increment-2-s1-indirect-with-index-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 ${d-i4-2}(${d-An})++,(${s1-An},${s1-r}) */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_INDIRECT_WITH_INDEX_2, "swapb.2-d-indirect-with-pre-increment-2-s1-indirect-with-index-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 ${d-direct-addr},${s1-imm7-2}(${s1-An}) */
   {
     UBI32_INSN_SWAPB_2_D_DIRECT_S1_INDIRECT_WITH_OFFSET_2, "swapb.2-d-direct-s1-indirect-with-offset-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 #${d-imm8},${s1-imm7-2}(${s1-An}) */
   {
     UBI32_INSN_SWAPB_2_D_IMMEDIATE_2_S1_INDIRECT_WITH_OFFSET_2, "swapb.2-d-immediate-2-s1-indirect-with-offset-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 (${d-An},${d-r}),${s1-imm7-2}(${s1-An}) */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_INDEX_2_S1_INDIRECT_WITH_OFFSET_2, "swapb.2-d-indirect-with-index-2-s1-indirect-with-offset-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 ${d-imm7-2}(${d-An}),${s1-imm7-2}(${s1-An}) */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_OFFSET_2_S1_INDIRECT_WITH_OFFSET_2, "swapb.2-d-indirect-with-offset-2-s1-indirect-with-offset-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 (${d-An}),${s1-imm7-2}(${s1-An}) */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_2_S1_INDIRECT_WITH_OFFSET_2, "swapb.2-d-indirect-2-s1-indirect-with-offset-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 (${d-An})${d-i4-2}++,${s1-imm7-2}(${s1-An}) */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_POST_INCREMENT_2_S1_INDIRECT_WITH_OFFSET_2, "swapb.2-d-indirect-with-post-increment-2-s1-indirect-with-offset-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 ${d-i4-2}(${d-An})++,${s1-imm7-2}(${s1-An}) */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_INDIRECT_WITH_OFFSET_2, "swapb.2-d-indirect-with-pre-increment-2-s1-indirect-with-offset-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 ${d-direct-addr},(${s1-An}) */
   {
     UBI32_INSN_SWAPB_2_D_DIRECT_S1_INDIRECT_2, "swapb.2-d-direct-s1-indirect-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 #${d-imm8},(${s1-An}) */
   {
     UBI32_INSN_SWAPB_2_D_IMMEDIATE_2_S1_INDIRECT_2, "swapb.2-d-immediate-2-s1-indirect-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 (${d-An},${d-r}),(${s1-An}) */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_INDEX_2_S1_INDIRECT_2, "swapb.2-d-indirect-with-index-2-s1-indirect-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 ${d-imm7-2}(${d-An}),(${s1-An}) */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_OFFSET_2_S1_INDIRECT_2, "swapb.2-d-indirect-with-offset-2-s1-indirect-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 (${d-An}),(${s1-An}) */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_2_S1_INDIRECT_2, "swapb.2-d-indirect-2-s1-indirect-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 (${d-An})${d-i4-2}++,(${s1-An}) */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_POST_INCREMENT_2_S1_INDIRECT_2, "swapb.2-d-indirect-with-post-increment-2-s1-indirect-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 ${d-i4-2}(${d-An})++,(${s1-An}) */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_INDIRECT_2, "swapb.2-d-indirect-with-pre-increment-2-s1-indirect-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 ${d-direct-addr},(${s1-An})${s1-i4-2}++ */
   {
     UBI32_INSN_SWAPB_2_D_DIRECT_S1_INDIRECT_WITH_POST_INCREMENT_2, "swapb.2-d-direct-s1-indirect-with-post-increment-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 #${d-imm8},(${s1-An})${s1-i4-2}++ */
   {
     UBI32_INSN_SWAPB_2_D_IMMEDIATE_2_S1_INDIRECT_WITH_POST_INCREMENT_2, "swapb.2-d-immediate-2-s1-indirect-with-post-increment-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 (${d-An},${d-r}),(${s1-An})${s1-i4-2}++ */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_INDEX_2_S1_INDIRECT_WITH_POST_INCREMENT_2, "swapb.2-d-indirect-with-index-2-s1-indirect-with-post-increment-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 ${d-imm7-2}(${d-An}),(${s1-An})${s1-i4-2}++ */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_OFFSET_2_S1_INDIRECT_WITH_POST_INCREMENT_2, "swapb.2-d-indirect-with-offset-2-s1-indirect-with-post-increment-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 (${d-An}),(${s1-An})${s1-i4-2}++ */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_2_S1_INDIRECT_WITH_POST_INCREMENT_2, "swapb.2-d-indirect-2-s1-indirect-with-post-increment-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 (${d-An})${d-i4-2}++,(${s1-An})${s1-i4-2}++ */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_POST_INCREMENT_2_S1_INDIRECT_WITH_POST_INCREMENT_2, "swapb.2-d-indirect-with-post-increment-2-s1-indirect-with-post-increment-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 ${d-i4-2}(${d-An})++,(${s1-An})${s1-i4-2}++ */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_INDIRECT_WITH_POST_INCREMENT_2, "swapb.2-d-indirect-with-pre-increment-2-s1-indirect-with-post-increment-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 ${d-direct-addr},${s1-i4-2}(${s1-An})++ */
   {
     UBI32_INSN_SWAPB_2_D_DIRECT_S1_INDIRECT_WITH_PRE_INCREMENT_2, "swapb.2-d-direct-s1-indirect-with-pre-increment-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 #${d-imm8},${s1-i4-2}(${s1-An})++ */
   {
     UBI32_INSN_SWAPB_2_D_IMMEDIATE_2_S1_INDIRECT_WITH_PRE_INCREMENT_2, "swapb.2-d-immediate-2-s1-indirect-with-pre-increment-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 (${d-An},${d-r}),${s1-i4-2}(${s1-An})++ */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_INDEX_2_S1_INDIRECT_WITH_PRE_INCREMENT_2, "swapb.2-d-indirect-with-index-2-s1-indirect-with-pre-increment-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 ${d-imm7-2}(${d-An}),${s1-i4-2}(${s1-An})++ */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_OFFSET_2_S1_INDIRECT_WITH_PRE_INCREMENT_2, "swapb.2-d-indirect-with-offset-2-s1-indirect-with-pre-increment-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 (${d-An}),${s1-i4-2}(${s1-An})++ */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_2_S1_INDIRECT_WITH_PRE_INCREMENT_2, "swapb.2-d-indirect-2-s1-indirect-with-pre-increment-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 (${d-An})${d-i4-2}++,${s1-i4-2}(${s1-An})++ */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_POST_INCREMENT_2_S1_INDIRECT_WITH_PRE_INCREMENT_2, "swapb.2-d-indirect-with-post-increment-2-s1-indirect-with-pre-increment-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* swapb.2 ${d-i4-2}(${d-An})++,${s1-i4-2}(${s1-An})++ */
   {
     UBI32_INSN_SWAPB_2_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_INDIRECT_WITH_PRE_INCREMENT_2, "swapb.2-d-indirect-with-pre-increment-2-s1-indirect-with-pre-increment-2", "swapb.2", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* pdec ${d-direct-addr},${pdec-s1-imm7-4}(${s1-An}) */
   {
@@ -8157,6 +11722,2036 @@ static const CGEN_IBASE ubi32_cgen_insn_table[MAX_INSNS] =
     UBI32_INSN_CMPI_S1_INDIRECT_WITH_PRE_INCREMENT_2, "cmpi-s1-indirect-with-pre-increment-2", "cmpi", 32,
     { 0, { { { (1<<MACH_BASE), 0 } } } }
   },
+/* pxadds.u ${d-direct-addr},${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_DIRECT_S1_DIRECT, "pxadds.u-d-direct-s1-direct", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u #${d-imm8},${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_IMMEDIATE_2_S1_DIRECT, "pxadds.u-d-immediate-2-s1-direct", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u (${d-An},${d-r}),${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_INDEX_2_S1_DIRECT, "pxadds.u-d-indirect-with-index-2-s1-direct", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u ${d-imm7-2}(${d-An}),${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_OFFSET_2_S1_DIRECT, "pxadds.u-d-indirect-with-offset-2-s1-direct", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u (${d-An}),${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_2_S1_DIRECT, "pxadds.u-d-indirect-2-s1-direct", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u (${d-An})${d-i4-2}++,${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_POST_INCREMENT_2_S1_DIRECT, "pxadds.u-d-indirect-with-post-increment-2-s1-direct", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u ${d-i4-2}(${d-An})++,${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_DIRECT, "pxadds.u-d-indirect-with-pre-increment-2-s1-direct", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u ${d-direct-addr},#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_DIRECT_S1_IMMEDIATE, "pxadds.u-d-direct-s1-immediate", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u #${d-imm8},#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_IMMEDIATE_2_S1_IMMEDIATE, "pxadds.u-d-immediate-2-s1-immediate", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u (${d-An},${d-r}),#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_INDEX_2_S1_IMMEDIATE, "pxadds.u-d-indirect-with-index-2-s1-immediate", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u ${d-imm7-2}(${d-An}),#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_OFFSET_2_S1_IMMEDIATE, "pxadds.u-d-indirect-with-offset-2-s1-immediate", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u (${d-An}),#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_2_S1_IMMEDIATE, "pxadds.u-d-indirect-2-s1-immediate", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u (${d-An})${d-i4-2}++,#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_POST_INCREMENT_2_S1_IMMEDIATE, "pxadds.u-d-indirect-with-post-increment-2-s1-immediate", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u ${d-i4-2}(${d-An})++,#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_IMMEDIATE, "pxadds.u-d-indirect-with-pre-increment-2-s1-immediate", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u ${d-direct-addr},(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_DIRECT_S1_INDIRECT_WITH_INDEX_4, "pxadds.u-d-direct-s1-indirect-with-index-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u #${d-imm8},(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_IMMEDIATE_2_S1_INDIRECT_WITH_INDEX_4, "pxadds.u-d-immediate-2-s1-indirect-with-index-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u (${d-An},${d-r}),(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_INDEX_2_S1_INDIRECT_WITH_INDEX_4, "pxadds.u-d-indirect-with-index-2-s1-indirect-with-index-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u ${d-imm7-2}(${d-An}),(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_OFFSET_2_S1_INDIRECT_WITH_INDEX_4, "pxadds.u-d-indirect-with-offset-2-s1-indirect-with-index-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u (${d-An}),(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_2_S1_INDIRECT_WITH_INDEX_4, "pxadds.u-d-indirect-2-s1-indirect-with-index-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u (${d-An})${d-i4-2}++,(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_POST_INCREMENT_2_S1_INDIRECT_WITH_INDEX_4, "pxadds.u-d-indirect-with-post-increment-2-s1-indirect-with-index-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u ${d-i4-2}(${d-An})++,(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_INDIRECT_WITH_INDEX_4, "pxadds.u-d-indirect-with-pre-increment-2-s1-indirect-with-index-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u ${d-direct-addr},${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_DIRECT_S1_INDIRECT_WITH_OFFSET_4, "pxadds.u-d-direct-s1-indirect-with-offset-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u #${d-imm8},${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_IMMEDIATE_2_S1_INDIRECT_WITH_OFFSET_4, "pxadds.u-d-immediate-2-s1-indirect-with-offset-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u (${d-An},${d-r}),${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_INDEX_2_S1_INDIRECT_WITH_OFFSET_4, "pxadds.u-d-indirect-with-index-2-s1-indirect-with-offset-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u ${d-imm7-2}(${d-An}),${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_OFFSET_2_S1_INDIRECT_WITH_OFFSET_4, "pxadds.u-d-indirect-with-offset-2-s1-indirect-with-offset-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u (${d-An}),${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_2_S1_INDIRECT_WITH_OFFSET_4, "pxadds.u-d-indirect-2-s1-indirect-with-offset-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u (${d-An})${d-i4-2}++,${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_POST_INCREMENT_2_S1_INDIRECT_WITH_OFFSET_4, "pxadds.u-d-indirect-with-post-increment-2-s1-indirect-with-offset-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u ${d-i4-2}(${d-An})++,${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_INDIRECT_WITH_OFFSET_4, "pxadds.u-d-indirect-with-pre-increment-2-s1-indirect-with-offset-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u ${d-direct-addr},(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_DIRECT_S1_INDIRECT_4, "pxadds.u-d-direct-s1-indirect-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u #${d-imm8},(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_IMMEDIATE_2_S1_INDIRECT_4, "pxadds.u-d-immediate-2-s1-indirect-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u (${d-An},${d-r}),(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_INDEX_2_S1_INDIRECT_4, "pxadds.u-d-indirect-with-index-2-s1-indirect-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u ${d-imm7-2}(${d-An}),(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_OFFSET_2_S1_INDIRECT_4, "pxadds.u-d-indirect-with-offset-2-s1-indirect-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u (${d-An}),(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_2_S1_INDIRECT_4, "pxadds.u-d-indirect-2-s1-indirect-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u (${d-An})${d-i4-2}++,(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_POST_INCREMENT_2_S1_INDIRECT_4, "pxadds.u-d-indirect-with-post-increment-2-s1-indirect-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u ${d-i4-2}(${d-An})++,(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_INDIRECT_4, "pxadds.u-d-indirect-with-pre-increment-2-s1-indirect-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u ${d-direct-addr},(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_DIRECT_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxadds.u-d-direct-s1-indirect-with-post-increment-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u #${d-imm8},(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_IMMEDIATE_2_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxadds.u-d-immediate-2-s1-indirect-with-post-increment-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u (${d-An},${d-r}),(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_INDEX_2_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxadds.u-d-indirect-with-index-2-s1-indirect-with-post-increment-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u ${d-imm7-2}(${d-An}),(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_OFFSET_2_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxadds.u-d-indirect-with-offset-2-s1-indirect-with-post-increment-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u (${d-An}),(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_2_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxadds.u-d-indirect-2-s1-indirect-with-post-increment-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u (${d-An})${d-i4-2}++,(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_POST_INCREMENT_2_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxadds.u-d-indirect-with-post-increment-2-s1-indirect-with-post-increment-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u ${d-i4-2}(${d-An})++,(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxadds.u-d-indirect-with-pre-increment-2-s1-indirect-with-post-increment-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u ${d-direct-addr},${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_DIRECT_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxadds.u-d-direct-s1-indirect-with-pre-increment-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u #${d-imm8},${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_IMMEDIATE_2_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxadds.u-d-immediate-2-s1-indirect-with-pre-increment-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u (${d-An},${d-r}),${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_INDEX_2_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxadds.u-d-indirect-with-index-2-s1-indirect-with-pre-increment-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u ${d-imm7-2}(${d-An}),${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_OFFSET_2_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxadds.u-d-indirect-with-offset-2-s1-indirect-with-pre-increment-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u (${d-An}),${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_2_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxadds.u-d-indirect-2-s1-indirect-with-pre-increment-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u (${d-An})${d-i4-2}++,${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_POST_INCREMENT_2_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxadds.u-d-indirect-with-post-increment-2-s1-indirect-with-pre-increment-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds.u ${d-i4-2}(${d-An})++,${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXADDS_U_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxadds.u-d-indirect-with-pre-increment-2-s1-indirect-with-pre-increment-4", "pxadds.u", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds ${d-direct-addr},${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXADDS_D_DIRECT_S1_DIRECT, "pxadds-d-direct-s1-direct", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds #${d-imm8},${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXADDS_D_IMMEDIATE_2_S1_DIRECT, "pxadds-d-immediate-2-s1-direct", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds (${d-An},${d-r}),${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_INDEX_2_S1_DIRECT, "pxadds-d-indirect-with-index-2-s1-direct", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds ${d-imm7-2}(${d-An}),${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_OFFSET_2_S1_DIRECT, "pxadds-d-indirect-with-offset-2-s1-direct", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds (${d-An}),${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_2_S1_DIRECT, "pxadds-d-indirect-2-s1-direct", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds (${d-An})${d-i4-2}++,${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_POST_INCREMENT_2_S1_DIRECT, "pxadds-d-indirect-with-post-increment-2-s1-direct", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds ${d-i4-2}(${d-An})++,${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_DIRECT, "pxadds-d-indirect-with-pre-increment-2-s1-direct", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds ${d-direct-addr},#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXADDS_D_DIRECT_S1_IMMEDIATE, "pxadds-d-direct-s1-immediate", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds #${d-imm8},#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXADDS_D_IMMEDIATE_2_S1_IMMEDIATE, "pxadds-d-immediate-2-s1-immediate", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds (${d-An},${d-r}),#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_INDEX_2_S1_IMMEDIATE, "pxadds-d-indirect-with-index-2-s1-immediate", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds ${d-imm7-2}(${d-An}),#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_OFFSET_2_S1_IMMEDIATE, "pxadds-d-indirect-with-offset-2-s1-immediate", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds (${d-An}),#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_2_S1_IMMEDIATE, "pxadds-d-indirect-2-s1-immediate", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds (${d-An})${d-i4-2}++,#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_POST_INCREMENT_2_S1_IMMEDIATE, "pxadds-d-indirect-with-post-increment-2-s1-immediate", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds ${d-i4-2}(${d-An})++,#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_IMMEDIATE, "pxadds-d-indirect-with-pre-increment-2-s1-immediate", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds ${d-direct-addr},(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXADDS_D_DIRECT_S1_INDIRECT_WITH_INDEX_4, "pxadds-d-direct-s1-indirect-with-index-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds #${d-imm8},(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXADDS_D_IMMEDIATE_2_S1_INDIRECT_WITH_INDEX_4, "pxadds-d-immediate-2-s1-indirect-with-index-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds (${d-An},${d-r}),(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_INDEX_2_S1_INDIRECT_WITH_INDEX_4, "pxadds-d-indirect-with-index-2-s1-indirect-with-index-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds ${d-imm7-2}(${d-An}),(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_OFFSET_2_S1_INDIRECT_WITH_INDEX_4, "pxadds-d-indirect-with-offset-2-s1-indirect-with-index-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds (${d-An}),(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_2_S1_INDIRECT_WITH_INDEX_4, "pxadds-d-indirect-2-s1-indirect-with-index-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds (${d-An})${d-i4-2}++,(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_POST_INCREMENT_2_S1_INDIRECT_WITH_INDEX_4, "pxadds-d-indirect-with-post-increment-2-s1-indirect-with-index-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds ${d-i4-2}(${d-An})++,(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_INDIRECT_WITH_INDEX_4, "pxadds-d-indirect-with-pre-increment-2-s1-indirect-with-index-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds ${d-direct-addr},${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_D_DIRECT_S1_INDIRECT_WITH_OFFSET_4, "pxadds-d-direct-s1-indirect-with-offset-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds #${d-imm8},${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_D_IMMEDIATE_2_S1_INDIRECT_WITH_OFFSET_4, "pxadds-d-immediate-2-s1-indirect-with-offset-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds (${d-An},${d-r}),${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_INDEX_2_S1_INDIRECT_WITH_OFFSET_4, "pxadds-d-indirect-with-index-2-s1-indirect-with-offset-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds ${d-imm7-2}(${d-An}),${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_OFFSET_2_S1_INDIRECT_WITH_OFFSET_4, "pxadds-d-indirect-with-offset-2-s1-indirect-with-offset-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds (${d-An}),${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_2_S1_INDIRECT_WITH_OFFSET_4, "pxadds-d-indirect-2-s1-indirect-with-offset-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds (${d-An})${d-i4-2}++,${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_POST_INCREMENT_2_S1_INDIRECT_WITH_OFFSET_4, "pxadds-d-indirect-with-post-increment-2-s1-indirect-with-offset-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds ${d-i4-2}(${d-An})++,${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_INDIRECT_WITH_OFFSET_4, "pxadds-d-indirect-with-pre-increment-2-s1-indirect-with-offset-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds ${d-direct-addr},(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_D_DIRECT_S1_INDIRECT_4, "pxadds-d-direct-s1-indirect-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds #${d-imm8},(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_D_IMMEDIATE_2_S1_INDIRECT_4, "pxadds-d-immediate-2-s1-indirect-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds (${d-An},${d-r}),(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_INDEX_2_S1_INDIRECT_4, "pxadds-d-indirect-with-index-2-s1-indirect-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds ${d-imm7-2}(${d-An}),(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_OFFSET_2_S1_INDIRECT_4, "pxadds-d-indirect-with-offset-2-s1-indirect-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds (${d-An}),(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_2_S1_INDIRECT_4, "pxadds-d-indirect-2-s1-indirect-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds (${d-An})${d-i4-2}++,(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_POST_INCREMENT_2_S1_INDIRECT_4, "pxadds-d-indirect-with-post-increment-2-s1-indirect-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds ${d-i4-2}(${d-An})++,(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_INDIRECT_4, "pxadds-d-indirect-with-pre-increment-2-s1-indirect-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds ${d-direct-addr},(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXADDS_D_DIRECT_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxadds-d-direct-s1-indirect-with-post-increment-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds #${d-imm8},(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXADDS_D_IMMEDIATE_2_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxadds-d-immediate-2-s1-indirect-with-post-increment-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds (${d-An},${d-r}),(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_INDEX_2_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxadds-d-indirect-with-index-2-s1-indirect-with-post-increment-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds ${d-imm7-2}(${d-An}),(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_OFFSET_2_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxadds-d-indirect-with-offset-2-s1-indirect-with-post-increment-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds (${d-An}),(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_2_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxadds-d-indirect-2-s1-indirect-with-post-increment-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds (${d-An})${d-i4-2}++,(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_POST_INCREMENT_2_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxadds-d-indirect-with-post-increment-2-s1-indirect-with-post-increment-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds ${d-i4-2}(${d-An})++,(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxadds-d-indirect-with-pre-increment-2-s1-indirect-with-post-increment-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds ${d-direct-addr},${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXADDS_D_DIRECT_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxadds-d-direct-s1-indirect-with-pre-increment-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds #${d-imm8},${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXADDS_D_IMMEDIATE_2_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxadds-d-immediate-2-s1-indirect-with-pre-increment-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds (${d-An},${d-r}),${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_INDEX_2_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxadds-d-indirect-with-index-2-s1-indirect-with-pre-increment-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds ${d-imm7-2}(${d-An}),${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_OFFSET_2_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxadds-d-indirect-with-offset-2-s1-indirect-with-pre-increment-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds (${d-An}),${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_2_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxadds-d-indirect-2-s1-indirect-with-pre-increment-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds (${d-An})${d-i4-2}++,${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_POST_INCREMENT_2_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxadds-d-indirect-with-post-increment-2-s1-indirect-with-pre-increment-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxadds ${d-i4-2}(${d-An})++,${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXADDS_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxadds-d-indirect-with-pre-increment-2-s1-indirect-with-pre-increment-4", "pxadds", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxhi.s ${Dn},${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXHI_S_S1_DIRECT, "pxhi.s-s1-direct", "pxhi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxhi.s ${Dn},#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXHI_S_S1_IMMEDIATE, "pxhi.s-s1-immediate", "pxhi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxhi.s ${Dn},(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXHI_S_S1_INDIRECT_WITH_INDEX_4, "pxhi.s-s1-indirect-with-index-4", "pxhi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxhi.s ${Dn},${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXHI_S_S1_INDIRECT_WITH_OFFSET_4, "pxhi.s-s1-indirect-with-offset-4", "pxhi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxhi.s ${Dn},(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXHI_S_S1_INDIRECT_4, "pxhi.s-s1-indirect-4", "pxhi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxhi.s ${Dn},(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXHI_S_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxhi.s-s1-indirect-with-post-increment-4", "pxhi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxhi.s ${Dn},${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXHI_S_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxhi.s-s1-indirect-with-pre-increment-4", "pxhi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxhi ${Dn},${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXHI_S1_DIRECT, "pxhi-s1-direct", "pxhi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxhi ${Dn},#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXHI_S1_IMMEDIATE, "pxhi-s1-immediate", "pxhi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxhi ${Dn},(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXHI_S1_INDIRECT_WITH_INDEX_4, "pxhi-s1-indirect-with-index-4", "pxhi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxhi ${Dn},${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXHI_S1_INDIRECT_WITH_OFFSET_4, "pxhi-s1-indirect-with-offset-4", "pxhi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxhi ${Dn},(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXHI_S1_INDIRECT_4, "pxhi-s1-indirect-4", "pxhi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxhi ${Dn},(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXHI_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxhi-s1-indirect-with-post-increment-4", "pxhi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxhi ${Dn},${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXHI_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxhi-s1-indirect-with-pre-increment-4", "pxhi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s ${d-direct-addr},${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_DIRECT_S1_DIRECT, "pxvi.s-d-direct-s1-direct", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s #${d-imm8},${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_IMMEDIATE_4_S1_DIRECT, "pxvi.s-d-immediate-4-s1-direct", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s (${d-An},${d-r}),${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_INDEX_4_S1_DIRECT, "pxvi.s-d-indirect-with-index-4-s1-direct", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s ${d-imm7-4}(${d-An}),${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_OFFSET_4_S1_DIRECT, "pxvi.s-d-indirect-with-offset-4-s1-direct", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s (${d-An}),${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_4_S1_DIRECT, "pxvi.s-d-indirect-4-s1-direct", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s (${d-An})${d-i4-4}++,${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_POST_INCREMENT_4_S1_DIRECT, "pxvi.s-d-indirect-with-post-increment-4-s1-direct", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s ${d-i4-4}(${d-An})++,${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_DIRECT, "pxvi.s-d-indirect-with-pre-increment-4-s1-direct", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s ${d-direct-addr},#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_DIRECT_S1_IMMEDIATE, "pxvi.s-d-direct-s1-immediate", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s #${d-imm8},#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_IMMEDIATE_4_S1_IMMEDIATE, "pxvi.s-d-immediate-4-s1-immediate", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s (${d-An},${d-r}),#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_INDEX_4_S1_IMMEDIATE, "pxvi.s-d-indirect-with-index-4-s1-immediate", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s ${d-imm7-4}(${d-An}),#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_OFFSET_4_S1_IMMEDIATE, "pxvi.s-d-indirect-with-offset-4-s1-immediate", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s (${d-An}),#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_4_S1_IMMEDIATE, "pxvi.s-d-indirect-4-s1-immediate", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s (${d-An})${d-i4-4}++,#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_POST_INCREMENT_4_S1_IMMEDIATE, "pxvi.s-d-indirect-with-post-increment-4-s1-immediate", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s ${d-i4-4}(${d-An})++,#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_IMMEDIATE, "pxvi.s-d-indirect-with-pre-increment-4-s1-immediate", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s ${d-direct-addr},(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_DIRECT_S1_INDIRECT_WITH_INDEX_4, "pxvi.s-d-direct-s1-indirect-with-index-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s #${d-imm8},(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_IMMEDIATE_4_S1_INDIRECT_WITH_INDEX_4, "pxvi.s-d-immediate-4-s1-indirect-with-index-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s (${d-An},${d-r}),(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_INDEX_4, "pxvi.s-d-indirect-with-index-4-s1-indirect-with-index-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s ${d-imm7-4}(${d-An}),(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_INDEX_4, "pxvi.s-d-indirect-with-offset-4-s1-indirect-with-index-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s (${d-An}),(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_4_S1_INDIRECT_WITH_INDEX_4, "pxvi.s-d-indirect-4-s1-indirect-with-index-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s (${d-An})${d-i4-4}++,(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_INDEX_4, "pxvi.s-d-indirect-with-post-increment-4-s1-indirect-with-index-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s ${d-i4-4}(${d-An})++,(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_INDEX_4, "pxvi.s-d-indirect-with-pre-increment-4-s1-indirect-with-index-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s ${d-direct-addr},${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_DIRECT_S1_INDIRECT_WITH_OFFSET_4, "pxvi.s-d-direct-s1-indirect-with-offset-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s #${d-imm8},${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_IMMEDIATE_4_S1_INDIRECT_WITH_OFFSET_4, "pxvi.s-d-immediate-4-s1-indirect-with-offset-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s (${d-An},${d-r}),${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_OFFSET_4, "pxvi.s-d-indirect-with-index-4-s1-indirect-with-offset-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s ${d-imm7-4}(${d-An}),${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_OFFSET_4, "pxvi.s-d-indirect-with-offset-4-s1-indirect-with-offset-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s (${d-An}),${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_4_S1_INDIRECT_WITH_OFFSET_4, "pxvi.s-d-indirect-4-s1-indirect-with-offset-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s (${d-An})${d-i4-4}++,${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_OFFSET_4, "pxvi.s-d-indirect-with-post-increment-4-s1-indirect-with-offset-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s ${d-i4-4}(${d-An})++,${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_OFFSET_4, "pxvi.s-d-indirect-with-pre-increment-4-s1-indirect-with-offset-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s ${d-direct-addr},(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_DIRECT_S1_INDIRECT_4, "pxvi.s-d-direct-s1-indirect-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s #${d-imm8},(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_IMMEDIATE_4_S1_INDIRECT_4, "pxvi.s-d-immediate-4-s1-indirect-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s (${d-An},${d-r}),(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_4, "pxvi.s-d-indirect-with-index-4-s1-indirect-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s ${d-imm7-4}(${d-An}),(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_4, "pxvi.s-d-indirect-with-offset-4-s1-indirect-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s (${d-An}),(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_4_S1_INDIRECT_4, "pxvi.s-d-indirect-4-s1-indirect-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s (${d-An})${d-i4-4}++,(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_4, "pxvi.s-d-indirect-with-post-increment-4-s1-indirect-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s ${d-i4-4}(${d-An})++,(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_4, "pxvi.s-d-indirect-with-pre-increment-4-s1-indirect-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s ${d-direct-addr},(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_DIRECT_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxvi.s-d-direct-s1-indirect-with-post-increment-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s #${d-imm8},(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_IMMEDIATE_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxvi.s-d-immediate-4-s1-indirect-with-post-increment-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s (${d-An},${d-r}),(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxvi.s-d-indirect-with-index-4-s1-indirect-with-post-increment-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s ${d-imm7-4}(${d-An}),(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxvi.s-d-indirect-with-offset-4-s1-indirect-with-post-increment-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s (${d-An}),(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxvi.s-d-indirect-4-s1-indirect-with-post-increment-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s (${d-An})${d-i4-4}++,(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxvi.s-d-indirect-with-post-increment-4-s1-indirect-with-post-increment-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s ${d-i4-4}(${d-An})++,(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxvi.s-d-indirect-with-pre-increment-4-s1-indirect-with-post-increment-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s ${d-direct-addr},${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_DIRECT_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxvi.s-d-direct-s1-indirect-with-pre-increment-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s #${d-imm8},${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_IMMEDIATE_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxvi.s-d-immediate-4-s1-indirect-with-pre-increment-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s (${d-An},${d-r}),${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxvi.s-d-indirect-with-index-4-s1-indirect-with-pre-increment-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s ${d-imm7-4}(${d-An}),${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxvi.s-d-indirect-with-offset-4-s1-indirect-with-pre-increment-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s (${d-An}),${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxvi.s-d-indirect-4-s1-indirect-with-pre-increment-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s (${d-An})${d-i4-4}++,${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxvi.s-d-indirect-with-post-increment-4-s1-indirect-with-pre-increment-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi.s ${d-i4-4}(${d-An})++,${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXVI_S_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxvi.s-d-indirect-with-pre-increment-4-s1-indirect-with-pre-increment-4", "pxvi.s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi ${d-direct-addr},${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXVI_D_DIRECT_S1_DIRECT, "pxvi-d-direct-s1-direct", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi #${d-imm8},${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXVI_D_IMMEDIATE_4_S1_DIRECT, "pxvi-d-immediate-4-s1-direct", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi (${d-An},${d-r}),${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_INDEX_4_S1_DIRECT, "pxvi-d-indirect-with-index-4-s1-direct", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi ${d-imm7-4}(${d-An}),${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_OFFSET_4_S1_DIRECT, "pxvi-d-indirect-with-offset-4-s1-direct", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi (${d-An}),${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_4_S1_DIRECT, "pxvi-d-indirect-4-s1-direct", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi (${d-An})${d-i4-4}++,${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_POST_INCREMENT_4_S1_DIRECT, "pxvi-d-indirect-with-post-increment-4-s1-direct", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi ${d-i4-4}(${d-An})++,${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_DIRECT, "pxvi-d-indirect-with-pre-increment-4-s1-direct", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi ${d-direct-addr},#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXVI_D_DIRECT_S1_IMMEDIATE, "pxvi-d-direct-s1-immediate", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi #${d-imm8},#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXVI_D_IMMEDIATE_4_S1_IMMEDIATE, "pxvi-d-immediate-4-s1-immediate", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi (${d-An},${d-r}),#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_INDEX_4_S1_IMMEDIATE, "pxvi-d-indirect-with-index-4-s1-immediate", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi ${d-imm7-4}(${d-An}),#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_OFFSET_4_S1_IMMEDIATE, "pxvi-d-indirect-with-offset-4-s1-immediate", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi (${d-An}),#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_4_S1_IMMEDIATE, "pxvi-d-indirect-4-s1-immediate", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi (${d-An})${d-i4-4}++,#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_POST_INCREMENT_4_S1_IMMEDIATE, "pxvi-d-indirect-with-post-increment-4-s1-immediate", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi ${d-i4-4}(${d-An})++,#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_IMMEDIATE, "pxvi-d-indirect-with-pre-increment-4-s1-immediate", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi ${d-direct-addr},(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXVI_D_DIRECT_S1_INDIRECT_WITH_INDEX_4, "pxvi-d-direct-s1-indirect-with-index-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi #${d-imm8},(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXVI_D_IMMEDIATE_4_S1_INDIRECT_WITH_INDEX_4, "pxvi-d-immediate-4-s1-indirect-with-index-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi (${d-An},${d-r}),(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_INDEX_4, "pxvi-d-indirect-with-index-4-s1-indirect-with-index-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi ${d-imm7-4}(${d-An}),(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_INDEX_4, "pxvi-d-indirect-with-offset-4-s1-indirect-with-index-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi (${d-An}),(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_4_S1_INDIRECT_WITH_INDEX_4, "pxvi-d-indirect-4-s1-indirect-with-index-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi (${d-An})${d-i4-4}++,(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_INDEX_4, "pxvi-d-indirect-with-post-increment-4-s1-indirect-with-index-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi ${d-i4-4}(${d-An})++,(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_INDEX_4, "pxvi-d-indirect-with-pre-increment-4-s1-indirect-with-index-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi ${d-direct-addr},${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_D_DIRECT_S1_INDIRECT_WITH_OFFSET_4, "pxvi-d-direct-s1-indirect-with-offset-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi #${d-imm8},${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_D_IMMEDIATE_4_S1_INDIRECT_WITH_OFFSET_4, "pxvi-d-immediate-4-s1-indirect-with-offset-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi (${d-An},${d-r}),${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_OFFSET_4, "pxvi-d-indirect-with-index-4-s1-indirect-with-offset-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi ${d-imm7-4}(${d-An}),${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_OFFSET_4, "pxvi-d-indirect-with-offset-4-s1-indirect-with-offset-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi (${d-An}),${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_4_S1_INDIRECT_WITH_OFFSET_4, "pxvi-d-indirect-4-s1-indirect-with-offset-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi (${d-An})${d-i4-4}++,${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_OFFSET_4, "pxvi-d-indirect-with-post-increment-4-s1-indirect-with-offset-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi ${d-i4-4}(${d-An})++,${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_OFFSET_4, "pxvi-d-indirect-with-pre-increment-4-s1-indirect-with-offset-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi ${d-direct-addr},(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_D_DIRECT_S1_INDIRECT_4, "pxvi-d-direct-s1-indirect-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi #${d-imm8},(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_D_IMMEDIATE_4_S1_INDIRECT_4, "pxvi-d-immediate-4-s1-indirect-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi (${d-An},${d-r}),(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_4, "pxvi-d-indirect-with-index-4-s1-indirect-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi ${d-imm7-4}(${d-An}),(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_4, "pxvi-d-indirect-with-offset-4-s1-indirect-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi (${d-An}),(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_4_S1_INDIRECT_4, "pxvi-d-indirect-4-s1-indirect-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi (${d-An})${d-i4-4}++,(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_4, "pxvi-d-indirect-with-post-increment-4-s1-indirect-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi ${d-i4-4}(${d-An})++,(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_4, "pxvi-d-indirect-with-pre-increment-4-s1-indirect-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi ${d-direct-addr},(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXVI_D_DIRECT_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxvi-d-direct-s1-indirect-with-post-increment-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi #${d-imm8},(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXVI_D_IMMEDIATE_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxvi-d-immediate-4-s1-indirect-with-post-increment-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi (${d-An},${d-r}),(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxvi-d-indirect-with-index-4-s1-indirect-with-post-increment-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi ${d-imm7-4}(${d-An}),(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxvi-d-indirect-with-offset-4-s1-indirect-with-post-increment-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi (${d-An}),(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxvi-d-indirect-4-s1-indirect-with-post-increment-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi (${d-An})${d-i4-4}++,(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxvi-d-indirect-with-post-increment-4-s1-indirect-with-post-increment-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi ${d-i4-4}(${d-An})++,(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxvi-d-indirect-with-pre-increment-4-s1-indirect-with-post-increment-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi ${d-direct-addr},${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXVI_D_DIRECT_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxvi-d-direct-s1-indirect-with-pre-increment-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi #${d-imm8},${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXVI_D_IMMEDIATE_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxvi-d-immediate-4-s1-indirect-with-pre-increment-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi (${d-An},${d-r}),${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxvi-d-indirect-with-index-4-s1-indirect-with-pre-increment-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi ${d-imm7-4}(${d-An}),${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxvi-d-indirect-with-offset-4-s1-indirect-with-pre-increment-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi (${d-An}),${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxvi-d-indirect-4-s1-indirect-with-pre-increment-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi (${d-An})${d-i4-4}++,${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxvi-d-indirect-with-post-increment-4-s1-indirect-with-pre-increment-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxvi ${d-i4-4}(${d-An})++,${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXVI_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxvi-d-indirect-with-pre-increment-4-s1-indirect-with-pre-increment-4", "pxvi", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t ${d-direct-addr},${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_DIRECT_S1_DIRECT, "pxblend.t-d-direct-s1-direct", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t #${d-imm8},${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_IMMEDIATE_4_S1_DIRECT, "pxblend.t-d-immediate-4-s1-direct", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t (${d-An},${d-r}),${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_INDEX_4_S1_DIRECT, "pxblend.t-d-indirect-with-index-4-s1-direct", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t ${d-imm7-4}(${d-An}),${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_OFFSET_4_S1_DIRECT, "pxblend.t-d-indirect-with-offset-4-s1-direct", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t (${d-An}),${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_4_S1_DIRECT, "pxblend.t-d-indirect-4-s1-direct", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t (${d-An})${d-i4-4}++,${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_POST_INCREMENT_4_S1_DIRECT, "pxblend.t-d-indirect-with-post-increment-4-s1-direct", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t ${d-i4-4}(${d-An})++,${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_DIRECT, "pxblend.t-d-indirect-with-pre-increment-4-s1-direct", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t ${d-direct-addr},#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_DIRECT_S1_IMMEDIATE, "pxblend.t-d-direct-s1-immediate", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t #${d-imm8},#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_IMMEDIATE_4_S1_IMMEDIATE, "pxblend.t-d-immediate-4-s1-immediate", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t (${d-An},${d-r}),#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_INDEX_4_S1_IMMEDIATE, "pxblend.t-d-indirect-with-index-4-s1-immediate", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t ${d-imm7-4}(${d-An}),#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_OFFSET_4_S1_IMMEDIATE, "pxblend.t-d-indirect-with-offset-4-s1-immediate", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t (${d-An}),#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_4_S1_IMMEDIATE, "pxblend.t-d-indirect-4-s1-immediate", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t (${d-An})${d-i4-4}++,#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_POST_INCREMENT_4_S1_IMMEDIATE, "pxblend.t-d-indirect-with-post-increment-4-s1-immediate", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t ${d-i4-4}(${d-An})++,#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_IMMEDIATE, "pxblend.t-d-indirect-with-pre-increment-4-s1-immediate", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t ${d-direct-addr},(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_DIRECT_S1_INDIRECT_WITH_INDEX_4, "pxblend.t-d-direct-s1-indirect-with-index-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t #${d-imm8},(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_IMMEDIATE_4_S1_INDIRECT_WITH_INDEX_4, "pxblend.t-d-immediate-4-s1-indirect-with-index-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t (${d-An},${d-r}),(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_INDEX_4, "pxblend.t-d-indirect-with-index-4-s1-indirect-with-index-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t ${d-imm7-4}(${d-An}),(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_INDEX_4, "pxblend.t-d-indirect-with-offset-4-s1-indirect-with-index-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t (${d-An}),(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_4_S1_INDIRECT_WITH_INDEX_4, "pxblend.t-d-indirect-4-s1-indirect-with-index-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t (${d-An})${d-i4-4}++,(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_INDEX_4, "pxblend.t-d-indirect-with-post-increment-4-s1-indirect-with-index-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t ${d-i4-4}(${d-An})++,(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_INDEX_4, "pxblend.t-d-indirect-with-pre-increment-4-s1-indirect-with-index-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t ${d-direct-addr},${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_DIRECT_S1_INDIRECT_WITH_OFFSET_4, "pxblend.t-d-direct-s1-indirect-with-offset-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t #${d-imm8},${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_IMMEDIATE_4_S1_INDIRECT_WITH_OFFSET_4, "pxblend.t-d-immediate-4-s1-indirect-with-offset-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t (${d-An},${d-r}),${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_OFFSET_4, "pxblend.t-d-indirect-with-index-4-s1-indirect-with-offset-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t ${d-imm7-4}(${d-An}),${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_OFFSET_4, "pxblend.t-d-indirect-with-offset-4-s1-indirect-with-offset-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t (${d-An}),${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_4_S1_INDIRECT_WITH_OFFSET_4, "pxblend.t-d-indirect-4-s1-indirect-with-offset-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t (${d-An})${d-i4-4}++,${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_OFFSET_4, "pxblend.t-d-indirect-with-post-increment-4-s1-indirect-with-offset-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t ${d-i4-4}(${d-An})++,${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_OFFSET_4, "pxblend.t-d-indirect-with-pre-increment-4-s1-indirect-with-offset-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t ${d-direct-addr},(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_DIRECT_S1_INDIRECT_4, "pxblend.t-d-direct-s1-indirect-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t #${d-imm8},(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_IMMEDIATE_4_S1_INDIRECT_4, "pxblend.t-d-immediate-4-s1-indirect-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t (${d-An},${d-r}),(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_4, "pxblend.t-d-indirect-with-index-4-s1-indirect-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t ${d-imm7-4}(${d-An}),(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_4, "pxblend.t-d-indirect-with-offset-4-s1-indirect-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t (${d-An}),(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_4_S1_INDIRECT_4, "pxblend.t-d-indirect-4-s1-indirect-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t (${d-An})${d-i4-4}++,(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_4, "pxblend.t-d-indirect-with-post-increment-4-s1-indirect-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t ${d-i4-4}(${d-An})++,(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_4, "pxblend.t-d-indirect-with-pre-increment-4-s1-indirect-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t ${d-direct-addr},(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_DIRECT_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxblend.t-d-direct-s1-indirect-with-post-increment-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t #${d-imm8},(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_IMMEDIATE_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxblend.t-d-immediate-4-s1-indirect-with-post-increment-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t (${d-An},${d-r}),(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxblend.t-d-indirect-with-index-4-s1-indirect-with-post-increment-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t ${d-imm7-4}(${d-An}),(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxblend.t-d-indirect-with-offset-4-s1-indirect-with-post-increment-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t (${d-An}),(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxblend.t-d-indirect-4-s1-indirect-with-post-increment-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t (${d-An})${d-i4-4}++,(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxblend.t-d-indirect-with-post-increment-4-s1-indirect-with-post-increment-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t ${d-i4-4}(${d-An})++,(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxblend.t-d-indirect-with-pre-increment-4-s1-indirect-with-post-increment-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t ${d-direct-addr},${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_DIRECT_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxblend.t-d-direct-s1-indirect-with-pre-increment-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t #${d-imm8},${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_IMMEDIATE_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxblend.t-d-immediate-4-s1-indirect-with-pre-increment-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t (${d-An},${d-r}),${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxblend.t-d-indirect-with-index-4-s1-indirect-with-pre-increment-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t ${d-imm7-4}(${d-An}),${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxblend.t-d-indirect-with-offset-4-s1-indirect-with-pre-increment-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t (${d-An}),${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxblend.t-d-indirect-4-s1-indirect-with-pre-increment-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t (${d-An})${d-i4-4}++,${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxblend.t-d-indirect-with-post-increment-4-s1-indirect-with-pre-increment-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend.t ${d-i4-4}(${d-An})++,${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_T_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxblend.t-d-indirect-with-pre-increment-4-s1-indirect-with-pre-increment-4", "pxblend.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend ${d-direct-addr},${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_DIRECT_S1_DIRECT, "pxblend-d-direct-s1-direct", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend #${d-imm8},${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_IMMEDIATE_4_S1_DIRECT, "pxblend-d-immediate-4-s1-direct", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend (${d-An},${d-r}),${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_INDEX_4_S1_DIRECT, "pxblend-d-indirect-with-index-4-s1-direct", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend ${d-imm7-4}(${d-An}),${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_OFFSET_4_S1_DIRECT, "pxblend-d-indirect-with-offset-4-s1-direct", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend (${d-An}),${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_4_S1_DIRECT, "pxblend-d-indirect-4-s1-direct", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend (${d-An})${d-i4-4}++,${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_POST_INCREMENT_4_S1_DIRECT, "pxblend-d-indirect-with-post-increment-4-s1-direct", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend ${d-i4-4}(${d-An})++,${s1-direct-addr},${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_DIRECT, "pxblend-d-indirect-with-pre-increment-4-s1-direct", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend ${d-direct-addr},#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_DIRECT_S1_IMMEDIATE, "pxblend-d-direct-s1-immediate", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend #${d-imm8},#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_IMMEDIATE_4_S1_IMMEDIATE, "pxblend-d-immediate-4-s1-immediate", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend (${d-An},${d-r}),#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_INDEX_4_S1_IMMEDIATE, "pxblend-d-indirect-with-index-4-s1-immediate", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend ${d-imm7-4}(${d-An}),#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_OFFSET_4_S1_IMMEDIATE, "pxblend-d-indirect-with-offset-4-s1-immediate", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend (${d-An}),#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_4_S1_IMMEDIATE, "pxblend-d-indirect-4-s1-immediate", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend (${d-An})${d-i4-4}++,#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_POST_INCREMENT_4_S1_IMMEDIATE, "pxblend-d-indirect-with-post-increment-4-s1-immediate", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend ${d-i4-4}(${d-An})++,#${s1-imm8},${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_IMMEDIATE, "pxblend-d-indirect-with-pre-increment-4-s1-immediate", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend ${d-direct-addr},(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_DIRECT_S1_INDIRECT_WITH_INDEX_4, "pxblend-d-direct-s1-indirect-with-index-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend #${d-imm8},(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_IMMEDIATE_4_S1_INDIRECT_WITH_INDEX_4, "pxblend-d-immediate-4-s1-indirect-with-index-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend (${d-An},${d-r}),(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_INDEX_4, "pxblend-d-indirect-with-index-4-s1-indirect-with-index-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend ${d-imm7-4}(${d-An}),(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_INDEX_4, "pxblend-d-indirect-with-offset-4-s1-indirect-with-index-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend (${d-An}),(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_4_S1_INDIRECT_WITH_INDEX_4, "pxblend-d-indirect-4-s1-indirect-with-index-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend (${d-An})${d-i4-4}++,(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_INDEX_4, "pxblend-d-indirect-with-post-increment-4-s1-indirect-with-index-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend ${d-i4-4}(${d-An})++,(${s1-An},${s1-r}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_INDEX_4, "pxblend-d-indirect-with-pre-increment-4-s1-indirect-with-index-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend ${d-direct-addr},${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_DIRECT_S1_INDIRECT_WITH_OFFSET_4, "pxblend-d-direct-s1-indirect-with-offset-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend #${d-imm8},${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_IMMEDIATE_4_S1_INDIRECT_WITH_OFFSET_4, "pxblend-d-immediate-4-s1-indirect-with-offset-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend (${d-An},${d-r}),${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_OFFSET_4, "pxblend-d-indirect-with-index-4-s1-indirect-with-offset-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend ${d-imm7-4}(${d-An}),${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_OFFSET_4, "pxblend-d-indirect-with-offset-4-s1-indirect-with-offset-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend (${d-An}),${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_4_S1_INDIRECT_WITH_OFFSET_4, "pxblend-d-indirect-4-s1-indirect-with-offset-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend (${d-An})${d-i4-4}++,${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_OFFSET_4, "pxblend-d-indirect-with-post-increment-4-s1-indirect-with-offset-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend ${d-i4-4}(${d-An})++,${s1-imm7-4}(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_OFFSET_4, "pxblend-d-indirect-with-pre-increment-4-s1-indirect-with-offset-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend ${d-direct-addr},(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_DIRECT_S1_INDIRECT_4, "pxblend-d-direct-s1-indirect-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend #${d-imm8},(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_IMMEDIATE_4_S1_INDIRECT_4, "pxblend-d-immediate-4-s1-indirect-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend (${d-An},${d-r}),(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_4, "pxblend-d-indirect-with-index-4-s1-indirect-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend ${d-imm7-4}(${d-An}),(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_4, "pxblend-d-indirect-with-offset-4-s1-indirect-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend (${d-An}),(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_4_S1_INDIRECT_4, "pxblend-d-indirect-4-s1-indirect-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend (${d-An})${d-i4-4}++,(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_4, "pxblend-d-indirect-with-post-increment-4-s1-indirect-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend ${d-i4-4}(${d-An})++,(${s1-An}),${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_4, "pxblend-d-indirect-with-pre-increment-4-s1-indirect-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend ${d-direct-addr},(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_DIRECT_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxblend-d-direct-s1-indirect-with-post-increment-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend #${d-imm8},(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_IMMEDIATE_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxblend-d-immediate-4-s1-indirect-with-post-increment-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend (${d-An},${d-r}),(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxblend-d-indirect-with-index-4-s1-indirect-with-post-increment-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend ${d-imm7-4}(${d-An}),(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxblend-d-indirect-with-offset-4-s1-indirect-with-post-increment-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend (${d-An}),(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxblend-d-indirect-4-s1-indirect-with-post-increment-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend (${d-An})${d-i4-4}++,(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxblend-d-indirect-with-post-increment-4-s1-indirect-with-post-increment-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend ${d-i4-4}(${d-An})++,(${s1-An})${s1-i4-4}++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxblend-d-indirect-with-pre-increment-4-s1-indirect-with-post-increment-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend ${d-direct-addr},${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_DIRECT_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxblend-d-direct-s1-indirect-with-pre-increment-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend #${d-imm8},${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_IMMEDIATE_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxblend-d-immediate-4-s1-indirect-with-pre-increment-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend (${d-An},${d-r}),${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_INDEX_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxblend-d-indirect-with-index-4-s1-indirect-with-pre-increment-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend ${d-imm7-4}(${d-An}),${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_OFFSET_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxblend-d-indirect-with-offset-4-s1-indirect-with-pre-increment-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend (${d-An}),${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxblend-d-indirect-4-s1-indirect-with-pre-increment-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend (${d-An})${d-i4-4}++,${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_POST_INCREMENT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxblend-d-indirect-with-post-increment-4-s1-indirect-with-pre-increment-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxblend ${d-i4-4}(${d-An})++,${s1-i4-4}(${s1-An})++,${s2} */
+  {
+    UBI32_INSN_PXBLEND_D_INDIRECT_WITH_PRE_INCREMENT_4_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxblend-d-indirect-with-pre-increment-4-s1-indirect-with-pre-increment-4", "pxblend", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t ${d-direct-addr},${s1-direct-addr} */
+  {
+    UBI32_INSN_PXCNV_T_D_DIRECT_S1_DIRECT, "pxcnv.t-d-direct-s1-direct", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t #${d-imm8},${s1-direct-addr} */
+  {
+    UBI32_INSN_PXCNV_T_D_IMMEDIATE_2_S1_DIRECT, "pxcnv.t-d-immediate-2-s1-direct", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t (${d-An},${d-r}),${s1-direct-addr} */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_INDEX_2_S1_DIRECT, "pxcnv.t-d-indirect-with-index-2-s1-direct", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t ${d-imm7-2}(${d-An}),${s1-direct-addr} */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_OFFSET_2_S1_DIRECT, "pxcnv.t-d-indirect-with-offset-2-s1-direct", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t (${d-An}),${s1-direct-addr} */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_2_S1_DIRECT, "pxcnv.t-d-indirect-2-s1-direct", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t (${d-An})${d-i4-2}++,${s1-direct-addr} */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_POST_INCREMENT_2_S1_DIRECT, "pxcnv.t-d-indirect-with-post-increment-2-s1-direct", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t ${d-i4-2}(${d-An})++,${s1-direct-addr} */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_DIRECT, "pxcnv.t-d-indirect-with-pre-increment-2-s1-direct", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t ${d-direct-addr},#${s1-imm8} */
+  {
+    UBI32_INSN_PXCNV_T_D_DIRECT_S1_IMMEDIATE, "pxcnv.t-d-direct-s1-immediate", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t #${d-imm8},#${s1-imm8} */
+  {
+    UBI32_INSN_PXCNV_T_D_IMMEDIATE_2_S1_IMMEDIATE, "pxcnv.t-d-immediate-2-s1-immediate", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t (${d-An},${d-r}),#${s1-imm8} */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_INDEX_2_S1_IMMEDIATE, "pxcnv.t-d-indirect-with-index-2-s1-immediate", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t ${d-imm7-2}(${d-An}),#${s1-imm8} */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_OFFSET_2_S1_IMMEDIATE, "pxcnv.t-d-indirect-with-offset-2-s1-immediate", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t (${d-An}),#${s1-imm8} */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_2_S1_IMMEDIATE, "pxcnv.t-d-indirect-2-s1-immediate", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t (${d-An})${d-i4-2}++,#${s1-imm8} */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_POST_INCREMENT_2_S1_IMMEDIATE, "pxcnv.t-d-indirect-with-post-increment-2-s1-immediate", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t ${d-i4-2}(${d-An})++,#${s1-imm8} */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_IMMEDIATE, "pxcnv.t-d-indirect-with-pre-increment-2-s1-immediate", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t ${d-direct-addr},(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_PXCNV_T_D_DIRECT_S1_INDIRECT_WITH_INDEX_4, "pxcnv.t-d-direct-s1-indirect-with-index-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t #${d-imm8},(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_PXCNV_T_D_IMMEDIATE_2_S1_INDIRECT_WITH_INDEX_4, "pxcnv.t-d-immediate-2-s1-indirect-with-index-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t (${d-An},${d-r}),(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_INDEX_2_S1_INDIRECT_WITH_INDEX_4, "pxcnv.t-d-indirect-with-index-2-s1-indirect-with-index-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t ${d-imm7-2}(${d-An}),(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_OFFSET_2_S1_INDIRECT_WITH_INDEX_4, "pxcnv.t-d-indirect-with-offset-2-s1-indirect-with-index-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t (${d-An}),(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_2_S1_INDIRECT_WITH_INDEX_4, "pxcnv.t-d-indirect-2-s1-indirect-with-index-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t (${d-An})${d-i4-2}++,(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_POST_INCREMENT_2_S1_INDIRECT_WITH_INDEX_4, "pxcnv.t-d-indirect-with-post-increment-2-s1-indirect-with-index-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t ${d-i4-2}(${d-An})++,(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_INDIRECT_WITH_INDEX_4, "pxcnv.t-d-indirect-with-pre-increment-2-s1-indirect-with-index-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t ${d-direct-addr},${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_T_D_DIRECT_S1_INDIRECT_WITH_OFFSET_4, "pxcnv.t-d-direct-s1-indirect-with-offset-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t #${d-imm8},${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_T_D_IMMEDIATE_2_S1_INDIRECT_WITH_OFFSET_4, "pxcnv.t-d-immediate-2-s1-indirect-with-offset-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t (${d-An},${d-r}),${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_INDEX_2_S1_INDIRECT_WITH_OFFSET_4, "pxcnv.t-d-indirect-with-index-2-s1-indirect-with-offset-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t ${d-imm7-2}(${d-An}),${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_OFFSET_2_S1_INDIRECT_WITH_OFFSET_4, "pxcnv.t-d-indirect-with-offset-2-s1-indirect-with-offset-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t (${d-An}),${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_2_S1_INDIRECT_WITH_OFFSET_4, "pxcnv.t-d-indirect-2-s1-indirect-with-offset-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t (${d-An})${d-i4-2}++,${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_POST_INCREMENT_2_S1_INDIRECT_WITH_OFFSET_4, "pxcnv.t-d-indirect-with-post-increment-2-s1-indirect-with-offset-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t ${d-i4-2}(${d-An})++,${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_INDIRECT_WITH_OFFSET_4, "pxcnv.t-d-indirect-with-pre-increment-2-s1-indirect-with-offset-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t ${d-direct-addr},(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_T_D_DIRECT_S1_INDIRECT_4, "pxcnv.t-d-direct-s1-indirect-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t #${d-imm8},(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_T_D_IMMEDIATE_2_S1_INDIRECT_4, "pxcnv.t-d-immediate-2-s1-indirect-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t (${d-An},${d-r}),(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_INDEX_2_S1_INDIRECT_4, "pxcnv.t-d-indirect-with-index-2-s1-indirect-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t ${d-imm7-2}(${d-An}),(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_OFFSET_2_S1_INDIRECT_4, "pxcnv.t-d-indirect-with-offset-2-s1-indirect-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t (${d-An}),(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_2_S1_INDIRECT_4, "pxcnv.t-d-indirect-2-s1-indirect-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t (${d-An})${d-i4-2}++,(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_POST_INCREMENT_2_S1_INDIRECT_4, "pxcnv.t-d-indirect-with-post-increment-2-s1-indirect-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t ${d-i4-2}(${d-An})++,(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_INDIRECT_4, "pxcnv.t-d-indirect-with-pre-increment-2-s1-indirect-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t ${d-direct-addr},(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_PXCNV_T_D_DIRECT_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxcnv.t-d-direct-s1-indirect-with-post-increment-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t #${d-imm8},(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_PXCNV_T_D_IMMEDIATE_2_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxcnv.t-d-immediate-2-s1-indirect-with-post-increment-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t (${d-An},${d-r}),(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_INDEX_2_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxcnv.t-d-indirect-with-index-2-s1-indirect-with-post-increment-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t ${d-imm7-2}(${d-An}),(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_OFFSET_2_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxcnv.t-d-indirect-with-offset-2-s1-indirect-with-post-increment-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t (${d-An}),(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_2_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxcnv.t-d-indirect-2-s1-indirect-with-post-increment-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t (${d-An})${d-i4-2}++,(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_POST_INCREMENT_2_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxcnv.t-d-indirect-with-post-increment-2-s1-indirect-with-post-increment-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t ${d-i4-2}(${d-An})++,(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxcnv.t-d-indirect-with-pre-increment-2-s1-indirect-with-post-increment-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t ${d-direct-addr},${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_PXCNV_T_D_DIRECT_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxcnv.t-d-direct-s1-indirect-with-pre-increment-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t #${d-imm8},${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_PXCNV_T_D_IMMEDIATE_2_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxcnv.t-d-immediate-2-s1-indirect-with-pre-increment-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t (${d-An},${d-r}),${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_INDEX_2_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxcnv.t-d-indirect-with-index-2-s1-indirect-with-pre-increment-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t ${d-imm7-2}(${d-An}),${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_OFFSET_2_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxcnv.t-d-indirect-with-offset-2-s1-indirect-with-pre-increment-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t (${d-An}),${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_2_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxcnv.t-d-indirect-2-s1-indirect-with-pre-increment-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t (${d-An})${d-i4-2}++,${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_POST_INCREMENT_2_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxcnv.t-d-indirect-with-post-increment-2-s1-indirect-with-pre-increment-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv.t ${d-i4-2}(${d-An})++,${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_PXCNV_T_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxcnv.t-d-indirect-with-pre-increment-2-s1-indirect-with-pre-increment-4", "pxcnv.t", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv ${d-direct-addr},${s1-direct-addr} */
+  {
+    UBI32_INSN_PXCNV_D_DIRECT_S1_DIRECT, "pxcnv-d-direct-s1-direct", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv #${d-imm8},${s1-direct-addr} */
+  {
+    UBI32_INSN_PXCNV_D_IMMEDIATE_2_S1_DIRECT, "pxcnv-d-immediate-2-s1-direct", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv (${d-An},${d-r}),${s1-direct-addr} */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_INDEX_2_S1_DIRECT, "pxcnv-d-indirect-with-index-2-s1-direct", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv ${d-imm7-2}(${d-An}),${s1-direct-addr} */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_OFFSET_2_S1_DIRECT, "pxcnv-d-indirect-with-offset-2-s1-direct", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv (${d-An}),${s1-direct-addr} */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_2_S1_DIRECT, "pxcnv-d-indirect-2-s1-direct", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv (${d-An})${d-i4-2}++,${s1-direct-addr} */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_POST_INCREMENT_2_S1_DIRECT, "pxcnv-d-indirect-with-post-increment-2-s1-direct", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv ${d-i4-2}(${d-An})++,${s1-direct-addr} */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_DIRECT, "pxcnv-d-indirect-with-pre-increment-2-s1-direct", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv ${d-direct-addr},#${s1-imm8} */
+  {
+    UBI32_INSN_PXCNV_D_DIRECT_S1_IMMEDIATE, "pxcnv-d-direct-s1-immediate", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv #${d-imm8},#${s1-imm8} */
+  {
+    UBI32_INSN_PXCNV_D_IMMEDIATE_2_S1_IMMEDIATE, "pxcnv-d-immediate-2-s1-immediate", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv (${d-An},${d-r}),#${s1-imm8} */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_INDEX_2_S1_IMMEDIATE, "pxcnv-d-indirect-with-index-2-s1-immediate", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv ${d-imm7-2}(${d-An}),#${s1-imm8} */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_OFFSET_2_S1_IMMEDIATE, "pxcnv-d-indirect-with-offset-2-s1-immediate", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv (${d-An}),#${s1-imm8} */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_2_S1_IMMEDIATE, "pxcnv-d-indirect-2-s1-immediate", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv (${d-An})${d-i4-2}++,#${s1-imm8} */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_POST_INCREMENT_2_S1_IMMEDIATE, "pxcnv-d-indirect-with-post-increment-2-s1-immediate", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv ${d-i4-2}(${d-An})++,#${s1-imm8} */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_IMMEDIATE, "pxcnv-d-indirect-with-pre-increment-2-s1-immediate", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv ${d-direct-addr},(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_PXCNV_D_DIRECT_S1_INDIRECT_WITH_INDEX_4, "pxcnv-d-direct-s1-indirect-with-index-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv #${d-imm8},(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_PXCNV_D_IMMEDIATE_2_S1_INDIRECT_WITH_INDEX_4, "pxcnv-d-immediate-2-s1-indirect-with-index-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv (${d-An},${d-r}),(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_INDEX_2_S1_INDIRECT_WITH_INDEX_4, "pxcnv-d-indirect-with-index-2-s1-indirect-with-index-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv ${d-imm7-2}(${d-An}),(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_OFFSET_2_S1_INDIRECT_WITH_INDEX_4, "pxcnv-d-indirect-with-offset-2-s1-indirect-with-index-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv (${d-An}),(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_2_S1_INDIRECT_WITH_INDEX_4, "pxcnv-d-indirect-2-s1-indirect-with-index-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv (${d-An})${d-i4-2}++,(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_POST_INCREMENT_2_S1_INDIRECT_WITH_INDEX_4, "pxcnv-d-indirect-with-post-increment-2-s1-indirect-with-index-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv ${d-i4-2}(${d-An})++,(${s1-An},${s1-r}) */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_INDIRECT_WITH_INDEX_4, "pxcnv-d-indirect-with-pre-increment-2-s1-indirect-with-index-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv ${d-direct-addr},${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_D_DIRECT_S1_INDIRECT_WITH_OFFSET_4, "pxcnv-d-direct-s1-indirect-with-offset-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv #${d-imm8},${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_D_IMMEDIATE_2_S1_INDIRECT_WITH_OFFSET_4, "pxcnv-d-immediate-2-s1-indirect-with-offset-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv (${d-An},${d-r}),${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_INDEX_2_S1_INDIRECT_WITH_OFFSET_4, "pxcnv-d-indirect-with-index-2-s1-indirect-with-offset-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv ${d-imm7-2}(${d-An}),${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_OFFSET_2_S1_INDIRECT_WITH_OFFSET_4, "pxcnv-d-indirect-with-offset-2-s1-indirect-with-offset-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv (${d-An}),${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_2_S1_INDIRECT_WITH_OFFSET_4, "pxcnv-d-indirect-2-s1-indirect-with-offset-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv (${d-An})${d-i4-2}++,${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_POST_INCREMENT_2_S1_INDIRECT_WITH_OFFSET_4, "pxcnv-d-indirect-with-post-increment-2-s1-indirect-with-offset-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv ${d-i4-2}(${d-An})++,${s1-imm7-4}(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_INDIRECT_WITH_OFFSET_4, "pxcnv-d-indirect-with-pre-increment-2-s1-indirect-with-offset-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv ${d-direct-addr},(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_D_DIRECT_S1_INDIRECT_4, "pxcnv-d-direct-s1-indirect-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv #${d-imm8},(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_D_IMMEDIATE_2_S1_INDIRECT_4, "pxcnv-d-immediate-2-s1-indirect-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv (${d-An},${d-r}),(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_INDEX_2_S1_INDIRECT_4, "pxcnv-d-indirect-with-index-2-s1-indirect-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv ${d-imm7-2}(${d-An}),(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_OFFSET_2_S1_INDIRECT_4, "pxcnv-d-indirect-with-offset-2-s1-indirect-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv (${d-An}),(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_2_S1_INDIRECT_4, "pxcnv-d-indirect-2-s1-indirect-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv (${d-An})${d-i4-2}++,(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_POST_INCREMENT_2_S1_INDIRECT_4, "pxcnv-d-indirect-with-post-increment-2-s1-indirect-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv ${d-i4-2}(${d-An})++,(${s1-An}) */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_INDIRECT_4, "pxcnv-d-indirect-with-pre-increment-2-s1-indirect-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv ${d-direct-addr},(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_PXCNV_D_DIRECT_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxcnv-d-direct-s1-indirect-with-post-increment-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv #${d-imm8},(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_PXCNV_D_IMMEDIATE_2_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxcnv-d-immediate-2-s1-indirect-with-post-increment-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv (${d-An},${d-r}),(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_INDEX_2_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxcnv-d-indirect-with-index-2-s1-indirect-with-post-increment-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv ${d-imm7-2}(${d-An}),(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_OFFSET_2_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxcnv-d-indirect-with-offset-2-s1-indirect-with-post-increment-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv (${d-An}),(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_2_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxcnv-d-indirect-2-s1-indirect-with-post-increment-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv (${d-An})${d-i4-2}++,(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_POST_INCREMENT_2_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxcnv-d-indirect-with-post-increment-2-s1-indirect-with-post-increment-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv ${d-i4-2}(${d-An})++,(${s1-An})${s1-i4-4}++ */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_INDIRECT_WITH_POST_INCREMENT_4, "pxcnv-d-indirect-with-pre-increment-2-s1-indirect-with-post-increment-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv ${d-direct-addr},${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_PXCNV_D_DIRECT_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxcnv-d-direct-s1-indirect-with-pre-increment-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv #${d-imm8},${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_PXCNV_D_IMMEDIATE_2_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxcnv-d-immediate-2-s1-indirect-with-pre-increment-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv (${d-An},${d-r}),${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_INDEX_2_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxcnv-d-indirect-with-index-2-s1-indirect-with-pre-increment-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv ${d-imm7-2}(${d-An}),${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_OFFSET_2_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxcnv-d-indirect-with-offset-2-s1-indirect-with-pre-increment-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv (${d-An}),${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_2_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxcnv-d-indirect-2-s1-indirect-with-pre-increment-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv (${d-An})${d-i4-2}++,${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_POST_INCREMENT_2_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxcnv-d-indirect-with-post-increment-2-s1-indirect-with-pre-increment-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* pxcnv ${d-i4-2}(${d-An})++,${s1-i4-4}(${s1-An})++ */
+  {
+    UBI32_INSN_PXCNV_D_INDIRECT_WITH_PRE_INCREMENT_2_S1_INDIRECT_WITH_PRE_INCREMENT_4, "pxcnv-d-indirect-with-pre-increment-2-s1-indirect-with-pre-increment-4", "pxcnv", 32,
+    { 0, { { { (1<<MACH_UBI32_VER4), 0 } } } }
+  },
 /* subc ${d-direct-addr},${s1-direct-addr},${s2} */
   {
     UBI32_INSN_SUBC_D_DIRECT_S1_DIRECT, "subc-d-direct-s1-direct", "subc", 32,
@@ -8650,247 +14245,247 @@ static const CGEN_IBASE ubi32_cgen_insn_table[MAX_INSNS] =
 /* sub.1 ${d-direct-addr},${s1-direct-addr},${s2} */
   {
     UBI32_INSN_SUB_1_D_DIRECT_S1_DIRECT, "sub.1-d-direct-s1-direct", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 #${d-imm8},${s1-direct-addr},${s2} */
   {
     UBI32_INSN_SUB_1_D_IMMEDIATE_1_S1_DIRECT, "sub.1-d-immediate-1-s1-direct", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 (${d-An},${d-r}),${s1-direct-addr},${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_INDEX_1_S1_DIRECT, "sub.1-d-indirect-with-index-1-s1-direct", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 ${d-imm7-1}(${d-An}),${s1-direct-addr},${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_OFFSET_1_S1_DIRECT, "sub.1-d-indirect-with-offset-1-s1-direct", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 (${d-An}),${s1-direct-addr},${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_1_S1_DIRECT, "sub.1-d-indirect-1-s1-direct", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 (${d-An})${d-i4-1}++,${s1-direct-addr},${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_DIRECT, "sub.1-d-indirect-with-post-increment-1-s1-direct", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 ${d-i4-1}(${d-An})++,${s1-direct-addr},${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_DIRECT, "sub.1-d-indirect-with-pre-increment-1-s1-direct", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 ${d-direct-addr},#${s1-imm8},${s2} */
   {
     UBI32_INSN_SUB_1_D_DIRECT_S1_IMMEDIATE, "sub.1-d-direct-s1-immediate", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 #${d-imm8},#${s1-imm8},${s2} */
   {
     UBI32_INSN_SUB_1_D_IMMEDIATE_1_S1_IMMEDIATE, "sub.1-d-immediate-1-s1-immediate", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 (${d-An},${d-r}),#${s1-imm8},${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_INDEX_1_S1_IMMEDIATE, "sub.1-d-indirect-with-index-1-s1-immediate", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 ${d-imm7-1}(${d-An}),#${s1-imm8},${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_OFFSET_1_S1_IMMEDIATE, "sub.1-d-indirect-with-offset-1-s1-immediate", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 (${d-An}),#${s1-imm8},${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_1_S1_IMMEDIATE, "sub.1-d-indirect-1-s1-immediate", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 (${d-An})${d-i4-1}++,#${s1-imm8},${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_IMMEDIATE, "sub.1-d-indirect-with-post-increment-1-s1-immediate", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 ${d-i4-1}(${d-An})++,#${s1-imm8},${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_IMMEDIATE, "sub.1-d-indirect-with-pre-increment-1-s1-immediate", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 ${d-direct-addr},(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_SUB_1_D_DIRECT_S1_INDIRECT_WITH_INDEX_1, "sub.1-d-direct-s1-indirect-with-index-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 #${d-imm8},(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_SUB_1_D_IMMEDIATE_1_S1_INDIRECT_WITH_INDEX_1, "sub.1-d-immediate-1-s1-indirect-with-index-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 (${d-An},${d-r}),(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_INDEX_1_S1_INDIRECT_WITH_INDEX_1, "sub.1-d-indirect-with-index-1-s1-indirect-with-index-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 ${d-imm7-1}(${d-An}),(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_OFFSET_1_S1_INDIRECT_WITH_INDEX_1, "sub.1-d-indirect-with-offset-1-s1-indirect-with-index-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 (${d-An}),(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_1_S1_INDIRECT_WITH_INDEX_1, "sub.1-d-indirect-1-s1-indirect-with-index-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 (${d-An})${d-i4-1}++,(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_INDIRECT_WITH_INDEX_1, "sub.1-d-indirect-with-post-increment-1-s1-indirect-with-index-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 ${d-i4-1}(${d-An})++,(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_INDIRECT_WITH_INDEX_1, "sub.1-d-indirect-with-pre-increment-1-s1-indirect-with-index-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 ${d-direct-addr},${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_SUB_1_D_DIRECT_S1_INDIRECT_WITH_OFFSET_1, "sub.1-d-direct-s1-indirect-with-offset-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 #${d-imm8},${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_SUB_1_D_IMMEDIATE_1_S1_INDIRECT_WITH_OFFSET_1, "sub.1-d-immediate-1-s1-indirect-with-offset-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 (${d-An},${d-r}),${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_INDEX_1_S1_INDIRECT_WITH_OFFSET_1, "sub.1-d-indirect-with-index-1-s1-indirect-with-offset-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 ${d-imm7-1}(${d-An}),${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_OFFSET_1_S1_INDIRECT_WITH_OFFSET_1, "sub.1-d-indirect-with-offset-1-s1-indirect-with-offset-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 (${d-An}),${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_1_S1_INDIRECT_WITH_OFFSET_1, "sub.1-d-indirect-1-s1-indirect-with-offset-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 (${d-An})${d-i4-1}++,${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_INDIRECT_WITH_OFFSET_1, "sub.1-d-indirect-with-post-increment-1-s1-indirect-with-offset-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 ${d-i4-1}(${d-An})++,${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_INDIRECT_WITH_OFFSET_1, "sub.1-d-indirect-with-pre-increment-1-s1-indirect-with-offset-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 ${d-direct-addr},(${s1-An}),${s2} */
   {
     UBI32_INSN_SUB_1_D_DIRECT_S1_INDIRECT_1, "sub.1-d-direct-s1-indirect-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 #${d-imm8},(${s1-An}),${s2} */
   {
     UBI32_INSN_SUB_1_D_IMMEDIATE_1_S1_INDIRECT_1, "sub.1-d-immediate-1-s1-indirect-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 (${d-An},${d-r}),(${s1-An}),${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_INDEX_1_S1_INDIRECT_1, "sub.1-d-indirect-with-index-1-s1-indirect-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 ${d-imm7-1}(${d-An}),(${s1-An}),${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_OFFSET_1_S1_INDIRECT_1, "sub.1-d-indirect-with-offset-1-s1-indirect-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 (${d-An}),(${s1-An}),${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_1_S1_INDIRECT_1, "sub.1-d-indirect-1-s1-indirect-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 (${d-An})${d-i4-1}++,(${s1-An}),${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_INDIRECT_1, "sub.1-d-indirect-with-post-increment-1-s1-indirect-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 ${d-i4-1}(${d-An})++,(${s1-An}),${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_INDIRECT_1, "sub.1-d-indirect-with-pre-increment-1-s1-indirect-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 ${d-direct-addr},(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_SUB_1_D_DIRECT_S1_INDIRECT_WITH_POST_INCREMENT_1, "sub.1-d-direct-s1-indirect-with-post-increment-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 #${d-imm8},(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_SUB_1_D_IMMEDIATE_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "sub.1-d-immediate-1-s1-indirect-with-post-increment-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 (${d-An},${d-r}),(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_INDEX_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "sub.1-d-indirect-with-index-1-s1-indirect-with-post-increment-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 ${d-imm7-1}(${d-An}),(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_OFFSET_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "sub.1-d-indirect-with-offset-1-s1-indirect-with-post-increment-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 (${d-An}),(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "sub.1-d-indirect-1-s1-indirect-with-post-increment-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 (${d-An})${d-i4-1}++,(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "sub.1-d-indirect-with-post-increment-1-s1-indirect-with-post-increment-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 ${d-i4-1}(${d-An})++,(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "sub.1-d-indirect-with-pre-increment-1-s1-indirect-with-post-increment-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 ${d-direct-addr},${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_SUB_1_D_DIRECT_S1_INDIRECT_WITH_PRE_INCREMENT_1, "sub.1-d-direct-s1-indirect-with-pre-increment-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 #${d-imm8},${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_SUB_1_D_IMMEDIATE_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "sub.1-d-immediate-1-s1-indirect-with-pre-increment-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 (${d-An},${d-r}),${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_INDEX_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "sub.1-d-indirect-with-index-1-s1-indirect-with-pre-increment-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 ${d-imm7-1}(${d-An}),${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_OFFSET_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "sub.1-d-indirect-with-offset-1-s1-indirect-with-pre-increment-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 (${d-An}),${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "sub.1-d-indirect-1-s1-indirect-with-pre-increment-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 (${d-An})${d-i4-1}++,${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "sub.1-d-indirect-with-post-increment-1-s1-indirect-with-pre-increment-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.1 ${d-i4-1}(${d-An})++,${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_SUB_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "sub.1-d-indirect-with-pre-increment-1-s1-indirect-with-pre-increment-1", "sub.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* sub.4 ${d-direct-addr},${s1-direct-addr},${s2} */
   {
@@ -9385,247 +14980,247 @@ static const CGEN_IBASE ubi32_cgen_insn_table[MAX_INSNS] =
 /* add.1 ${d-direct-addr},${s1-direct-addr},${s2} */
   {
     UBI32_INSN_ADD_1_D_DIRECT_S1_DIRECT, "add.1-d-direct-s1-direct", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 #${d-imm8},${s1-direct-addr},${s2} */
   {
     UBI32_INSN_ADD_1_D_IMMEDIATE_1_S1_DIRECT, "add.1-d-immediate-1-s1-direct", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 (${d-An},${d-r}),${s1-direct-addr},${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_INDEX_1_S1_DIRECT, "add.1-d-indirect-with-index-1-s1-direct", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 ${d-imm7-1}(${d-An}),${s1-direct-addr},${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_OFFSET_1_S1_DIRECT, "add.1-d-indirect-with-offset-1-s1-direct", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 (${d-An}),${s1-direct-addr},${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_1_S1_DIRECT, "add.1-d-indirect-1-s1-direct", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 (${d-An})${d-i4-1}++,${s1-direct-addr},${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_DIRECT, "add.1-d-indirect-with-post-increment-1-s1-direct", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 ${d-i4-1}(${d-An})++,${s1-direct-addr},${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_DIRECT, "add.1-d-indirect-with-pre-increment-1-s1-direct", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 ${d-direct-addr},#${s1-imm8},${s2} */
   {
     UBI32_INSN_ADD_1_D_DIRECT_S1_IMMEDIATE, "add.1-d-direct-s1-immediate", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 #${d-imm8},#${s1-imm8},${s2} */
   {
     UBI32_INSN_ADD_1_D_IMMEDIATE_1_S1_IMMEDIATE, "add.1-d-immediate-1-s1-immediate", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 (${d-An},${d-r}),#${s1-imm8},${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_INDEX_1_S1_IMMEDIATE, "add.1-d-indirect-with-index-1-s1-immediate", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 ${d-imm7-1}(${d-An}),#${s1-imm8},${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_OFFSET_1_S1_IMMEDIATE, "add.1-d-indirect-with-offset-1-s1-immediate", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 (${d-An}),#${s1-imm8},${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_1_S1_IMMEDIATE, "add.1-d-indirect-1-s1-immediate", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 (${d-An})${d-i4-1}++,#${s1-imm8},${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_IMMEDIATE, "add.1-d-indirect-with-post-increment-1-s1-immediate", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 ${d-i4-1}(${d-An})++,#${s1-imm8},${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_IMMEDIATE, "add.1-d-indirect-with-pre-increment-1-s1-immediate", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 ${d-direct-addr},(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_ADD_1_D_DIRECT_S1_INDIRECT_WITH_INDEX_1, "add.1-d-direct-s1-indirect-with-index-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 #${d-imm8},(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_ADD_1_D_IMMEDIATE_1_S1_INDIRECT_WITH_INDEX_1, "add.1-d-immediate-1-s1-indirect-with-index-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 (${d-An},${d-r}),(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_INDEX_1_S1_INDIRECT_WITH_INDEX_1, "add.1-d-indirect-with-index-1-s1-indirect-with-index-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 ${d-imm7-1}(${d-An}),(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_OFFSET_1_S1_INDIRECT_WITH_INDEX_1, "add.1-d-indirect-with-offset-1-s1-indirect-with-index-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 (${d-An}),(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_1_S1_INDIRECT_WITH_INDEX_1, "add.1-d-indirect-1-s1-indirect-with-index-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 (${d-An})${d-i4-1}++,(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_INDIRECT_WITH_INDEX_1, "add.1-d-indirect-with-post-increment-1-s1-indirect-with-index-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 ${d-i4-1}(${d-An})++,(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_INDIRECT_WITH_INDEX_1, "add.1-d-indirect-with-pre-increment-1-s1-indirect-with-index-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 ${d-direct-addr},${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_ADD_1_D_DIRECT_S1_INDIRECT_WITH_OFFSET_1, "add.1-d-direct-s1-indirect-with-offset-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 #${d-imm8},${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_ADD_1_D_IMMEDIATE_1_S1_INDIRECT_WITH_OFFSET_1, "add.1-d-immediate-1-s1-indirect-with-offset-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 (${d-An},${d-r}),${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_INDEX_1_S1_INDIRECT_WITH_OFFSET_1, "add.1-d-indirect-with-index-1-s1-indirect-with-offset-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 ${d-imm7-1}(${d-An}),${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_OFFSET_1_S1_INDIRECT_WITH_OFFSET_1, "add.1-d-indirect-with-offset-1-s1-indirect-with-offset-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 (${d-An}),${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_1_S1_INDIRECT_WITH_OFFSET_1, "add.1-d-indirect-1-s1-indirect-with-offset-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 (${d-An})${d-i4-1}++,${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_INDIRECT_WITH_OFFSET_1, "add.1-d-indirect-with-post-increment-1-s1-indirect-with-offset-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 ${d-i4-1}(${d-An})++,${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_INDIRECT_WITH_OFFSET_1, "add.1-d-indirect-with-pre-increment-1-s1-indirect-with-offset-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 ${d-direct-addr},(${s1-An}),${s2} */
   {
     UBI32_INSN_ADD_1_D_DIRECT_S1_INDIRECT_1, "add.1-d-direct-s1-indirect-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 #${d-imm8},(${s1-An}),${s2} */
   {
     UBI32_INSN_ADD_1_D_IMMEDIATE_1_S1_INDIRECT_1, "add.1-d-immediate-1-s1-indirect-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 (${d-An},${d-r}),(${s1-An}),${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_INDEX_1_S1_INDIRECT_1, "add.1-d-indirect-with-index-1-s1-indirect-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 ${d-imm7-1}(${d-An}),(${s1-An}),${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_OFFSET_1_S1_INDIRECT_1, "add.1-d-indirect-with-offset-1-s1-indirect-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 (${d-An}),(${s1-An}),${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_1_S1_INDIRECT_1, "add.1-d-indirect-1-s1-indirect-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 (${d-An})${d-i4-1}++,(${s1-An}),${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_INDIRECT_1, "add.1-d-indirect-with-post-increment-1-s1-indirect-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 ${d-i4-1}(${d-An})++,(${s1-An}),${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_INDIRECT_1, "add.1-d-indirect-with-pre-increment-1-s1-indirect-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 ${d-direct-addr},(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_ADD_1_D_DIRECT_S1_INDIRECT_WITH_POST_INCREMENT_1, "add.1-d-direct-s1-indirect-with-post-increment-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 #${d-imm8},(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_ADD_1_D_IMMEDIATE_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "add.1-d-immediate-1-s1-indirect-with-post-increment-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 (${d-An},${d-r}),(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_INDEX_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "add.1-d-indirect-with-index-1-s1-indirect-with-post-increment-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 ${d-imm7-1}(${d-An}),(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_OFFSET_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "add.1-d-indirect-with-offset-1-s1-indirect-with-post-increment-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 (${d-An}),(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "add.1-d-indirect-1-s1-indirect-with-post-increment-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 (${d-An})${d-i4-1}++,(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "add.1-d-indirect-with-post-increment-1-s1-indirect-with-post-increment-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 ${d-i4-1}(${d-An})++,(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "add.1-d-indirect-with-pre-increment-1-s1-indirect-with-post-increment-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 ${d-direct-addr},${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_ADD_1_D_DIRECT_S1_INDIRECT_WITH_PRE_INCREMENT_1, "add.1-d-direct-s1-indirect-with-pre-increment-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 #${d-imm8},${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_ADD_1_D_IMMEDIATE_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "add.1-d-immediate-1-s1-indirect-with-pre-increment-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 (${d-An},${d-r}),${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_INDEX_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "add.1-d-indirect-with-index-1-s1-indirect-with-pre-increment-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 ${d-imm7-1}(${d-An}),${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_OFFSET_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "add.1-d-indirect-with-offset-1-s1-indirect-with-pre-increment-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 (${d-An}),${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "add.1-d-indirect-1-s1-indirect-with-pre-increment-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 (${d-An})${d-i4-1}++,${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "add.1-d-indirect-with-post-increment-1-s1-indirect-with-pre-increment-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.1 ${d-i4-1}(${d-An})++,${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_ADD_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "add.1-d-indirect-with-pre-increment-1-s1-indirect-with-pre-increment-1", "add.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* add.4 ${d-direct-addr},${s1-direct-addr},${s2} */
   {
@@ -10610,737 +16205,737 @@ static const CGEN_IBASE ubi32_cgen_insn_table[MAX_INSNS] =
 /* xor.1 ${d-direct-addr},${s1-direct-addr},${s2} */
   {
     UBI32_INSN_XOR_1_D_DIRECT_S1_DIRECT, "xor.1-d-direct-s1-direct", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 #${d-imm8},${s1-direct-addr},${s2} */
   {
     UBI32_INSN_XOR_1_D_IMMEDIATE_1_S1_DIRECT, "xor.1-d-immediate-1-s1-direct", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 (${d-An},${d-r}),${s1-direct-addr},${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_INDEX_1_S1_DIRECT, "xor.1-d-indirect-with-index-1-s1-direct", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 ${d-imm7-1}(${d-An}),${s1-direct-addr},${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_OFFSET_1_S1_DIRECT, "xor.1-d-indirect-with-offset-1-s1-direct", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 (${d-An}),${s1-direct-addr},${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_1_S1_DIRECT, "xor.1-d-indirect-1-s1-direct", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 (${d-An})${d-i4-1}++,${s1-direct-addr},${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_DIRECT, "xor.1-d-indirect-with-post-increment-1-s1-direct", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 ${d-i4-1}(${d-An})++,${s1-direct-addr},${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_DIRECT, "xor.1-d-indirect-with-pre-increment-1-s1-direct", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 ${d-direct-addr},#${s1-imm8},${s2} */
   {
     UBI32_INSN_XOR_1_D_DIRECT_S1_IMMEDIATE, "xor.1-d-direct-s1-immediate", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 #${d-imm8},#${s1-imm8},${s2} */
   {
     UBI32_INSN_XOR_1_D_IMMEDIATE_1_S1_IMMEDIATE, "xor.1-d-immediate-1-s1-immediate", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 (${d-An},${d-r}),#${s1-imm8},${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_INDEX_1_S1_IMMEDIATE, "xor.1-d-indirect-with-index-1-s1-immediate", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 ${d-imm7-1}(${d-An}),#${s1-imm8},${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_OFFSET_1_S1_IMMEDIATE, "xor.1-d-indirect-with-offset-1-s1-immediate", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 (${d-An}),#${s1-imm8},${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_1_S1_IMMEDIATE, "xor.1-d-indirect-1-s1-immediate", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 (${d-An})${d-i4-1}++,#${s1-imm8},${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_IMMEDIATE, "xor.1-d-indirect-with-post-increment-1-s1-immediate", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 ${d-i4-1}(${d-An})++,#${s1-imm8},${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_IMMEDIATE, "xor.1-d-indirect-with-pre-increment-1-s1-immediate", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 ${d-direct-addr},(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_XOR_1_D_DIRECT_S1_INDIRECT_WITH_INDEX_1, "xor.1-d-direct-s1-indirect-with-index-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 #${d-imm8},(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_XOR_1_D_IMMEDIATE_1_S1_INDIRECT_WITH_INDEX_1, "xor.1-d-immediate-1-s1-indirect-with-index-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 (${d-An},${d-r}),(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_INDEX_1_S1_INDIRECT_WITH_INDEX_1, "xor.1-d-indirect-with-index-1-s1-indirect-with-index-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 ${d-imm7-1}(${d-An}),(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_OFFSET_1_S1_INDIRECT_WITH_INDEX_1, "xor.1-d-indirect-with-offset-1-s1-indirect-with-index-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 (${d-An}),(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_1_S1_INDIRECT_WITH_INDEX_1, "xor.1-d-indirect-1-s1-indirect-with-index-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 (${d-An})${d-i4-1}++,(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_INDIRECT_WITH_INDEX_1, "xor.1-d-indirect-with-post-increment-1-s1-indirect-with-index-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 ${d-i4-1}(${d-An})++,(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_INDIRECT_WITH_INDEX_1, "xor.1-d-indirect-with-pre-increment-1-s1-indirect-with-index-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 ${d-direct-addr},${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_XOR_1_D_DIRECT_S1_INDIRECT_WITH_OFFSET_1, "xor.1-d-direct-s1-indirect-with-offset-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 #${d-imm8},${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_XOR_1_D_IMMEDIATE_1_S1_INDIRECT_WITH_OFFSET_1, "xor.1-d-immediate-1-s1-indirect-with-offset-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 (${d-An},${d-r}),${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_INDEX_1_S1_INDIRECT_WITH_OFFSET_1, "xor.1-d-indirect-with-index-1-s1-indirect-with-offset-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 ${d-imm7-1}(${d-An}),${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_OFFSET_1_S1_INDIRECT_WITH_OFFSET_1, "xor.1-d-indirect-with-offset-1-s1-indirect-with-offset-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 (${d-An}),${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_1_S1_INDIRECT_WITH_OFFSET_1, "xor.1-d-indirect-1-s1-indirect-with-offset-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 (${d-An})${d-i4-1}++,${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_INDIRECT_WITH_OFFSET_1, "xor.1-d-indirect-with-post-increment-1-s1-indirect-with-offset-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 ${d-i4-1}(${d-An})++,${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_INDIRECT_WITH_OFFSET_1, "xor.1-d-indirect-with-pre-increment-1-s1-indirect-with-offset-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 ${d-direct-addr},(${s1-An}),${s2} */
   {
     UBI32_INSN_XOR_1_D_DIRECT_S1_INDIRECT_1, "xor.1-d-direct-s1-indirect-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 #${d-imm8},(${s1-An}),${s2} */
   {
     UBI32_INSN_XOR_1_D_IMMEDIATE_1_S1_INDIRECT_1, "xor.1-d-immediate-1-s1-indirect-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 (${d-An},${d-r}),(${s1-An}),${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_INDEX_1_S1_INDIRECT_1, "xor.1-d-indirect-with-index-1-s1-indirect-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 ${d-imm7-1}(${d-An}),(${s1-An}),${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_OFFSET_1_S1_INDIRECT_1, "xor.1-d-indirect-with-offset-1-s1-indirect-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 (${d-An}),(${s1-An}),${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_1_S1_INDIRECT_1, "xor.1-d-indirect-1-s1-indirect-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 (${d-An})${d-i4-1}++,(${s1-An}),${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_INDIRECT_1, "xor.1-d-indirect-with-post-increment-1-s1-indirect-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 ${d-i4-1}(${d-An})++,(${s1-An}),${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_INDIRECT_1, "xor.1-d-indirect-with-pre-increment-1-s1-indirect-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 ${d-direct-addr},(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_XOR_1_D_DIRECT_S1_INDIRECT_WITH_POST_INCREMENT_1, "xor.1-d-direct-s1-indirect-with-post-increment-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 #${d-imm8},(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_XOR_1_D_IMMEDIATE_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "xor.1-d-immediate-1-s1-indirect-with-post-increment-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 (${d-An},${d-r}),(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_INDEX_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "xor.1-d-indirect-with-index-1-s1-indirect-with-post-increment-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 ${d-imm7-1}(${d-An}),(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_OFFSET_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "xor.1-d-indirect-with-offset-1-s1-indirect-with-post-increment-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 (${d-An}),(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "xor.1-d-indirect-1-s1-indirect-with-post-increment-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 (${d-An})${d-i4-1}++,(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "xor.1-d-indirect-with-post-increment-1-s1-indirect-with-post-increment-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 ${d-i4-1}(${d-An})++,(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "xor.1-d-indirect-with-pre-increment-1-s1-indirect-with-post-increment-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 ${d-direct-addr},${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_XOR_1_D_DIRECT_S1_INDIRECT_WITH_PRE_INCREMENT_1, "xor.1-d-direct-s1-indirect-with-pre-increment-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 #${d-imm8},${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_XOR_1_D_IMMEDIATE_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "xor.1-d-immediate-1-s1-indirect-with-pre-increment-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 (${d-An},${d-r}),${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_INDEX_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "xor.1-d-indirect-with-index-1-s1-indirect-with-pre-increment-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 ${d-imm7-1}(${d-An}),${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_OFFSET_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "xor.1-d-indirect-with-offset-1-s1-indirect-with-pre-increment-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 (${d-An}),${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "xor.1-d-indirect-1-s1-indirect-with-pre-increment-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 (${d-An})${d-i4-1}++,${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "xor.1-d-indirect-with-post-increment-1-s1-indirect-with-pre-increment-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.1 ${d-i4-1}(${d-An})++,${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_XOR_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "xor.1-d-indirect-with-pre-increment-1-s1-indirect-with-pre-increment-1", "xor.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 ${d-direct-addr},${s1-direct-addr},${s2} */
   {
     UBI32_INSN_OR_1_D_DIRECT_S1_DIRECT, "or.1-d-direct-s1-direct", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 #${d-imm8},${s1-direct-addr},${s2} */
   {
     UBI32_INSN_OR_1_D_IMMEDIATE_1_S1_DIRECT, "or.1-d-immediate-1-s1-direct", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 (${d-An},${d-r}),${s1-direct-addr},${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_INDEX_1_S1_DIRECT, "or.1-d-indirect-with-index-1-s1-direct", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 ${d-imm7-1}(${d-An}),${s1-direct-addr},${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_OFFSET_1_S1_DIRECT, "or.1-d-indirect-with-offset-1-s1-direct", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 (${d-An}),${s1-direct-addr},${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_1_S1_DIRECT, "or.1-d-indirect-1-s1-direct", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 (${d-An})${d-i4-1}++,${s1-direct-addr},${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_DIRECT, "or.1-d-indirect-with-post-increment-1-s1-direct", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 ${d-i4-1}(${d-An})++,${s1-direct-addr},${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_DIRECT, "or.1-d-indirect-with-pre-increment-1-s1-direct", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 ${d-direct-addr},#${s1-imm8},${s2} */
   {
     UBI32_INSN_OR_1_D_DIRECT_S1_IMMEDIATE, "or.1-d-direct-s1-immediate", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 #${d-imm8},#${s1-imm8},${s2} */
   {
     UBI32_INSN_OR_1_D_IMMEDIATE_1_S1_IMMEDIATE, "or.1-d-immediate-1-s1-immediate", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 (${d-An},${d-r}),#${s1-imm8},${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_INDEX_1_S1_IMMEDIATE, "or.1-d-indirect-with-index-1-s1-immediate", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 ${d-imm7-1}(${d-An}),#${s1-imm8},${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_OFFSET_1_S1_IMMEDIATE, "or.1-d-indirect-with-offset-1-s1-immediate", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 (${d-An}),#${s1-imm8},${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_1_S1_IMMEDIATE, "or.1-d-indirect-1-s1-immediate", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 (${d-An})${d-i4-1}++,#${s1-imm8},${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_IMMEDIATE, "or.1-d-indirect-with-post-increment-1-s1-immediate", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 ${d-i4-1}(${d-An})++,#${s1-imm8},${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_IMMEDIATE, "or.1-d-indirect-with-pre-increment-1-s1-immediate", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 ${d-direct-addr},(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_OR_1_D_DIRECT_S1_INDIRECT_WITH_INDEX_1, "or.1-d-direct-s1-indirect-with-index-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 #${d-imm8},(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_OR_1_D_IMMEDIATE_1_S1_INDIRECT_WITH_INDEX_1, "or.1-d-immediate-1-s1-indirect-with-index-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 (${d-An},${d-r}),(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_INDEX_1_S1_INDIRECT_WITH_INDEX_1, "or.1-d-indirect-with-index-1-s1-indirect-with-index-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 ${d-imm7-1}(${d-An}),(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_OFFSET_1_S1_INDIRECT_WITH_INDEX_1, "or.1-d-indirect-with-offset-1-s1-indirect-with-index-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 (${d-An}),(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_1_S1_INDIRECT_WITH_INDEX_1, "or.1-d-indirect-1-s1-indirect-with-index-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 (${d-An})${d-i4-1}++,(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_INDIRECT_WITH_INDEX_1, "or.1-d-indirect-with-post-increment-1-s1-indirect-with-index-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 ${d-i4-1}(${d-An})++,(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_INDIRECT_WITH_INDEX_1, "or.1-d-indirect-with-pre-increment-1-s1-indirect-with-index-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 ${d-direct-addr},${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_OR_1_D_DIRECT_S1_INDIRECT_WITH_OFFSET_1, "or.1-d-direct-s1-indirect-with-offset-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 #${d-imm8},${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_OR_1_D_IMMEDIATE_1_S1_INDIRECT_WITH_OFFSET_1, "or.1-d-immediate-1-s1-indirect-with-offset-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 (${d-An},${d-r}),${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_INDEX_1_S1_INDIRECT_WITH_OFFSET_1, "or.1-d-indirect-with-index-1-s1-indirect-with-offset-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 ${d-imm7-1}(${d-An}),${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_OFFSET_1_S1_INDIRECT_WITH_OFFSET_1, "or.1-d-indirect-with-offset-1-s1-indirect-with-offset-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 (${d-An}),${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_1_S1_INDIRECT_WITH_OFFSET_1, "or.1-d-indirect-1-s1-indirect-with-offset-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 (${d-An})${d-i4-1}++,${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_INDIRECT_WITH_OFFSET_1, "or.1-d-indirect-with-post-increment-1-s1-indirect-with-offset-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 ${d-i4-1}(${d-An})++,${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_INDIRECT_WITH_OFFSET_1, "or.1-d-indirect-with-pre-increment-1-s1-indirect-with-offset-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 ${d-direct-addr},(${s1-An}),${s2} */
   {
     UBI32_INSN_OR_1_D_DIRECT_S1_INDIRECT_1, "or.1-d-direct-s1-indirect-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 #${d-imm8},(${s1-An}),${s2} */
   {
     UBI32_INSN_OR_1_D_IMMEDIATE_1_S1_INDIRECT_1, "or.1-d-immediate-1-s1-indirect-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 (${d-An},${d-r}),(${s1-An}),${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_INDEX_1_S1_INDIRECT_1, "or.1-d-indirect-with-index-1-s1-indirect-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 ${d-imm7-1}(${d-An}),(${s1-An}),${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_OFFSET_1_S1_INDIRECT_1, "or.1-d-indirect-with-offset-1-s1-indirect-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 (${d-An}),(${s1-An}),${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_1_S1_INDIRECT_1, "or.1-d-indirect-1-s1-indirect-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 (${d-An})${d-i4-1}++,(${s1-An}),${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_INDIRECT_1, "or.1-d-indirect-with-post-increment-1-s1-indirect-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 ${d-i4-1}(${d-An})++,(${s1-An}),${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_INDIRECT_1, "or.1-d-indirect-with-pre-increment-1-s1-indirect-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 ${d-direct-addr},(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_OR_1_D_DIRECT_S1_INDIRECT_WITH_POST_INCREMENT_1, "or.1-d-direct-s1-indirect-with-post-increment-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 #${d-imm8},(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_OR_1_D_IMMEDIATE_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "or.1-d-immediate-1-s1-indirect-with-post-increment-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 (${d-An},${d-r}),(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_INDEX_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "or.1-d-indirect-with-index-1-s1-indirect-with-post-increment-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 ${d-imm7-1}(${d-An}),(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_OFFSET_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "or.1-d-indirect-with-offset-1-s1-indirect-with-post-increment-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 (${d-An}),(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "or.1-d-indirect-1-s1-indirect-with-post-increment-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 (${d-An})${d-i4-1}++,(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "or.1-d-indirect-with-post-increment-1-s1-indirect-with-post-increment-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 ${d-i4-1}(${d-An})++,(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "or.1-d-indirect-with-pre-increment-1-s1-indirect-with-post-increment-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 ${d-direct-addr},${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_OR_1_D_DIRECT_S1_INDIRECT_WITH_PRE_INCREMENT_1, "or.1-d-direct-s1-indirect-with-pre-increment-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 #${d-imm8},${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_OR_1_D_IMMEDIATE_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "or.1-d-immediate-1-s1-indirect-with-pre-increment-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 (${d-An},${d-r}),${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_INDEX_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "or.1-d-indirect-with-index-1-s1-indirect-with-pre-increment-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 ${d-imm7-1}(${d-An}),${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_OFFSET_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "or.1-d-indirect-with-offset-1-s1-indirect-with-pre-increment-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 (${d-An}),${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "or.1-d-indirect-1-s1-indirect-with-pre-increment-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 (${d-An})${d-i4-1}++,${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "or.1-d-indirect-with-post-increment-1-s1-indirect-with-pre-increment-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* or.1 ${d-i4-1}(${d-An})++,${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_OR_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "or.1-d-indirect-with-pre-increment-1-s1-indirect-with-pre-increment-1", "or.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 ${d-direct-addr},${s1-direct-addr},${s2} */
   {
     UBI32_INSN_AND_1_D_DIRECT_S1_DIRECT, "and.1-d-direct-s1-direct", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 #${d-imm8},${s1-direct-addr},${s2} */
   {
     UBI32_INSN_AND_1_D_IMMEDIATE_1_S1_DIRECT, "and.1-d-immediate-1-s1-direct", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 (${d-An},${d-r}),${s1-direct-addr},${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_INDEX_1_S1_DIRECT, "and.1-d-indirect-with-index-1-s1-direct", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 ${d-imm7-1}(${d-An}),${s1-direct-addr},${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_OFFSET_1_S1_DIRECT, "and.1-d-indirect-with-offset-1-s1-direct", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 (${d-An}),${s1-direct-addr},${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_1_S1_DIRECT, "and.1-d-indirect-1-s1-direct", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 (${d-An})${d-i4-1}++,${s1-direct-addr},${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_DIRECT, "and.1-d-indirect-with-post-increment-1-s1-direct", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 ${d-i4-1}(${d-An})++,${s1-direct-addr},${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_DIRECT, "and.1-d-indirect-with-pre-increment-1-s1-direct", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 ${d-direct-addr},#${s1-imm8},${s2} */
   {
     UBI32_INSN_AND_1_D_DIRECT_S1_IMMEDIATE, "and.1-d-direct-s1-immediate", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 #${d-imm8},#${s1-imm8},${s2} */
   {
     UBI32_INSN_AND_1_D_IMMEDIATE_1_S1_IMMEDIATE, "and.1-d-immediate-1-s1-immediate", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 (${d-An},${d-r}),#${s1-imm8},${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_INDEX_1_S1_IMMEDIATE, "and.1-d-indirect-with-index-1-s1-immediate", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 ${d-imm7-1}(${d-An}),#${s1-imm8},${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_OFFSET_1_S1_IMMEDIATE, "and.1-d-indirect-with-offset-1-s1-immediate", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 (${d-An}),#${s1-imm8},${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_1_S1_IMMEDIATE, "and.1-d-indirect-1-s1-immediate", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 (${d-An})${d-i4-1}++,#${s1-imm8},${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_IMMEDIATE, "and.1-d-indirect-with-post-increment-1-s1-immediate", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 ${d-i4-1}(${d-An})++,#${s1-imm8},${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_IMMEDIATE, "and.1-d-indirect-with-pre-increment-1-s1-immediate", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 ${d-direct-addr},(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_AND_1_D_DIRECT_S1_INDIRECT_WITH_INDEX_1, "and.1-d-direct-s1-indirect-with-index-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 #${d-imm8},(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_AND_1_D_IMMEDIATE_1_S1_INDIRECT_WITH_INDEX_1, "and.1-d-immediate-1-s1-indirect-with-index-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 (${d-An},${d-r}),(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_INDEX_1_S1_INDIRECT_WITH_INDEX_1, "and.1-d-indirect-with-index-1-s1-indirect-with-index-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 ${d-imm7-1}(${d-An}),(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_OFFSET_1_S1_INDIRECT_WITH_INDEX_1, "and.1-d-indirect-with-offset-1-s1-indirect-with-index-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 (${d-An}),(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_1_S1_INDIRECT_WITH_INDEX_1, "and.1-d-indirect-1-s1-indirect-with-index-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 (${d-An})${d-i4-1}++,(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_INDIRECT_WITH_INDEX_1, "and.1-d-indirect-with-post-increment-1-s1-indirect-with-index-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 ${d-i4-1}(${d-An})++,(${s1-An},${s1-r}),${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_INDIRECT_WITH_INDEX_1, "and.1-d-indirect-with-pre-increment-1-s1-indirect-with-index-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 ${d-direct-addr},${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_AND_1_D_DIRECT_S1_INDIRECT_WITH_OFFSET_1, "and.1-d-direct-s1-indirect-with-offset-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 #${d-imm8},${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_AND_1_D_IMMEDIATE_1_S1_INDIRECT_WITH_OFFSET_1, "and.1-d-immediate-1-s1-indirect-with-offset-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 (${d-An},${d-r}),${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_INDEX_1_S1_INDIRECT_WITH_OFFSET_1, "and.1-d-indirect-with-index-1-s1-indirect-with-offset-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 ${d-imm7-1}(${d-An}),${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_OFFSET_1_S1_INDIRECT_WITH_OFFSET_1, "and.1-d-indirect-with-offset-1-s1-indirect-with-offset-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 (${d-An}),${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_1_S1_INDIRECT_WITH_OFFSET_1, "and.1-d-indirect-1-s1-indirect-with-offset-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 (${d-An})${d-i4-1}++,${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_INDIRECT_WITH_OFFSET_1, "and.1-d-indirect-with-post-increment-1-s1-indirect-with-offset-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 ${d-i4-1}(${d-An})++,${s1-imm7-1}(${s1-An}),${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_INDIRECT_WITH_OFFSET_1, "and.1-d-indirect-with-pre-increment-1-s1-indirect-with-offset-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 ${d-direct-addr},(${s1-An}),${s2} */
   {
     UBI32_INSN_AND_1_D_DIRECT_S1_INDIRECT_1, "and.1-d-direct-s1-indirect-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 #${d-imm8},(${s1-An}),${s2} */
   {
     UBI32_INSN_AND_1_D_IMMEDIATE_1_S1_INDIRECT_1, "and.1-d-immediate-1-s1-indirect-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 (${d-An},${d-r}),(${s1-An}),${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_INDEX_1_S1_INDIRECT_1, "and.1-d-indirect-with-index-1-s1-indirect-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 ${d-imm7-1}(${d-An}),(${s1-An}),${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_OFFSET_1_S1_INDIRECT_1, "and.1-d-indirect-with-offset-1-s1-indirect-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 (${d-An}),(${s1-An}),${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_1_S1_INDIRECT_1, "and.1-d-indirect-1-s1-indirect-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 (${d-An})${d-i4-1}++,(${s1-An}),${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_INDIRECT_1, "and.1-d-indirect-with-post-increment-1-s1-indirect-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 ${d-i4-1}(${d-An})++,(${s1-An}),${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_INDIRECT_1, "and.1-d-indirect-with-pre-increment-1-s1-indirect-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 ${d-direct-addr},(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_AND_1_D_DIRECT_S1_INDIRECT_WITH_POST_INCREMENT_1, "and.1-d-direct-s1-indirect-with-post-increment-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 #${d-imm8},(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_AND_1_D_IMMEDIATE_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "and.1-d-immediate-1-s1-indirect-with-post-increment-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 (${d-An},${d-r}),(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_INDEX_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "and.1-d-indirect-with-index-1-s1-indirect-with-post-increment-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 ${d-imm7-1}(${d-An}),(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_OFFSET_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "and.1-d-indirect-with-offset-1-s1-indirect-with-post-increment-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 (${d-An}),(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "and.1-d-indirect-1-s1-indirect-with-post-increment-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 (${d-An})${d-i4-1}++,(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "and.1-d-indirect-with-post-increment-1-s1-indirect-with-post-increment-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 ${d-i4-1}(${d-An})++,(${s1-An})${s1-i4-1}++,${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_INDIRECT_WITH_POST_INCREMENT_1, "and.1-d-indirect-with-pre-increment-1-s1-indirect-with-post-increment-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 ${d-direct-addr},${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_AND_1_D_DIRECT_S1_INDIRECT_WITH_PRE_INCREMENT_1, "and.1-d-direct-s1-indirect-with-pre-increment-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 #${d-imm8},${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_AND_1_D_IMMEDIATE_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "and.1-d-immediate-1-s1-indirect-with-pre-increment-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 (${d-An},${d-r}),${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_INDEX_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "and.1-d-indirect-with-index-1-s1-indirect-with-pre-increment-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 ${d-imm7-1}(${d-An}),${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_OFFSET_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "and.1-d-indirect-with-offset-1-s1-indirect-with-pre-increment-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 (${d-An}),${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "and.1-d-indirect-1-s1-indirect-with-pre-increment-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 (${d-An})${d-i4-1}++,${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_POST_INCREMENT_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "and.1-d-indirect-with-post-increment-1-s1-indirect-with-pre-increment-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* and.1 ${d-i4-1}(${d-An})++,${s1-i4-1}(${s1-An})++,${s2} */
   {
     UBI32_INSN_AND_1_D_INDIRECT_WITH_PRE_INCREMENT_1_S1_INDIRECT_WITH_PRE_INCREMENT_1, "and.1-d-indirect-with-pre-increment-1-s1-indirect-with-pre-increment-1", "and.1", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_VER4)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
   },
 /* xor.4 ${d-direct-addr},${s1-direct-addr},${s2} */
   {
@@ -12820,7 +18415,17 @@ static const CGEN_IBASE ubi32_cgen_insn_table[MAX_INSNS] =
 /* moveai ${An},#${imm25} */
   {
     UBI32_INSN_MOVEAI_V5, "moveai_v5", "moveai", 32,
-    { 0, { { { (1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+    { 0, { { { (1<<MACH_UBI32_NEWMOVEAI)|(1<<MACH_UBI32_VER6)|(1<<MACH_UBI32_VER61), 0 } } } }
+  },
+/* moveaih ${An},#${imm24} */
+  {
+    UBI32_INSN_MOVEAIH, "moveaih", "moveaih", 32,
+    { 0, { { { (1<<MACH_UBI32_NEWMOVEAISIMULATE), 0 } } } }
+  },
+/* moveai ${An},#${imm24} */
+  {
+    UBI32_INSN_MOVEAI, "moveai", "moveai", 32,
+    { 0, { { { (1<<MACH_UBI32_OLDMOVEAI), 0 } } } }
   },
 /* __nop__ */
   {
@@ -12851,6 +18456,191 @@ static const CGEN_IBASE ubi32_cgen_insn_table[MAX_INSNS] =
   {
     UBI32_INSN_SUSPEND, "suspend", "suspend", 32,
     { 0, { { { (1<<MACH_BASE), 0 } } } }
+  },
+/* __clracc__ ${dsp-destA} */
+  {
+    UBI32_INSN_DSP_CLRACC, "dsp-clracc", "__clracc__", 32,
+    { 0, { { { (1<<MACH_UBI32DSP)|(1<<MACH_UBI32_VER4), 0 } } } }
+  },
+/* faddd ${fpu-64-dest-reg},${fpu-64-S1-data-reg},${fpu-64-S2-data-reg} */
+  {
+    UBI32_INSN_FADDD_DATA_DATA, "faddd_data_data", "faddd", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* faddd ${fpu-64-dest-reg},${fpu-64-S1-data-reg},${fpu-64-S2-acc-reg} */
+  {
+    UBI32_INSN_FADDD_DATA_ACC, "faddd_data_acc", "faddd", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* faddd ${fpu-64-dest-reg},${fpu-64-S1-acc-reg},${fpu-64-S2-data-reg} */
+  {
+    UBI32_INSN_FADDD_ACC_DATA, "faddd_acc_data", "faddd", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* faddd ${fpu-64-dest-reg},${fpu-64-S1-acc-reg},${fpu-64-S2-acc-reg} */
+  {
+    UBI32_INSN_FADDD_ACC_ACC, "faddd_acc_acc", "faddd", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsubd ${fpu-64-dest-reg},${fpu-64-S1-data-reg},${fpu-64-S2-data-reg} */
+  {
+    UBI32_INSN_FSUBD_DATA_DATA, "fsubd_data_data", "fsubd", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsubd ${fpu-64-dest-reg},${fpu-64-S1-data-reg},${fpu-64-S2-acc-reg} */
+  {
+    UBI32_INSN_FSUBD_DATA_ACC, "fsubd_data_acc", "fsubd", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsubd ${fpu-64-dest-reg},${fpu-64-S1-acc-reg},${fpu-64-S2-data-reg} */
+  {
+    UBI32_INSN_FSUBD_ACC_DATA, "fsubd_acc_data", "fsubd", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsubd ${fpu-64-dest-reg},${fpu-64-S1-acc-reg},${fpu-64-S2-acc-reg} */
+  {
+    UBI32_INSN_FSUBD_ACC_ACC, "fsubd_acc_acc", "fsubd", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fmuld ${fpu-64-dest-reg},${fpu-64-S1-data-reg},${fpu-64-S2-data-reg} */
+  {
+    UBI32_INSN_FMULD_DATA_DATA, "fmuld_data_data", "fmuld", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fmuld ${fpu-64-dest-reg},${fpu-64-S1-data-reg},${fpu-64-S2-acc-reg} */
+  {
+    UBI32_INSN_FMULD_DATA_ACC, "fmuld_data_acc", "fmuld", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fmuld ${fpu-64-dest-reg},${fpu-64-S1-acc-reg},${fpu-64-S2-data-reg} */
+  {
+    UBI32_INSN_FMULD_ACC_DATA, "fmuld_acc_data", "fmuld", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fmuld ${fpu-64-dest-reg},${fpu-64-S1-acc-reg},${fpu-64-S2-acc-reg} */
+  {
+    UBI32_INSN_FMULD_ACC_ACC, "fmuld_acc_acc", "fmuld", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fdivd ${fpu-64-dest-reg},${fpu-64-S1-data-reg},${fpu-64-S2-data-reg} */
+  {
+    UBI32_INSN_FDIVD_DATA_DATA, "fdivd_data_data", "fdivd", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fdivd ${fpu-64-dest-reg},${fpu-64-S1-data-reg},${fpu-64-S2-acc-reg} */
+  {
+    UBI32_INSN_FDIVD_DATA_ACC, "fdivd_data_acc", "fdivd", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fdivd ${fpu-64-dest-reg},${fpu-64-S1-acc-reg},${fpu-64-S2-data-reg} */
+  {
+    UBI32_INSN_FDIVD_ACC_DATA, "fdivd_acc_data", "fdivd", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fdivd ${fpu-64-dest-reg},${fpu-64-S1-acc-reg},${fpu-64-S2-acc-reg} */
+  {
+    UBI32_INSN_FDIVD_ACC_ACC, "fdivd_acc_acc", "fdivd", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsqrtd ${fpu-64-dest-reg},${fpu-64-S1-data-reg} */
+  {
+    UBI32_INSN_FSQRTD_DATA, "fsqrtd_data", "fsqrtd", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fsqrtd ${fpu-64-dest-reg},${fpu-64-S1-acc-reg} */
+  {
+    UBI32_INSN_FSQRTD_ACC, "fsqrtd_acc", "fsqrtd", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fnegd ${fpu-64-dest-reg},${fpu-64-S1-data-reg} */
+  {
+    UBI32_INSN_FNEGD_DATA, "fnegd_data", "fnegd", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fnegd ${fpu-64-dest-reg},${fpu-64-S1-acc-reg} */
+  {
+    UBI32_INSN_FNEGD_ACC, "fnegd_acc", "fnegd", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fabsd ${fpu-64-dest-reg},${fpu-64-S1-data-reg} */
+  {
+    UBI32_INSN_FABSD_DATA, "fabsd_data", "fabsd", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fabsd ${fpu-64-dest-reg},${fpu-64-S1-acc-reg} */
+  {
+    UBI32_INSN_FABSD_ACC, "fabsd_acc", "fabsd", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fl2s ${fpu-32-dest-reg},${fpu-64-S1-data-reg} */
+  {
+    UBI32_INSN_FL2S_DATA, "fl2s_data", "fl2s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fl2s ${fpu-32-dest-reg},${fpu-64-S1-acc-reg} */
+  {
+    UBI32_INSN_FL2S_ACC, "fl2s_acc", "fl2s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fl2d ${fpu-64-dest-reg},${fpu-64-S1-data-reg} */
+  {
+    UBI32_INSN_FL2D_DATA, "fl2d_data", "fl2d", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fl2d ${fpu-64-dest-reg},${fpu-64-S1-acc-reg} */
+  {
+    UBI32_INSN_FL2D_ACC, "fl2d_acc", "fl2d", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fd2s ${fpu-32-dest-reg},${fpu-64-S1-data-reg} */
+  {
+    UBI32_INSN_FD2S_DATA, "fd2s_data", "fd2s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fd2s ${fpu-32-dest-reg},${fpu-64-S1-acc-reg} */
+  {
+    UBI32_INSN_FD2S_ACC, "fd2s_acc", "fd2s", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fd2i ${fpu-32-dest-reg},${fpu-64-S1-data-reg} */
+  {
+    UBI32_INSN_FD2I_DATA, "fd2i_data", "fd2i", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fd2i ${fpu-32-dest-reg},${fpu-64-S1-acc-reg} */
+  {
+    UBI32_INSN_FD2I_ACC, "fd2i_acc", "fd2i", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fd2l ${fpu-64-dest-reg},${fpu-64-S1-data-reg} */
+  {
+    UBI32_INSN_FD2L_DATA, "fd2l_data", "fd2l", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fd2l ${fpu-64-dest-reg},${fpu-64-S1-acc-reg} */
+  {
+    UBI32_INSN_FD2L_ACC, "fd2l_acc", "fd2l", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fcmpd ${fpu-64-S1-data-reg},${fpu-64-S2-data-reg} */
+  {
+    UBI32_INSN_FCMPD_DATA_DATA, "fcmpd_data_data", "fcmpd", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fcmpd ${fpu-64-S1-data-reg},${fpu-64-S2-acc-reg} */
+  {
+    UBI32_INSN_FCMPD_DATA_ACC, "fcmpd_data_acc", "fcmpd", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fcmpd ${fpu-64-S1-acc-reg},${fpu-64-S2-acc-reg} */
+  {
+    UBI32_INSN_FCMPD_ACC_ACC, "fcmpd_acc_acc", "fcmpd", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
+  },
+/* fcmpd ${fpu-64-S1-acc-reg},${fpu-64-S2-data-reg} */
+  {
+    UBI32_INSN_FCMPD_ACC_DATA, "fcmpd_acc_data", "fcmpd", 32,
+    { 0, { { { (1<<MACH_UBI32_VER5), 0 } } } }
   },
 /* __unused__02_04 */
   {

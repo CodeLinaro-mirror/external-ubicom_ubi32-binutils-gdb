@@ -4,7 +4,8 @@
    THIS FILE IS MACHINE GENERATED WITH CGEN.
    - the resultant file is machine generated, cgen-dis.in isn't
 
-   Copyright (C) 1996-2015 Free Software Foundation, Inc.
+   Copyright 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2005, 2007
+   Free Software Foundation, Inc.
 
    This file is part of libopcodes.
 
@@ -63,6 +64,15 @@ int print_insn_ubi32 (bfd_vma pc, disassemble_info *info);
 static int
 ubi32_internal_print_insn (CGEN_CPU_DESC cd, bfd_vma pc, disassemble_info *info)
 {
+  if ((info)->mach <= bfd_mach_ubi32ver4)
+    (cd)->machs |= (1 << MACH_UBI32_OLDMOVEAI);
+  else if ((info)->mach == bfd_mach_ubi32ver5)
+    {
+      (cd)->machs |= (1 << MACH_UBI32_NEWMOVEAI);
+      (cd)->machs |= (1 << MACH_UBI32DSP);
+      (cd)->machs |= (1 << MACH_UBI32_VER4);
+    }
+
   return default_print_insn (cd, pc, info);
 }
 
@@ -131,9 +141,27 @@ print_direct_addr (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
   disassemble_info *info = (disassemble_info *) dis_info;
   struct ubi32_cgen_data_space_map *cur;
 
-  if (cd->machs & (1<<MACH_UBI32_VER6))
+  if(cd->machs & (1<<MACH_IP3035))
     {
-      /* cpu is akronite */
+      /* cpu is mercury */
+      cur = ubi32_cgen_data_space_map_mercury;
+    }
+
+  if((cd->machs & (1<<MACH_UBI32DSP)) || (cd->machs & (1<<MACH_UBI32_VER4)))
+    {
+      /* cpu is mars/ares */
+      cur = ubi32_cgen_data_space_map_mars;
+    }
+
+  if (cd->machs & (1<<MACH_UBI32_VER5))
+    {
+      /* cpu is jupiter */
+      cur = ubi32_cgen_data_space_map_jupiter;
+    }
+
+  if ((cd->machs & (1<<MACH_UBI32_VER6)) || (cd->machs & (1<<MACH_UBI32_VER61)))
+    {
+      /* cpu is akronite or hawkeye */
       cur = ubi32_cgen_data_space_map_akronite;
     }
 
@@ -151,7 +179,6 @@ print_direct_addr (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
   (*info->fprintf_func) (info->stream, "#%lx", value);
 }
 
-#if 0
 static void
 print_imm24 (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
 	     PTR dis_info,
@@ -163,7 +190,6 @@ print_imm24 (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
   disassemble_info *info = (disassemble_info *) dis_info;
   (*info->fprintf_func) (info->stream, "%%hi(0x%08lx)", value << 7);
 }
-#endif
 
 static void
 print_imm25 (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
@@ -225,7 +251,16 @@ ubi32_cgen_print_operand (CGEN_CPU_DESC cd,
     case UBI32_OPERAND_P :
       print_keyword (cd, info, & ubi32_cgen_opval_h_P, fields->f_P, 0);
       break;
+    case UBI32_OPERAND_ACC1HI :
+      print_normal (cd, info, 0, 0, pc, length);
+      break;
+    case UBI32_OPERAND_ACC1LO :
+      print_normal (cd, info, 0, 0, pc, length);
+      break;
     case UBI32_OPERAND_BIT5 :
+      print_normal (cd, info, fields->f_bit5, 0, pc, length);
+      break;
+    case UBI32_OPERAND_BIT5_ADDSUB :
       print_normal (cd, info, fields->f_bit5, 0, pc, length);
       break;
     case UBI32_OPERAND_CC :
@@ -261,11 +296,65 @@ ubi32_cgen_print_operand (CGEN_CPU_DESC cd,
     case UBI32_OPERAND_D_R :
       print_keyword (cd, info, & ubi32_cgen_opval_data_names, fields->f_d_r, 0);
       break;
+    case UBI32_OPERAND_DSP_S2_ACC_REG_ADDSUB :
+      print_keyword (cd, info, & ubi32_cgen_opval_acc_names, fields->f_dsp_S2, 0);
+      break;
+    case UBI32_OPERAND_DSP_S2_ACC_REG_MUL :
+      print_keyword (cd, info, & ubi32_cgen_opval_acc_names, fields->f_dsp_S2, 0);
+      break;
+    case UBI32_OPERAND_DSP_S2_DATA_REG :
+      print_keyword (cd, info, & ubi32_cgen_opval_data_names, fields->f_dsp_S2, 0);
+      break;
+    case UBI32_OPERAND_DSP_S2_DATA_REG_ADDSUB :
+      print_keyword (cd, info, & ubi32_cgen_opval_data_names, fields->f_dsp_S2, 0);
+      break;
+    case UBI32_OPERAND_DSP_S2_SEL :
+      print_normal (cd, info, fields->f_dsp_S2_sel, 0, pc, length);
+      break;
+    case UBI32_OPERAND_DSP_C :
+      print_keyword (cd, info, & ubi32_cgen_opval_h_DSP_C, fields->f_dsp_C, 0);
+      break;
+    case UBI32_OPERAND_DSP_DESTA :
+      print_keyword (cd, info, & ubi32_cgen_opval_h_DSP_Dest_A, fields->f_dsp_destA, 0);
+      break;
+    case UBI32_OPERAND_DSP_T :
+      print_keyword (cd, info, & ubi32_cgen_opval_h_DSP_T, fields->f_dsp_T, 0);
+      break;
+    case UBI32_OPERAND_DSP_T_ADDSUB :
+      print_keyword (cd, info, & ubi32_cgen_opval_h_DSP_T_addsub, fields->f_dsp_T, 0);
+      break;
+    case UBI32_OPERAND_FPU_32_S2_ACC_REG :
+      print_keyword (cd, info, & ubi32_cgen_opval_acc_lo_names, fields->f_FPS2_reg32, 0);
+      break;
+    case UBI32_OPERAND_FPU_32_S2_DATA_REG :
+      print_keyword (cd, info, & ubi32_cgen_opval_data_names, fields->f_FPS2_reg32, 0);
+      break;
+    case UBI32_OPERAND_FPU_32_DEST_REG :
+      print_keyword (cd, info, & ubi32_cgen_opval_acc_lo_names, fields->f_FPD32, 0);
+      break;
+    case UBI32_OPERAND_FPU_64_S1_ACC_REG :
+      print_keyword (cd, info, & ubi32_cgen_opval_acc_names, fields->f_FPS1_reg64, 0);
+      break;
+    case UBI32_OPERAND_FPU_64_S1_DATA_REG :
+      print_keyword (cd, info, & ubi32_cgen_opval_data_names_even, fields->f_FPS1_reg64, 0);
+      break;
+    case UBI32_OPERAND_FPU_64_S2_ACC_REG :
+      print_keyword (cd, info, & ubi32_cgen_opval_acc_names, fields->f_FPS2_reg64, 0);
+      break;
+    case UBI32_OPERAND_FPU_64_S2_DATA_REG :
+      print_keyword (cd, info, & ubi32_cgen_opval_data_names_even, fields->f_FPS2_reg64, 0);
+      break;
+    case UBI32_OPERAND_FPU_64_DEST_REG :
+      print_keyword (cd, info, & ubi32_cgen_opval_acc_names, fields->f_FPD64, 0);
+      break;
     case UBI32_OPERAND_IMM16_1 :
       print_normal (cd, info, fields->f_imm16_1, 0|(1<<CGEN_OPERAND_SIGNED), pc, length);
       break;
     case UBI32_OPERAND_IMM16_2 :
       print_normal (cd, info, fields->f_imm16_2, 0|(1<<CGEN_OPERAND_SIGNED), pc, length);
+      break;
+    case UBI32_OPERAND_IMM24 :
+      print_imm24 (cd, info, fields->f_imm24, 0|(1<<CGEN_OPERAND_VIRTUAL), pc, length);
       break;
     case UBI32_OPERAND_IMM25 :
       print_imm25 (cd, info, fields->f_imm25, 0|(1<<CGEN_OPERAND_VIRTUAL), pc, length);
@@ -397,6 +486,10 @@ print_normal (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
 {
   disassemble_info *info = (disassemble_info *) dis_info;
 
+#ifdef CGEN_PRINT_NORMAL
+  CGEN_PRINT_NORMAL (cd, info, value, attrs, pc, length);
+#endif
+
   /* Print the operand as directed by the attributes.  */
   if (CGEN_BOOL_ATTR (attrs, CGEN_OPERAND_SEM_ONLY))
     ; /* nothing to do */
@@ -417,6 +510,10 @@ print_address (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
 	       int length ATTRIBUTE_UNUSED)
 {
   disassemble_info *info = (disassemble_info *) dis_info;
+
+#ifdef CGEN_PRINT_ADDRESS
+  CGEN_PRINT_ADDRESS (cd, info, value, attrs, pc, length);
+#endif
 
   /* Print the operand as directed by the attributes.  */
   if (CGEN_BOOL_ATTR (attrs, CGEN_OPERAND_SEM_ONLY))
@@ -688,6 +785,11 @@ print_insn_ubi32 (bfd_vma pc, disassemble_info *info)
 		? CGEN_ENDIAN_BIG
 		: CGEN_ENDIAN_LITTLE);
   enum bfd_architecture arch;
+
+#ifdef CGEN_DISASSEM_CHUNKSIZE
+  /* Print insns as single chunks */
+  info->bytes_per_chunk = CGEN_DISASSEM_CHUNKSIZE;
+#endif
 
   /* ??? gdb will set mach but leave the architecture as "unknown" */
 #ifndef CGEN_BFD_ARCH
