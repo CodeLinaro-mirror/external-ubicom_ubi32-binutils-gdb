@@ -64,9 +64,9 @@ int print_insn_ubi32 (bfd_vma pc, disassemble_info *info);
 static int
 ubi32_internal_print_insn (CGEN_CPU_DESC cd, bfd_vma pc, disassemble_info *info)
 {
-  if ((info)->mach <= bfd_mach_ubi32ver4)
+  if ((info)->mach <= bfd_mach_ubi32v4)
     (cd)->machs |= (1 << MACH_UBI32_OLDMOVEAI);
-  else if ((info)->mach == bfd_mach_ubi32ver5)
+  else if ((info)->mach == bfd_mach_ubi32v5)
     {
       (cd)->machs |= (1 << MACH_UBI32_NEWMOVEAI);
       (cd)->machs |= (1 << MACH_UBI32DSP);

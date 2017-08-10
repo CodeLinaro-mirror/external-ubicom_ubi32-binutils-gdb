@@ -18,15 +18,6 @@
    Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston,
    MA 02110-1301, USA.  */
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
-
 #include "sysdep.h"
 #include <string.h>
 #include <assert.h>
@@ -410,7 +401,7 @@ ubi32_elf_relocate_hi24 (input_bfd, relhi, contents, value)
 
   value += relhi->r_addend;
 
-  if ((elf_elfheader (input_bfd)->e_flags & 0xffff) < bfd_mach_ubi32ver5)
+  if ((elf_elfheader (input_bfd)->e_flags & 0xffff) < bfd_mach_ubi32v5)
     {
       /* We are dealing with Ubi32 cpus that are version 4 or earlier. The moveai instruction assumes that the msb of the address is zero. */
       if (value & 0x80000000)
@@ -5219,12 +5210,12 @@ elf32_ubi32_grok_psinfo (bfd *abfd, Elf_Internal_Note *note)
 #undef TARGET_BIG_SYM
 #define TARGET_BIG_SYM	 ubi32_elf32_fdpic_be_vec
 #undef TARGET_BIG_NAME
-#define TARGET_BIG_NAME  "ubi32_elf32-fdpic_be"
+#define TARGET_BIG_NAME  "ubi32-elf32-fdpic-be"
 
 #undef TARGET_LITTLE_SYM
 #define TARGET_LITTLE_SYM  ubi32_elf32_fdpic_le_vec
 #undef TARGET_LITTLE_NAME
-#define TARGET_LITTLE_NAME "ubi32_elf32-fdpic_le"
+#define TARGET_LITTLE_NAME "ubi32-elf32-fdpic-le"
 
 #undef	elf32_bed
 #define	elf32_bed		ubi32_elf32_fdpic_bed

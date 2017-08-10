@@ -147,6 +147,7 @@
 #include "elf/tic6x.h"
 #include "elf/tilegx.h"
 #include "elf/tilepro.h"
+#include "elf/ubi32.h"
 #include "elf/v850.h"
 #include "elf/vax.h"
 #include "elf/visium.h"
@@ -789,6 +790,7 @@ guess_is_rela (unsigned int e_machine)
     case EM_TI_C6000:
     case EM_TILEGX:
     case EM_TILEPRO:
+    case EM_UBI32:
     case EM_V800:
     case EM_V850:
     case EM_CYGNUS_V850:
@@ -1482,6 +1484,10 @@ dump_relocations (FILE * file,
 
 	case EM_ALTERA_NIOS2:
 	  rtype = elf_nios2_reloc_type (type);
+	  break;
+
+	case EM_UBI32:
+	  rtype = elf_ubi32_reloc_type (type);
 	  break;
 	}
 
@@ -2370,6 +2376,7 @@ get_machine_name (unsigned e_machine)
     case EM_CSR_KALIMBA:	return "CSR Kalimba architecture family";
     case EM_Z80:		return "Zilog Z80";
     case EM_AMDGPU:		return "AMD GPU architecture";
+    case EM_UBI32:		return "Qualcomm Ubi32 architecture family";
     default:
       snprintf (buff, sizeof (buff), _("<unknown>: 0x%x"), e_machine);
       return buff;
@@ -11880,6 +11887,8 @@ is_32bit_abs_reloc (unsigned int reloc_type)
       return reloc_type == 2; /* R_TILEGX_32.  */
     case EM_TILEPRO:
       return reloc_type == 1; /* R_TILEPRO_32.  */
+    case EM_UBI32:
+      return reloc_type == 2; /* R_UBI32_32.  */
     case EM_CYGNUS_V850:
     case EM_V850:
       return reloc_type == 6; /* R_V850_ABS32.  */

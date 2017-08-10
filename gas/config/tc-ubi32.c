@@ -194,7 +194,7 @@ struct ubi32_processor_t ubi32_processor_names[] =
 const char * md_shortopts = "";
 
 /* Mach selected from command line.  */
-int ubi32_mach = bfd_mach_ubi32ver61;
+int ubi32_mach = bfd_mach_ubi32v61;
 unsigned ubi32_mach_bitmask = (1 << MACH_UBI32_VER61);
 
 int
@@ -209,27 +209,27 @@ md_parse_option (int c ATTRIBUTE_UNUSED, const char * arg ATTRIBUTE_UNUSED)
       break;
 
    case OPTION_CPU_UBI32V3:
-      ubi32_mach = bfd_mach_ubi32dsp;
+      ubi32_mach = bfd_mach_ubi32v3;
       ubi32_mach_bitmask = (1 << MACH_UBI32DSP)| (1 << MACH_IP3023COMPATIBILITY)| (1 << MACH_UBI32_OLDMOVEAI);
       break;
 
     case OPTION_CPU_UBI32V4:
-      ubi32_mach = bfd_mach_ubi32ver4;
+      ubi32_mach = bfd_mach_ubi32v4;
       ubi32_mach_bitmask = (1 << MACH_UBI32DSP)| (1 << MACH_IP3023COMPATIBILITY) | (1 << MACH_UBI32_VER4)| (1 << MACH_UBI32_OLDMOVEAI);
       break;
 
     case OPTION_CPU_UBI32V5:
-      ubi32_mach = bfd_mach_ubi32ver5;
+      ubi32_mach = bfd_mach_ubi32v5;
       ubi32_mach_bitmask = (1 << MACH_UBI32DSP)| (1 << MACH_IP3023COMPATIBILITY) | (1 << MACH_UBI32_VER4) | (1 << MACH_UBI32_VER5)| (1 << MACH_UBI32_NEWMOVEAI);
       break;
 
     case OPTION_CPU_UBI32V6:
-      ubi32_mach = bfd_mach_ubi32ver6;
+      ubi32_mach = bfd_mach_ubi32v6;
       ubi32_mach_bitmask = (1 << MACH_UBI32_VER6);
       break;
 
     case OPTION_CPU_UBI32V61:
-      ubi32_mach = bfd_mach_ubi32ver61;
+      ubi32_mach = bfd_mach_ubi32v61;
       ubi32_mach_bitmask = (1 << MACH_UBI32_VER61);
       break;
 

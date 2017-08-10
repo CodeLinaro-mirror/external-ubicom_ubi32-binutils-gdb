@@ -21,58 +21,45 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 #include "bfd.h"
 #include "libbfd.h"
 
-const bfd_arch_info_type bfd_ubi32v6_arch =
-{
-  32,				/* bits per word */
-  32,				/* bits per address */
-  8,				/* bits per byte */
-  bfd_arch_ubi32,		/* architecture */
-  bfd_mach_ubi32ver6,		/* machine */
-  "ubi32",			/* architecture name */
-  "ubi32v6",			/* printable name */
-  3,				/* section align power */
-  TRUE,				/* the default ? */
-  bfd_default_compatible,	/* architecture comparison fn */
-  bfd_default_scan,		/* string to architecture convert fn */
-  bfd_arch_default_fill,	/* Default fill.  */
-  NULL				/* next in list */
-};
+#define UBI32_ARCH(mach, arch_name, mach_name, default, next) \
+{									\
+  32,				/* bits per word.  */			\
+  32,				/* bits per address.  */		\
+  8,				/* bits per byte.  */			\
+  bfd_arch_ubi32,		/* architecture.  */			\
+  mach,				/* machine */				\
+  arch_name,			/* architecture name.  */		\
+  mach_name,			/* printable mach name.  */		\
+  3,				/* section align power.  */		\
+  default,			/* the default ?  */			\
+  bfd_default_compatible,	/* architecture comparison fn.  */	\
+  bfd_default_scan,		/* string to architecture cvt fn.  */	\
+  bfd_arch_default_fill,	/* Default fill.  */			\
+  next				/* next in list . */			\
+}
 
-const bfd_arch_info_type bfd_ubi32v61_arch =
+#ifdef BFD_UBI32_OLD_NAME
+static const bfd_arch_info_type ubi32_arch_list[] =
 {
-  32,				/* bits per word */
-  32,				/* bits per address */
-  8,				/* bits per byte */
-  bfd_arch_ubi32,		/* architecture */
-  bfd_mach_ubi32ver61,		/* machine */
-  "ubi32",			/* architecture name */
-  "ubi32ver61",			/* printable name */
-  3,				/* section align power */
-  TRUE,				/* the default ? */
-  bfd_default_compatible,	/* architecture comparison fn */
-  bfd_default_scan,		/* string to architecture convert fn */
-  bfd_arch_default_fill,	/* Default fill.  */
-  &bfd_ubi32v6_arch		/* next in list */
+  UBI32_ARCH (bfd_mach_ubi32v6, "ubicom32", "ubicom32ver6", FALSE, &ubi32_arch_list[1]),
+  UBI32_ARCH (bfd_mach_ubi32v5, "ubicom32", "ubicom32ver5", FALSE, &ubi32_arch_list[2]),
+  UBI32_ARCH (bfd_mach_ubi32v4, "ubicom32", "ubicom32ver4", FALSE, &ubi32_arch_list[3]),
+  UBI32_ARCH (bfd_mach_ubi32v3, "ubicom32", "ubicom32ver3", FALSE, &ubi32_arch_list[4]),
+  UBI32_ARCH (bfd_mach_ubi32,   "ubicom32", "ubicom32",     FALSE, NULL)
 };
 
 const bfd_arch_info_type bfd_ubi32_arch =
-{
-  32,				/* bits per word */
-  32,				/* bits per address */
-  8,				/* bits per byte */
-  bfd_arch_ubi32,		/* architecture */
-  bfd_mach_ubi32,		/* machine */
-#ifdef BFD_UBI32_OLD_NAME
-  "ubicom32",			/* architecture name */
-  "ubicom32",			/* printable name */
+  UBI32_ARCH (bfd_mach_ubi32v61, "ubi32", "ubicom32ver61", TRUE, &ubi32_arch_list[0]);
 #else
-  "ubi32",			/* architecture name */
-  "ubi32",			/* printable name */
-#endif
-  3,				/* section align power */
-  TRUE,				/* the default ? */
-  bfd_default_compatible,	/* architecture comparison fn */
-  bfd_default_scan,		/* string to architecture convert fn */
-  bfd_arch_default_fill,	/* Default fill.  */
-  &bfd_ubi32v61_arch		/* next in list */
+static const bfd_arch_info_type ubi32_arch_list[] =
+{
+  UBI32_ARCH (bfd_mach_ubi32v6, "ubi32", "ubi32v6", FALSE, &ubi32_arch_list[1]),
+  UBI32_ARCH (bfd_mach_ubi32v5, "ubi32", "ubi32v5", FALSE, &ubi32_arch_list[2]),
+  UBI32_ARCH (bfd_mach_ubi32v4, "ubi32", "ubi32v4", FALSE, &ubi32_arch_list[3]),
+  UBI32_ARCH (bfd_mach_ubi32v3, "ubi32", "ubi32v3", FALSE, &ubi32_arch_list[4]),
+  UBI32_ARCH (bfd_mach_ubi32,   "ubi32", "ubi32",     FALSE, NULL)
 };
+
+const bfd_arch_info_type bfd_ubi32_arch =
+  UBI32_ARCH (bfd_mach_ubi32v61, "ubi32", "ubi32v61", TRUE, &ubi32_arch_list[0]);
+#endif
