@@ -572,6 +572,7 @@ BFD32_BACKENDS_CFILES = \
 	elf32-tic6x.c \
 	elf32-tilegx.c \
 	elf32-tilepro.c \
+	elf32-ubi32.c \
 	elf32-v850.c \
 	elf32-vax.c \
 	elf32-visium.c \
