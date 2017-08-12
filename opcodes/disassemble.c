@@ -88,6 +88,7 @@
 #define ARCH_tic80
 #define ARCH_tilegx
 #define ARCH_tilepro
+#define ARCH_ubi32
 #define ARCH_v850
 #define ARCH_vax
 #define ARCH_visium
@@ -454,6 +455,11 @@ disassembler (bfd *abfd)
 #ifdef ARCH_ft32
     case bfd_arch_ft32:
       disassemble = print_insn_ft32;
+      break;
+#endif
+#ifdef ARCH_ubi32
+    case bfd_arch_ubi32:
+      disassemble = print_insn_ubi32;
       break;
 #endif
 #ifdef ARCH_v850
