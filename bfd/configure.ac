@@ -694,6 +694,8 @@ do
     ubi32_elf32_le_vec)		 tb="$tb elf32-ubi32.lo elf32.lo $elf" ;;
     ubi32_elf32_fdpic_be_vec)	 tb="$tb elf32-ubi32.lo elf32.lo $elf" ;;
     ubi32_elf32_fdpic_le_vec)	 tb="$tb elf32-ubi32.lo elf32.lo $elf" ;;
+    bfd_elf32_bigubicom32fdpic_vec) tb="$tb elf32-ubi32.lo elf32.lo $elf" ;;
+    bfd_elf32_littleubicom32fdpic_vec) tb="$tb elf32-ubi32.lo elf32.lo $elf" ;;
     v800_elf32_vec)		 tb="$tb elf32-v850.lo elf32.lo $elf" ;;
     v850_elf32_vec)		 tb="$tb elf32-v850.lo elf32.lo $elf" ;;
     vax_aout_1knbsd_vec)	 tb="$tb vax1knetbsd.lo aout32.lo" ;;

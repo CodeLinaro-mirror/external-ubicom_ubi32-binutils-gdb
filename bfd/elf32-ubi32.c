@@ -27,6 +27,10 @@
 #include "elf/ubi32.h"
 #include "dwarf2.h"
 
+
+/* Use OLD ubicom32 names */
+#define BFD_UBI32_OLD_NAME
+
 /* Call offset = signed 24bit word offset
    => 26bit signed byte offset.  */
 #define UBI32_CALL_MAX_POS_OFFS ((1 << 25) - 1)
@@ -344,10 +348,17 @@ static reloc_howto_type ubi32_elf_vtentry_howto =
 	 0,                     /* dst_mask */
 	 FALSE);                /* pcrel_offset */
 
+extern const bfd_target bfd_elf32_bigubicom32fdpic_vec;
+extern const bfd_target bfd_elf32_littleubicom32fdpic_vec;
 extern const bfd_target ubi32_elf32_fdpic_be_vec;
 extern const bfd_target ubi32_elf32_fdpic_le_vec;
+#ifdef BFD_UBI32_OLD_NAME
+#define IS_FDPIC(bfd) (((bfd)->xvec == &bfd_elf32_bigubicom32fdpic_vec) \
+		       || ((bfd)->xvec == &bfd_elf32_littleubicom32fdpic_vec))
+#else
 #define IS_FDPIC(bfd) (((bfd)->xvec == &ubi32_elf32_fdpic_be_vec) \
 		       || ((bfd)->xvec == &ubi32_elf32_fdpic_le_vec))
+#endif /* BFD_UBI32_OLD_NAME */
 
 bfd_reloc_status_type
 ubi32_elf_relocate_hi16 (input_bfd, relhi, contents, value)
@@ -5199,7 +5210,7 @@ elf32_ubi32_grok_psinfo (bfd *abfd, Elf_Internal_Note *note)
 
 #define TARGET_LITTLE_SYM  ubi32_elf32_le_vec
 #define TARGET_LITTLE_NAME  "elf32-littleubi32"
-#endif
+#endif /* BFD_UBI32_OLD_NAME */
 
 #define ELF_ARCH	 bfd_arch_ubi32
 #define ELF_MACHINE_CODE EM_UBI32
@@ -5207,6 +5218,17 @@ elf32_ubi32_grok_psinfo (bfd *abfd, Elf_Internal_Note *note)
 
 #include "elf32-target.h"
 
+#ifdef BFD_UBI32_OLD_NAME
+#undef TARGET_BIG_SYM
+#define TARGET_BIG_SYM	 bfd_elf32_bigubicom32fdpic_vec
+#undef TARGET_BIG_NAME
+#define TARGET_BIG_NAME  "elf32-bigubicom32fdpic"
+
+#undef TARGET_LITTLE_SYM
+#define TARGET_LITTLE_SYM  bfd_elf32_littleubicom32fdpic_vec
+#undef TARGET_LITTLE_NAME
+#define TARGET_LITTLE_NAME "elf32-littleubicom32fdpic"
+#else
 #undef TARGET_BIG_SYM
 #define TARGET_BIG_SYM	 ubi32_elf32_fdpic_be_vec
 #undef TARGET_BIG_NAME
@@ -5216,6 +5238,7 @@ elf32_ubi32_grok_psinfo (bfd *abfd, Elf_Internal_Note *note)
 #define TARGET_LITTLE_SYM  ubi32_elf32_fdpic_le_vec
 #undef TARGET_LITTLE_NAME
 #define TARGET_LITTLE_NAME "ubi32-elf32-fdpic-le"
+#endif /* BFD_UBI32_OLD_NAME */
 
 #undef	elf32_bed
 #define	elf32_bed		ubi32_elf32_fdpic_bed

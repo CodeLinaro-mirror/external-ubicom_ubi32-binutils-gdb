@@ -836,11 +836,11 @@ ft32-*-*)		targ_emul=elf32ft32
 			;;
 
 ubi32-*-linux-*)	targ_emul=elf32ubi32
-			targ_extra_emuls=elf32ubi32fdpic
+			targ_extra_emuls="elf32ubi32fdpic elf32ubicom32fdpic"
 			targ_extra_libpath=$targ_extra_emuls
 			;;
 ubi32-*-*)		targ_emul=elf32ubi32
-			targ_extra_emuls=elf32ubi32fdpic
+			targ_extra_emuls="elf32ubi32fdpic elf32ubicom32fdpic"
 			targ_extra_libpath=$targ_extra_emuls
 			;;
 

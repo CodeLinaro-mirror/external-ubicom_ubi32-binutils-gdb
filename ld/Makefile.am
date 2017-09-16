@@ -1315,6 +1315,11 @@ eelf32ubi32fdpic.c: $(srcdir)/emulparams/elf32ubi32fdpic.sh \
   $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
 	${GENSCRIPTS} elf32ubi32fdpic "$(tdir_ubi32fdpic)"
 
+eelf32ubicom32fdpic.c: $(srcdir)/emulparams/elf32ubi32fdpic.sh \
+  $(ELF_DEPS) \
+  $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
+	${GENSCRIPTS} elf32ubicom32fdpic "$(tdir_ubi32fdpic)"
+
 eelf32vax.c: $(srcdir)/emulparams/elf32vax.sh \
   $(ELF_DEPS) $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
 
