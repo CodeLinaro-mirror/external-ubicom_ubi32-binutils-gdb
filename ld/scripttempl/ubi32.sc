@@ -126,12 +126,18 @@ ${RELOCATING- /* For some reason, the Solaris linker makes bad executables
   at non-zero addresses.  Could be a Solaris ld bug, could be a GNU ld
   bug.  But for now assigning the zero vmas works.  */}
 
+PROGMEM_ORIGIN = 0x40000000;
+PROGMEM_LENGTH = 0x00100000;
+DATAMEM_ORIGIN = 0x40100000;
+DATAMEM_LENGTH = 0x00100000;
+FLASHRAM_ORIGIN = 0xb0000000;
+FLASHRAM_LENGTH = 0x00400000;
+
 MEMORY
 {
-  datamem (w) : ORIGIN = ${EXT_DATA_START_ADDR}, LENGTH = ${EXT_DATA_SIZE}
-  progmem (wx): ORIGIN = ${EXT_PROGRAM_START_ADDR}, LENGTH = ${EXT_PROGRAM_SIZE}
-  flashram (wx) : ORIGIN = ${FLASHRAM_START_ADDR}, LENGTH = 0x400000
-  copromem (w) : ORIGIN = ${COPROCESSOR_MEMORY}, LENGTH = ${COPROCESSOR_MEM_SIZE}
+  datamem (w) : ORIGIN = DATAMEM_ORIGIN, LENGTH = DATAMEM_LENGTH
+  progmem (wx): ORIGIN = PROGMEM_ORIGIN, LENGTH = PROGMEM_LENGTH
+  flashram (wx) : ORIGIN = FLASHRAM_ORIGIN, LENGTH = FLASHRAM_LENGTH
 }
 
 SECTIONS
