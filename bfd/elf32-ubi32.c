@@ -2832,7 +2832,7 @@ ubi32fdpic_emit_got_relocs_plt_entries (struct ubi32fdpic_relocs_info *entry,
 
   if (entry->got_entry || entry->fdgot_entry || entry->fd_entry)
     {
-      DPRINTF(" emit %p got %d fdgot %d fd %d addend %d\n", entry, entry->got_entry, entry->fdgot_entry, entry->fd_entry, addend);
+      DPRINTF(" emit %p got %ld fdgot %ld fd %ld addend %ld\n", entry, entry->got_entry, entry->fdgot_entry, entry->fd_entry, addend);
       /* If the symbol is dynamic, consider it for dynamic
 	 relocations, otherwise decay to section + offset.  */
       if (entry->symndx == -1 && entry->d.h->dynindx != -1)
@@ -2852,7 +2852,7 @@ ubi32fdpic_emit_got_relocs_plt_entries (struct ubi32fdpic_relocs_info *entry,
   /* Generate relocation for GOT entry pointing to the symbol.  */
   if (entry->got_entry)
     {
-      DPRINTF(" emit got entry %d:%p\n", entry->got_entry, entry);
+      DPRINTF(" emit got entry %ld:%p\n", entry->got_entry, entry);
 
       int idx = dynindx;
       bfd_vma ad = addend;
@@ -2913,7 +2913,7 @@ ubi32fdpic_emit_got_relocs_plt_entries (struct ubi32fdpic_relocs_info *entry,
      function descriptor.  */
   if (entry->fdgot_entry)
     {
-      DPRINTF(" emit got fdgot entry %d:%p\n", entry->fdgot_entry, entry);
+      DPRINTF(" emit got fdgot entry %ld:%p\n", entry->fdgot_entry, entry);
 
       int reloc, idx;
       bfd_vma ad = 0;
@@ -3124,7 +3124,7 @@ ubi32fdpic_emit_got_relocs_plt_entries (struct ubi32fdpic_relocs_info *entry,
 	    }	  
 	}
 
-      DPRINTF(" emit got fd_entry %d:%p lw 0x%x hw 0x%x fd_l_r_off 0x%x\n", entry->fd_entry, entry, lowword, highword, fd_lazy_rel_offset);
+      DPRINTF(" emit got fd_entry %ld:%p lw 0x%lx hw 0x%lx fd_l_r_off 0x%lx\n", entry->fd_entry, entry, lowword, highword, fd_lazy_rel_offset);
 
 
       bfd_put_32 (output_bfd, lowword,
@@ -3157,7 +3157,7 @@ ubi32fdpic_emit_got_relocs_plt_entries (struct ubi32fdpic_relocs_info *entry,
       unsigned int i;
       bfd_vma *plt_code;
 
-      DPRINTF(" emit fd entry %x:%p plt=%2x code=%p\n", entry->fd_entry, entry, entry->plt_entry, plt_output_code);
+      DPRINTF(" emit fd entry %lx:%p plt=%2lx code=%p\n", entry->fd_entry, entry, entry->plt_entry, plt_output_code);
 
 #if 0
       if (output_trampoline_code)
@@ -3704,7 +3704,7 @@ ubi32fdpic_assign_plt_entries (void **entryp, void *info_)
     {
       //      dinfo->current_fd -= FUNCTION_DESCRIPTOR_SIZE;
       //      entry->fd_entry = dinfo->current_fd;
-      DPRINTF(" late assign fd  % 5d:%p \n", entry->fd_entry, entry);
+      DPRINTF(" late assign fd  % 5ld:%p \n", entry->fd_entry, entry);
     }
 
   if (entry->plt)
@@ -3727,7 +3727,7 @@ ubi32fdpic_assign_plt_entries (void **entryp, void *info_)
 	  dinfo->current_plt += LZPLT_SIZE_SEQ1;
 	  entry->plt_type = 1;
 	}
-      DPRINTF(" assign plt % 4d for fd=% 4d:%p next %d plttype %d\n", entry->plt_entry, entry->fd_entry, entry,  dinfo->current_plt, entry->plt_type);
+      DPRINTF(" assign plt % 4ld for fd=% 4ld:%p next %ld plttype %ld\n", entry->plt_entry, entry->fd_entry, entry,  dinfo->current_plt, entry->plt_type);
 
     }
 
@@ -3747,14 +3747,14 @@ ubi32fdpic_assign_got_entries (void **entryp, void *info_)
   if (entry->got_lo || entry->got_hi)
     {
       entry->got_entry = dinfo->current_got;
-      DPRINTF(" assign got % 5d:%p \n", entry->got_entry, entry);
+      DPRINTF(" assign got % 5ld:%p \n", entry->got_entry, entry);
       dinfo->current_got += 4;
     }
 
   if (entry->fd_got_lo || entry->fd_got_hi)
     {
       entry->fdgot_entry = dinfo->current_got;
-      DPRINTF(" assign fdgot % 5d:%p \n", entry->fdgot_entry, entry);
+      DPRINTF(" assign fdgot % 5ld:%p \n", entry->fdgot_entry, entry);
       dinfo->current_got += 4;
     }
 
@@ -3778,13 +3778,13 @@ ubi32fdpic_assign_got_entries (void **entryp, void *info_)
 	  entry->plt_type = 1;
 	}
 
-      DPRINTF(" assign fd  % 5d:%p \n", entry->fd_entry, entry);
+      DPRINTF(" assign fd  % 5ld:%p \n", entry->fd_entry, entry);
     }
   else if (entry->privfd)
     {
       dinfo->current_privfd -= FUNCTION_DESCRIPTOR_SIZE;
       entry->fd_entry = dinfo->current_privfd;
-      DPRINTF(" assign private fd  % 5d:%p %p \n", entry->fd_entry, entry, entry->plt);
+      DPRINTF(" assign private fd  % 5ld:%p %d \n", entry->fd_entry, entry, entry->plt);
     }
 
   return 1;
@@ -3846,7 +3846,7 @@ ubi32fdpic_elf_size_dynamic_sections (bfd *output_bfd,
 				   We will decrement this by LZPLT_SIZE* each time we allocate. */
   gpinfo.current_plt_trampoline = 0;
 
-  DPRINTF("Total plts = %d \n", gpinfo.g.num_plts);
+  DPRINTF("Total plts = %ld \n", gpinfo.g.num_plts);
 
   /* Now assign (most) GOT offsets.  */
   htab_traverse (ubi32fdpic_relocs_info (info), ubi32fdpic_assign_got_entries,
@@ -3855,7 +3855,7 @@ ubi32fdpic_elf_size_dynamic_sections (bfd *output_bfd,
 
   ubi32fdpic_got_section (info)->size = gpinfo.total_fdplt + gpinfo.total_got + 12;
 
-  DPRINTF("GOT size = fd=%d, got=%d\n", gpinfo.total_fdplt, gpinfo.total_got);
+  DPRINTF("GOT size = fd=%ld, got=%ld\n", gpinfo.total_fdplt, gpinfo.total_got);
 
   if (ubi32fdpic_got_section (info)->size == 0)
     ubi32fdpic_got_section (info)->flags |= SEC_EXCLUDE;
@@ -3867,7 +3867,7 @@ ubi32fdpic_elf_size_dynamic_sections (bfd *output_bfd,
     }
   else
     {
-      DPRINTF(" Alloc GOT size = %d\n", ubi32fdpic_got_section (info)->size);
+      DPRINTF(" Alloc GOT size = %ld\n", ubi32fdpic_got_section (info)->size);
       ubi32fdpic_got_section (info)->contents =
 	(bfd_byte *) bfd_zalloc (dynobj,
 				 ubi32fdpic_got_section (info)->size);
@@ -3928,7 +3928,7 @@ ubi32fdpic_elf_size_dynamic_sections (bfd *output_bfd,
 
   if (elf_hash_table (info)->dynamic_sections_created)
     {
-      DPRINTF(" PLT size = %d\n", (total_plt_size ));
+      DPRINTF(" PLT size = %ld\n", (total_plt_size ));
       ubi32fdpic_plt_section (info)->size = (total_plt_size);
     }
 
@@ -3950,7 +3950,7 @@ ubi32fdpic_elf_size_dynamic_sections (bfd *output_bfd,
 	}
       else
 	{
-	  DPRINTF(" Alloc PLT size = %d\n", (total_plt_size));
+	  DPRINTF(" Alloc PLT size = %ld\n", (total_plt_size));
 	  ubi32fdpic_plt_section (info)->contents =
 	    (bfd_byte *) bfd_zalloc (dynobj,
 				     ubi32fdpic_plt_section (info)->size);
