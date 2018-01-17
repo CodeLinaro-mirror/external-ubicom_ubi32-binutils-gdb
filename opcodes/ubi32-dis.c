@@ -294,20 +294,24 @@ print_insn_fmt1 (bfd_vma pc ATTRIBUTE_UNUSED, unsigned int insn,
 		 int major, int ext, disassemble_info *info)
 {
   enum sub_fmt_t { I, Z, S, D, B, P };  /* Inv, Zero, Src, Dest, Both S&D, PDEC */
-  static int sub_fmt[32] =
-    { I, Z, D, D, S, D, S, S,
+  static int sub_fmt[2][32] =
+    {{ I, Z, D, D, S, D, S, S,
       B, D, B, B, B, B, B, B,
       B, D, B, B, B, B, D, B,
-      B, B, B, B, B, B, P, B };
+      B, B, B, B, B, B, P, B },
+     {B, B, B, B, B, B, I, I,
+      I, I, I, I, I, I, I, I,
+      I, I, I, I, I, I, I, I,
+      I, I, I, I, I, I, I, I }};
   static int sopnd_sz_tab[2][32] =
     {{ 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2, 4, 2, 4, 1,
        4, 4, 4, 4, 4, 2, 4, 1, 2, 4, 4, 4, 4, 2, 4, 1 },
-     { 4, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     { 4, 2, 1, 4, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }};
   static int dopnd_sz_tab[2][32] =
     {{ 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2, 4, 2, 4, 1,
        4, 4, 4, 4, 4, 2, 4, 1, 2, 4, 4, 4, 4, 4, 4, 4 },
-     { 4, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+     { 4, 2, 1, 4, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }};
   unsigned int source = insn & 0x000007ff;
   unsigned int dest = (insn >> 16) & 0x7ff;
@@ -315,7 +319,7 @@ print_insn_fmt1 (bfd_vma pc ATTRIBUTE_UNUSED, unsigned int insn,
   int sopnd_sz = sopnd_sz_tab[major][ext];
   int dopnd_sz = dopnd_sz_tab[major][ext];
 
-  switch (sub_fmt[ext])
+  switch (sub_fmt[major][ext])
     {
        case Z:		/* Zero operands */
 	 (*info->fprintf_func) (info->stream, "%s",
