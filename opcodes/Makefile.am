@@ -252,6 +252,7 @@ TARGET_LIBOPCODES_CFILES = \
 	tilepro-dis.c \
 	tilepro-opc.c \
 	ubi32-dis.c \
+	ubi32-opc.c \
 	v850-dis.c \
 	v850-opc.c \
 	vax-dis.c \
