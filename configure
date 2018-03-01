@@ -3959,16 +3959,15 @@ case "${target}" in
   tic6x-*-*)
     noconfigdirs="$noconfigdirs sim"
     ;;
-  ubi32-*-*)
-    noconfigdirs="$noconfigdirs gdb sim target-newlib target-libgloss"
-    ;;
   tilegx*-*-*)
     noconfigdirs="$noconfigdirs sim"
     ;;
   tilepro*-*-*)
     noconfigdirs="$noconfigdirs gdb sim"
     ;;
-
+  ubi32-*-*)
+    noconfigdirs="$noconfigdirs gas gdb sim target-newlib target-libgloss"
+    ;;
   v810-*-*)
     noconfigdirs="$noconfigdirs bfd binutils gas gdb ld opcodes target-libgloss"
     ;;

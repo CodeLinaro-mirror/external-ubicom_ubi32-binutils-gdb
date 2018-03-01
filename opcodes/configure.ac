@@ -340,7 +340,7 @@ if test x${all_targets} = xfalse ; then
 	bfd_tic80_arch)		ta="$ta tic80-dis.lo tic80-opc.lo" ;;
 	bfd_tilegx_arch)	ta="$ta tilegx-dis.lo tilegx-opc.lo" ;;
 	bfd_tilepro_arch)	ta="$ta tilepro-dis.lo tilepro-opc.lo" ;;
-	bfd_ubi32_arch)		ta="$ta ubi32-asm.lo ubi32-desc.lo ubi32-dis.lo ubi32-ibld.lo ubi32-opc.lo" using_cgen=yes ;;
+	bfd_ubi32_arch)		ta="$ta ubi32-dis.lo" ;;
 	bfd_v850_arch)		ta="$ta v850-opc.lo v850-dis.lo" ;;
 	bfd_v850e_arch)		ta="$ta v850-opc.lo v850-dis.lo" ;;
 	bfd_v850ea_arch)	ta="$ta v850-opc.lo v850-dis.lo" ;;
