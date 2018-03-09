@@ -40,6 +40,8 @@ struct op_table_t
   uint32_t version;
 };
 
+extern struct op_table_t op_table[];
+
 /* op_table_t.version flags.  */
 #define UBI32_V1  0x01
 #define UBI32_V2  0x02
@@ -74,6 +76,10 @@ struct reg_table_t
   uint32_t version;
 };
 
+extern struct reg_table_t reg_table[];
+
+#define REGNO_A0	0x20
+
 /* reg_table_t.rw flags.  */
 #define REG_R 0x01	/* Readable register.    */
 #define REG_W 0x02	/* Writeable register.   */
@@ -84,6 +90,8 @@ struct cc_t {
   const char *cond;
   int code;
 };
+
+extern struct cc_t cc_tab[];
 
 /* DSP instruction Control bits.  */
 #define DSP_CTRL_A 0x01 /* Destination register - 0 = ACC0, 1 = ACC1.  */

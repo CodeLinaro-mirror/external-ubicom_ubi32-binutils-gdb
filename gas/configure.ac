@@ -531,10 +531,6 @@ changequote([,])dnl
         fi
 	;;
 
-      ubi32)
-	using_cgen=yes
-	;;
-
       xstormy16)
 	using_cgen=yes
 	;;

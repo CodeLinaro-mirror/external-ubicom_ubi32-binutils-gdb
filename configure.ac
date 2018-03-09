@@ -1302,7 +1302,7 @@ case "${target}" in
     noconfigdirs="$noconfigdirs gdb sim"
     ;;
   ubi32-*-*)
-    noconfigdirs="$noconfigdirs gas gdb sim target-newlib target-libgloss"
+    noconfigdirs="$noconfigdirs gdb sim target-newlib target-libgloss"
     ;;
   v810-*-*)
     noconfigdirs="$noconfigdirs bfd binutils gas gdb ld opcodes target-libgloss"

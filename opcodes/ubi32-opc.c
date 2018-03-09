@@ -377,24 +377,24 @@ struct reg_table_t reg_table[] =
 
 /* Ubi32 JMP instruction condition codes.  */
 struct cc_t cc_tab[] =
-  {
-   {"f",  0x0},
-   {"cc", 0x1},
-   {"lo", 0x1},
-   {"cs", 0x2},
-   {"hs", 0x2},
-   {"eq", 0x3},
-   {"ge", 0x4},
-   {"gt", 0x5},
-   {"hi", 0x6},
-   {"le", 0x7},
-   {"ls", 0x8},
-   {"lt", 0x9},
-   {"mi", 0xa},
-   {"ne", 0xb},
-   {"pl", 0xc},
-   {"t",  0xd},
-   {"vc", 0xe},
-   {"vs", 0xf},
-   {NULL, 0}
-  };
+{
+  {"f",  0x0},
+  {"cc", 0x1},
+  {"lo", 0x1},
+  {"cs", 0x2},
+  {"hs", 0x2},
+  {"eq", 0x3},
+  {"ge", 0x4},
+  {"gt", 0x5},
+  {"hi", 0x6},
+  {"le", 0x7},
+  {"ls", 0x8},
+  {"lt", 0x9},
+  {"mi", 0xa},
+  {"ne", 0xb},
+  {"pl", 0xc},
+  {"t",  0xd},
+  {"vc", 0xe},
+  {"vs", 0xf},
+  {NULL, 0}
+};
