@@ -1267,7 +1267,6 @@ md_assemble (char *str)
   switch (insn->format)
     {
       case FMT_1A:	/* No operands.  */
-	    gas_assert(0);
 	    put_fmt1a (insn);
 	break;
 
