@@ -28,12 +28,16 @@
 struct op_table_t
 {
   const char *mnemonic;
-  enum { FMT_1A, FMT_1B, FMT_1C, FMT_1D, FMT_2, FMT_3, FMT_4,
-	 FMT_5, FMT_6, FMT_7, FMT_8, FMT_9, FMT_10, FMT_11A,
-	 FMT_11B, FMT_11C, FMT_11D, FMT_12A, FMT_12B, FMT_12C,
-	 FMT_12D, FMT_MAC  /* Macros */
-       } format;
-  enum { SZ_0 = 0, SZ_1 = 0, SZ_2 = 1, SZ_4 = 2 } scale;
+  enum op_fmt_t
+    { FMT_1A,  FMT_1B,  FMT_1C,  FMT_1D,  FMT_2,   FMT_3,   FMT_4A,
+      FMT_4B,
+      FMT_5,   FMT_6,   FMT_7,   FMT_8,   FMT_9,   FMT_10,  FMT_11A,
+      FMT_11B, FMT_11C, FMT_11D, FMT_12A, FMT_12B, FMT_12C,
+      FMT_12D, FMT_MAC  /* Macros */
+    } format;
+  enum op_scale_t
+    { SZ_0 = -1, SZ_1 = 0, SZ_2 = 1, SZ_4 = 2
+    } scale;
   uint32_t instruction;
   uint32_t mask;
   uint32_t flags;
@@ -56,9 +60,9 @@ extern struct op_table_t op_table[];
 #define FLAG_NONE 0x00
 #define FLAG_EXT  0x01	  /* Opcode has extensions, eg. jmp<cc>.	*/
 #define FLAG_MAC  0x02	  /* Opcode is macro NOP.			*/
-#define FLAG_PDEC 0x04	  /* Opcode is PDEX, special offset calc. */
-#define FLAG_LEA  0x08	  /* Opcode is LEA, special dest offset calc. */
-#define FLAG_MOVEAI 0x10  /* Opcode is either MOVEAI or MOVEAIH. */
+#define FLAG_PDEC 0x04	  /* Opcode is PDEX, special offset calc. 	*/
+#define FLAG_LEA  0x08	  /* Opcode is LEA, special dest offset calc. 	*/
+#define FLAG_MOVEAI 0x10  /* Opcode is either MOVEAI or MOVEAIH. 	*/
 
 /* Describe registers.  */
 struct reg_table_t

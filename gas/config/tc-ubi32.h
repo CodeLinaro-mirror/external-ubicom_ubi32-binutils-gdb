@@ -58,10 +58,8 @@ extern bfd_boolean ubi32_fix_adjustable (struct fix *);
 /* Permit temporary numeric labels.  */
 #define LOCAL_LABELS_FB 1
 
-#ifdef FIXME
 extern int ubi32_force_relocation (struct fix *);
 #define TC_FORCE_RELOCATION(fixp) ubi32_force_relocation(fixp)
-#endif
 
 #define md_convert_frag(abfd,sec,fragP)
 

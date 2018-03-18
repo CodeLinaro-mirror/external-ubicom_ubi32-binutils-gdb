@@ -129,26 +129,53 @@ md_atof (int type, char *litP, int *sizeP)
   return ieee_md_atof (type, litP, sizeP, target_big_endian);
 }
 
+/* Insert value into buffer at offset bits for len bits.  */
+/* FIXME -- check for overflow? */
+static void
+insert_bits (int *buf, int value, int offset, int len)
+{
+  int mask = (1 << len) - 1;
+
+  *buf |= (value & mask) << offset;
+}
+
 /* Apply a fixup to the object file.  */
 void
 md_apply_fix (fixS *fixP, valueT *valP, segT seg ATTRIBUTE_UNUSED)
 {
-  // char *where = fixP->fx_frag->fr_literal + fixP->fx_where;
+  char *where = fixP->fx_frag->fr_literal + fixP->fx_where;
   valueT value = *valP;
 
   if (fixP->fx_addsy == 0 && !fixP->fx_pcrel)
     fixP->fx_done = 1;
 
-  if (fixP->fx_pcrel)
-	/* FIXME */ gas_assert(0);
-
   switch (fixP->fx_r_type)
     {
       case BFD_RELOC_UBI32_21_PCREL:
+	/* where should always be word offset. */
+	gas_assert (((long)where & 0x3) == 0);
+	value >>= 2;
+	insert_bits ((int *)where, value, 0, 21);
+	fixP->fx_offset = *valP;
+	break;
+
+      case BFD_RELOC_UBI32_24_PCREL:
+	/* where should always be word offset. */
+	gas_assert (((long)where & 0x3) == 0);
+	value >>= 2;
+	insert_bits ((int *)where, value, 0, 21);
+	insert_bits ((int *)where, value >> 21, 24, 3);
+	fixP->fx_offset = *valP;
+	break;
+
       case BFD_RELOC_UBI32_HI24:
       case BFD_RELOC_UBI32_LO7_S:
+      case BFD_RELOC_UBI32_LO7_2_S:
+      case BFD_RELOC_UBI32_LO7_4_S:
       case BFD_RELOC_UBI32_LO7_D:
-	fixP->fx_addnumber = *valP;
+      case BFD_RELOC_UBI32_LO7_2_D:
+      case BFD_RELOC_UBI32_LO7_4_D:
+	fixP->fx_offset = *valP;
 	break;
 
       case BFD_RELOC_8:
@@ -162,9 +189,24 @@ md_apply_fix (fixS *fixP, valueT *valP, segT seg ATTRIBUTE_UNUSED)
 	/* FIXME */ gas_assert(0);
 	break;
     }
+}
 
-  /* Remember value for tc_gen_reloc.  */
-  fixP->fx_addnumber = value;
+/* Force relocations to be done in linker, even if they can
+   be resolved at assembly time.  This is to provide output
+   identical to the old assembler.
+
+   Comments in old (CGEN-based) assembler say that this is
+   to support relaxation in linker.   This should be removed.
+*/
+int
+ubi32_force_relocation (fix)
+     fixS * fix;
+{
+  if ((fix->fx_r_type == BFD_RELOC_UBI32_21_PCREL)
+      || (fix->fx_r_type == BFD_RELOC_UBI32_24_PCREL))
+    return 1;
+
+  return 0;
 }
 
 /* Return an initial guess of the length by which a fragment must grow to
@@ -209,11 +251,11 @@ tc_gen_reloc (asection *seg ATTRIBUTE_UNUSED, fixS *fixp)
   if (reloc->howto == NULL)
     {
       as_bad_where (fixp->fx_file, fixp->fx_line,
-		    _("cannot represent %s relocation in object file"), 
+		    _("cannot represent %s relocation in object file"),
 		    bfd_get_reloc_code_name (fixp->fx_r_type));
       return NULL;
     }
-  reloc->addend = fixp->fx_addnumber;
+  reloc->addend = fixp->fx_offset;
 
   return reloc;
 }
@@ -251,7 +293,9 @@ static int ubi32_version = UBI32_V61;
 int
 md_parse_option (int c ATTRIBUTE_UNUSED, const char * arg ATTRIBUTE_UNUSED)
 {
-/* FIXME -- incomplete.  */
+  /* FIXME */
+  // int pic_state = ubi32_mach & 0xffff0000;
+
   switch (c)
     {
     case OPTION_UBI32V2:
@@ -283,9 +327,31 @@ md_parse_option (int c ATTRIBUTE_UNUSED, const char * arg ATTRIBUTE_UNUSED)
       ubi32_mach = bfd_mach_ubi32v61;
       ubi32_version = UBI32_V61;
       break;
+
+#if 0
+    case OPTION_CPU_UBI32_FDPIC:
+      /* FIXME */
+      ubi32_mach |= EF_UBI32_FDPIC;
+      as_warn ("-fdpic ignored");
+      break;
+#endif
+
+    case OPTION_EB:
+      target_big_endian = 1;
+      break;
+
+    case OPTION_EL:
+      target_big_endian = 0;
+      break;
+
+    default:
+      return 0;
     }
 
-  return 0;
+  /* FIXME */
+  // ubi32_mach |= pic_state;
+
+  return 1;
 }
 
 valueT
@@ -493,6 +559,7 @@ struct op_offset_tab_t
 {
   const char *operator;
   enum bfd_reloc_code_real reloc;
+  enum op_scale_t scale;
   unsigned int shift;
   unsigned int mask;
 };
@@ -500,45 +567,75 @@ struct op_offset_tab_t
 static struct op_offset_tab_t
 op_offset_tab[] =
 {
-  { "%lo(",			BFD_RELOC_LO16, 0, 0xffff },
-  { "%hi(",			BFD_RELOC_HI16, 16, 0xffff },
-  { "%got_lo(", 		BFD_RELOC_UBI32_GOT_LO, 0, 0xffff },
-  { "%got_hi(", 		BFD_RELOC_UBI32_GOT_HI , 16, 0xffff},
-  { "%funcdesc_got_lo(",	BFD_RELOC_UBI32_FUNCDESC_GOT_LO , 0, 0xffff},
-  { "%funcdesc_got_hi(",	BFD_RELOC_UBI32_FUNCDESC_GOT_HI , 16, 0xffff},
-  { "%got_funcdesc_lo(",	BFD_RELOC_UBI32_FUNCDESC_GOT_LO , 0, 0xffff},
-  { "%got_funcdesc_hi(",	BFD_RELOC_UBI32_FUNCDESC_GOT_HI , 16, 0xffff},
-  { NULL, 0, 0, 0 }
+  { "%lo(",			BFD_RELOC_LO16, SZ_4, 0, 0xffff },
+  { "%hi(",			BFD_RELOC_HI16, SZ_4, 16, 0xffff },
+  { "%got_lo(", 		BFD_RELOC_UBI32_GOT_LO, SZ_4, 0, 0xffff },
+  { "%got_hi(", 		BFD_RELOC_UBI32_GOT_HI , SZ_4, 16, 0xffff},
+  { "%funcdesc_got_lo(",	BFD_RELOC_UBI32_FUNCDESC_GOT_LO , SZ_4, 0, 0xffff},
+  { "%funcdesc_got_hi(",	BFD_RELOC_UBI32_FUNCDESC_GOT_HI , SZ_4, 16, 0xffff},
+  { "%got_funcdesc_lo(",	BFD_RELOC_UBI32_FUNCDESC_GOT_LO , SZ_4, 0, 0xffff},
+  { "%got_funcdesc_hi(",	BFD_RELOC_UBI32_FUNCDESC_GOT_HI , SZ_4, 16, 0xffff},
+  { NULL, 0, 0, 0, 0 }
+};
+
+static struct op_offset_tab_t
+op_offset_imm16[] =
+{
+  { "%lo(",			BFD_RELOC_LO16, SZ_0, 0, 0xffff },
+  { "%hi(",			BFD_RELOC_HI16, SZ_0, 16, 0xffff },
+  { "%got_lo(", 		BFD_RELOC_UBI32_GOT_LO, SZ_0, 0, 0xffff },
+  { "%got_hi(", 		BFD_RELOC_UBI32_GOT_HI , SZ_0, 16, 0xffff},
+  { "%funcdesc_got_lo(",	BFD_RELOC_UBI32_FUNCDESC_GOT_LO , SZ_0, 0, 0xffff},
+  { "%funcdesc_got_hi(",	BFD_RELOC_UBI32_FUNCDESC_GOT_HI , SZ_0, 16, 0xffff},
+  { "%got_funcdesc_lo(",	BFD_RELOC_UBI32_FUNCDESC_GOT_LO , SZ_0, 0, 0xffff},
+  { "%got_funcdesc_hi(",	BFD_RELOC_UBI32_FUNCDESC_GOT_HI , SZ_0, 16, 0xffff},
+  { NULL, 0, 0, 0, 0 }
 };
 
 static struct op_offset_tab_t
 op_offset_imm25[] =
 {
-  { "%hi(",			BFD_RELOC_UBI32_HI24, 24, 0xffffff },
-  { "%got_hi(", 		BFD_RELOC_UBI32_GOT_HI24, 24, 0xffffff},
-  { "%funcdesc_got_hi(",	BFD_RELOC_UBI32_FUNCDESC_GOT_HI24, 24, 0xffffff},
-  { "%got_funcdesc_hi(",	BFD_RELOC_UBI32_FUNCDESC_GOT_HI24, 24, 0xffffff},
-  { NULL, 0, 0, 0 }
+  { "%hi(",			BFD_RELOC_UBI32_HI24, SZ_0, 7, 0x1ffffff },
+  { "%got_hi(", 		BFD_RELOC_UBI32_GOT_HI24, SZ_0, 7, 0x1ffffff},
+  { "%funcdesc_got_hi(",	BFD_RELOC_UBI32_FUNCDESC_GOT_HI24, SZ_0, 7, 0x1ffffff},
+  { "%got_funcdesc_hi(",	BFD_RELOC_UBI32_FUNCDESC_GOT_HI24, SZ_0, 7, 0x1ffffff},
+  { NULL, 0, 0, 0, 0 }
 };
 
 static struct op_offset_tab_t
 op_offset_imm7_s[] =
 {
-  { "%lo(",			BFD_RELOC_UBI32_LO7_S, 24, 0xffffff },
-  { "%got_lo(", 		BFD_RELOC_UBI32_GOT_LO7_S, 24, 0xffffff},
-  { "%funcdesc_got_lo(",	BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_S, 24, 0xffffff},
-  { "%got_funcdesc_lo(",	BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_S, 24, 0xffffff},
-  { NULL, 0, 0, 0 }
+  { "%lo(",			BFD_RELOC_UBI32_LO7_S, SZ_1, 0, 0x7f },
+  { "%lo(",			BFD_RELOC_UBI32_LO7_2_S, SZ_2, 0, 0x7f },
+  { "%lo(",			BFD_RELOC_UBI32_LO7_4_S, SZ_4, 0, 0x7f },
+  { "%got_lo(", 		BFD_RELOC_UBI32_GOT_LO7_S, SZ_1, 0, 0x7f},
+  { "%got_lo(", 		BFD_RELOC_UBI32_GOT_LO7_2_S, SZ_2, 0, 0x7f},
+  { "%got_lo(", 		BFD_RELOC_UBI32_GOT_LO7_4_S, SZ_4, 0, 0x7f},
+  { "%funcdesc_got_lo(",	BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_S, SZ_1, 0, 0x7f},
+  { "%funcdesc_got_lo(",	BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_2_S, SZ_2, 0, 0x7f},
+  { "%funcdesc_got_lo(",	BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_4_S, SZ_4, 0, 0x7f},
+  { "%got_funcdesc_lo(",	BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_S, SZ_1, 0, 0x7f},
+  { "%got_funcdesc_lo(",	BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_2_S, SZ_2, 0, 0x7f},
+  { "%got_funcdesc_lo(",	BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_4_S, SZ_4, 0, 0x7f},
+  { NULL, 0, 0, 0, 0 }
 };
 
 static struct op_offset_tab_t
 op_offset_imm7_d[] =
 {
-  { "%lo(",			BFD_RELOC_UBI32_LO7_D, 24, 0xffffff },
-  { "%got_lo(", 		BFD_RELOC_UBI32_GOT_LO7_D, 24, 0xffffff},
-  { "%funcdesc_got_lo(",	BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_D, 24, 0xffffff},
-  { "%got_funcdesc_lo(",	BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_D, 24, 0xffffff},
-  { NULL, 0, 0, 0 }
+  { "%lo(",			BFD_RELOC_UBI32_LO7_D, SZ_1, 0, 0x7f },
+  { "%lo(",			BFD_RELOC_UBI32_LO7_2_D, SZ_2, 0, 0x7f },
+  { "%lo(",			BFD_RELOC_UBI32_LO7_4_D, SZ_4, 0, 0x7f },
+  { "%got_lo(", 		BFD_RELOC_UBI32_GOT_LO7_D, SZ_1, 0, 0x7f},
+  { "%got_lo(", 		BFD_RELOC_UBI32_GOT_LO7_2_D, SZ_2, 0, 0x7f},
+  { "%got_lo(", 		BFD_RELOC_UBI32_GOT_LO7_4_D, SZ_4, 0, 0x7f},
+  { "%funcdesc_got_lo(",	BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_D, SZ_1, 0, 0x7f},
+  { "%funcdesc_got_lo(",	BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_2_D, SZ_2, 0, 0x7f},
+  { "%funcdesc_got_lo(",	BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_4_D, SZ_4, 0, 0x7f},
+  { "%got_funcdesc_lo(",	BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_D, SZ_1, 0, 0x7f},
+  { "%got_funcdesc_lo(",	BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_2_D, SZ_2, 0, 0x7f},
+  { "%got_funcdesc_lo(",	BFD_RELOC_UBI32_FUNCDESC_GOT_LO7_4_D, SZ_4, 0, 0x7f},
+  { NULL, 0, 0, 0, 0 }
 };
 
 /* FIXME -- add size limit.  */
@@ -558,7 +655,7 @@ parse_immed (char **strp, int *immed, int size ATTRIBUTE_UNUSED)
 
 /* FIXME -- offset signed?  unsigned?  */
 static const char *
-parse_offset (char **strp, int *offset, int size ATTRIBUTE_UNUSED)
+parse_offset (char **strp, int *offset, enum op_scale_t scale, int size ATTRIBUTE_UNUSED)
 {
   const char *errmsg = NULL;
   int value;
@@ -568,7 +665,8 @@ parse_offset (char **strp, int *offset, int size ATTRIBUTE_UNUSED)
     {
       while (op->operator)
         {
-	  if (strncasecmp (*strp, op->operator, strlen (op->operator)) == 0)
+	  if (strncasecmp (*strp, op->operator, strlen (op->operator)) == 0
+	      && op->scale == scale)
 	    {
 	      *strp += strlen (op->operator);
 	      if (!(errmsg = parse_address (strp, &value))
@@ -591,7 +689,7 @@ parse_offset (char **strp, int *offset, int size ATTRIBUTE_UNUSED)
 /* FIXME -- offset signed?  unsigned?  */
 static const char *
 parse_offset_operand (char **strp, struct operand_t *offset, int size,
-		      struct op_offset_tab_t *op)
+		      enum op_scale_t scale, struct op_offset_tab_t *op)
 {
   const char *errmsg = NULL;
 
@@ -599,12 +697,15 @@ parse_offset_operand (char **strp, struct operand_t *offset, int size,
     {
       while (op->operator)
         {
-	  if (strncasecmp (*strp, op->operator, strlen (op->operator)) == 0)
+	  if (strncasecmp (*strp, op->operator, strlen (op->operator)) == 0
+	      && op->scale == scale)
 	    {
 	      *strp += strlen (op->operator);
 	      if (!(errmsg = parse_address_operand (strp, offset, op->reloc))
 		 && !(errmsg = parse_literal (strp, ')')))
 		{
+		  offset->value >>= op->shift;
+		  offset->value &= op->mask;
 		  return NULL;
 		}
 	      else
@@ -620,21 +721,11 @@ parse_offset_operand (char **strp, struct operand_t *offset, int size,
   return parse_immed (strp, &offset->value, size);
 }
 
-
-/* Insert value into buffer at offset bits for len bits.  */
-/* FIXME -- check for overflow? */
-static void
-insert_bits (int *buf, int value, int offset, int len)
-{
-  int mask = (1 << len) - 1;
-
-  *buf |= (value & mask) << offset;
-}
-
+#if 0
 /* FIXME -- fill in addr struct. */
 /* Parse source or destination -- "Addressing modes" in ISA doc.  */
 static char *
-parse_addr (char **strp, int *addr, int scale, int pdec_encoding)
+parse_addr (char **strp, int *addr, enum op_scale_t scale, int pdec_encoding)
 {
   char *save_str = *strp;
   int reg, areg, dreg;
@@ -643,7 +734,7 @@ parse_addr (char **strp, int *addr, int scale, int pdec_encoding)
 
 /* FIXME -- look at first char to decide which to test.  */
 
-  if (!parse_offset (strp, &value, 7)				/* 1xx <ofs>(<areg>)		*/
+  if (!parse_offset (strp, &value, scale, 7)			/* 1xx <ofs>(<areg>)		*/
       && !parse_literal (strp, '(')
       && !parse_areg (strp, &areg)
       && !parse_literal (strp, ')')
@@ -662,6 +753,7 @@ parse_addr (char **strp, int *addr, int scale, int pdec_encoding)
       return NULL;
     }
 
+  *strp = save_str;
   if (!parse_literal (strp, '(')				/* 1xx (<areg>)			*/
       && !parse_areg (strp, &areg)
       && !parse_literal (strp, ')')
@@ -728,7 +820,7 @@ parse_addr (char **strp, int *addr, int scale, int pdec_encoding)
 
   *strp = save_str;
   if (!parse_literal (strp, '#')				/* 000 #<8-bit signed immed>	*/
-      && !parse_offset (strp, &value, 8))
+      && !parse_offset (strp, &value, scale, 8))
     {
       *addr = 0x000;
       insert_bits (addr, value, 0, 8);
@@ -737,11 +829,12 @@ parse_addr (char **strp, int *addr, int scale, int pdec_encoding)
 
   return _("Invalid address");
 }
+#endif
 
 /* FIXME -- fill in addr struct. */
 /* Parse source or destination -- "Addressing modes" in ISA doc.  */
 static char *
-parse_addr_operand (char **strp, struct operand_t *opnd, int scale, int pdec_encoding,
+parse_addr_operand (char **strp, struct operand_t *opnd, enum op_scale_t scale, int pdec_encoding,
 		    struct op_offset_tab_t *optab)
 {
   char *save_str = *strp;
@@ -754,7 +847,7 @@ parse_addr_operand (char **strp, struct operand_t *opnd, int scale, int pdec_enc
 
 /* FIXME -- look at first char to decide which to test.  */
 
-  if (!parse_offset_operand (strp, &temp, 7, optab)		/* 1xx <ofs>(<areg>)	*/
+  if (!parse_offset_operand (strp, &temp, 7, scale, optab)	/* 1xx <ofs>(<areg>)	*/
       && !parse_literal (strp, '(')
       && !parse_areg (strp, &areg)
       && !parse_literal (strp, ')')
@@ -776,6 +869,7 @@ parse_addr_operand (char **strp, struct operand_t *opnd, int scale, int pdec_enc
       return NULL;
     }
 
+  *strp = save_str;
   if (!parse_literal (strp, '(')				/* 1xx (<areg>)			*/
       && !parse_areg (strp, &areg)
       && !parse_literal (strp, ')')
@@ -931,10 +1025,12 @@ static fixS *
 add_fixup (char * frag, struct operand_t *operand)
 {
   fixS *fixP = NULL;
+  int pcrel = (operand->reloc == BFD_RELOC_UBI32_21_PCREL)
+	   || (operand->reloc == BFD_RELOC_UBI32_24_PCREL);
 
   if (operand->reloc != 0)
     fixP = fix_new_exp (frag_now, frag - frag_now->fr_literal, 4, &operand->exp,
-			0 /* pcrel */, operand->reloc);
+			 pcrel, operand->reloc);
   return fixP;
 }
 
@@ -947,21 +1043,25 @@ put_fmt1a (struct op_table_t *insn)
 }
 
 static void
-put_fmt1b (struct op_table_t *insn, int source)
+put_fmt1b (struct op_table_t *insn, struct operand_t *sopnd)
 {
   int buf = insn->instruction;
+  char *frag;
 
-  insert_bits (&buf, source, 0, 11);
-  finish_insn (buf);
+  insert_bits (&buf, sopnd->value, 0, 11);
+  frag = finish_insn (buf);
+  add_fixup (frag, sopnd);
 }
 
 static void
-put_fmt1c (struct op_table_t *insn, int dest)
+put_fmt1c (struct op_table_t *insn, struct operand_t *dopnd)
 {
   int buf = insn->instruction;
+  char *frag;
 
-  insert_bits (&buf, dest, 16, 11);
-  finish_insn (buf);
+  insert_bits (&buf, dopnd->value, 16, 11);
+  frag = finish_insn (buf);
+  add_fixup (frag, dopnd);
 }
 
 static void
@@ -973,61 +1073,80 @@ put_fmt1d (struct op_table_t *insn, struct operand_t *dopnd, struct operand_t *s
   insert_bits (&buf, sopnd->value, 0, 11);
   insert_bits (&buf, dopnd->value, 16, 11);
   frag = finish_insn (buf);
-  add_fixup (frag, sopnd);
   add_fixup (frag, dopnd);
+  add_fixup (frag, sopnd);
 }
 
 static void
-put_fmt2 (struct op_table_t *insn, unsigned int dest, unsigned int source, int bitno)
+put_fmt2 (struct op_table_t *insn, struct operand_t *dopnd,
+	  struct operand_t *sopnd, int bitno)
 {
   int buf = insn->instruction;
+  char *frag;
 
-  insert_bits (&buf, dest, 16, 11);
+  insert_bits (&buf, dopnd->value, 16, 11);
   insert_bits (&buf, bitno, 11, 5);
-  insert_bits (&buf, source, 0, 11);
-  finish_insn (buf);
+  insert_bits (&buf, sopnd->value, 0, 11);
+  frag = finish_insn (buf);
+  add_fixup (frag, dopnd);
+  add_fixup (frag, sopnd);
 }
 
 static void
-put_fmt3 (struct op_table_t *insn, unsigned int dest, unsigned int source, int sreg)
+put_fmt3 (struct op_table_t *insn, struct operand_t *dopnd,
+	  struct operand_t *sopnd, int sreg)
 {
   int buf = insn->instruction;
+  char *frag;
 
-  insert_bits (&buf, dest, 16, 11);
+  insert_bits (&buf, dopnd->value, 16, 11);
   insert_bits (&buf, sreg, 11, 4);
-  insert_bits (&buf, source, 0, 11);
-  finish_insn (buf);
+  insert_bits (&buf, sopnd->value, 0, 11);
+  frag = finish_insn (buf);
+  add_fixup (frag, dopnd);
+  add_fixup (frag, sopnd);
 }
 
 static void
-put_fmt4 (struct op_table_t *insn, unsigned int dest, int flag, int s_imm, unsigned int source)
+put_fmt4 (struct op_table_t *insn, unsigned int dest, int flag, int s_imm,
+	  struct operand_t *sopnd)
 {
   int buf = insn->instruction;
+  char *frag;
 
   insert_bits (&buf, flag, 26, 1);
   insert_bits (&buf, dest, 16, 4);
   insert_bits (&buf, s_imm, 11, 5);
-  insert_bits (&buf, source, 0, 11);
-  finish_insn (buf);
+  insert_bits (&buf, sopnd->value, 0, 11);
+  frag = finish_insn (buf);
+  add_fixup (frag, sopnd);
 }
 
 static void
-put_fmt5 (struct op_table_t *insn, unsigned int immed, unsigned int source)
+put_fmt5 (struct op_table_t *insn, struct operand_t *s2opnd,
+	  struct operand_t *sopnd)
 {
   int buf = insn->instruction;
+  char *frag;
 
-  insert_bits (&buf, immed, 11, 16);
-  insert_bits (&buf, source, 0, 11);
-  finish_insn (buf);
+  insert_bits (&buf, s2opnd->value, 11, 16);
+  insert_bits (&buf, sopnd->value, 0, 11);
+  frag = finish_insn (buf);
+  add_fixup (frag, s2opnd);
+  add_fixup (frag, sopnd);
 }
 
 static void
-put_fmt6 (struct op_table_t *insn, unsigned int dest, int immed)
+put_fmt6 (struct op_table_t *insn, struct operand_t *dopnd, struct operand_t *sopnd)
 {
   int buf = insn->instruction;
-  insert_bits (&buf, dest, 16, 11);
-  insert_bits (&buf, immed, 0, 16);
-  finish_insn (buf);
+  char *frag;
+
+  insert_bits (&buf, sopnd->value, 0, 16);
+  insert_bits (&buf, dopnd->value, 16, 11);
+  frag = finish_insn (buf);
+  add_fixup (frag, dopnd);
+  add_fixup (frag, sopnd);
 }
 
 static void
@@ -1050,7 +1169,7 @@ put_fmt8 (struct op_table_t *insn, int areg, struct operand_t *offset)
 {
   int buf = insn->instruction;
   char *frag;
-  int value = offset->value >> 7;
+  int value = offset->value;
 
   insert_bits (&buf, areg, 21, 3);
   insert_bits (&buf, value & 0x1fffff, 0, 21);
@@ -1064,6 +1183,8 @@ put_fmt9 (struct op_table_t *insn, int anreg, int amreg, int offset)
 {
   int buf = insn->instruction;
 
+  offset = offset >> insn->scale;
+
   insert_bits (&buf, anreg, 21, 3);
   insert_bits (&buf, amreg, 5, 3);
   insert_bits (&buf, offset & 0x1f, 0, 5);
@@ -1075,10 +1196,11 @@ put_fmt9 (struct op_table_t *insn, int anreg, int amreg, int offset)
 
 /* FIXME - handle immediate source. */
 static void
-put_fmt10 (struct op_table_t *insn, int acc, unsigned int addr, int s2)
+put_fmt10 (struct op_table_t *insn, int acc, struct operand_t *sopnd, int s2)
 {
   int buf = insn->instruction;
   unsigned int dsp_ctrl = 0;
+  char *frag;
 
   /* Register source.  */
   insert_bits (&buf, 1, 26, 1);
@@ -1087,8 +1209,9 @@ put_fmt10 (struct op_table_t *insn, int acc, unsigned int addr, int s2)
     dsp_ctrl |= DSP_CTRL_A;
   insert_bits (&buf, dsp_ctrl, 16, 5);
   insert_bits (&buf, s2, 11, 5);
-  insert_bits (&buf, addr, 0, 11);
-  finish_insn (buf);
+  insert_bits (&buf, sopnd->value, 0, 11);
+  frag = finish_insn (buf);
+  add_fixup (frag, sopnd);
 }
 
 /* FIXME -- better name */
@@ -1107,7 +1230,6 @@ md_assemble (char *str)
   struct op_table_t *insn;
   char *op_start, *op_end, *op;
   int len;
-  int saddr, daddr;
   int immed;
   int an, am, s2, acc, d;
   int cc, sw, pred;
@@ -1115,7 +1237,7 @@ md_assemble (char *str)
   struct operand_t offset_op;
   struct operand_t dopnd;
   struct operand_t sopnd;
-  int value;
+  struct operand_t s2opnd;
   const char *msg = _("unrecognized instruction");
 
 /* FIXME -- not needed? */
@@ -1150,20 +1272,24 @@ md_assemble (char *str)
 	break;
 
       case FMT_1B:	/* One operand - source.  */
-	if (!(msg = parse_addr (&op_end, &saddr, insn->scale, 0)))
+	if (!(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
+					op_offset_imm7_s)))
  	  {
-	    put_fmt1b (insn, saddr);
+	    put_fmt1b (insn, &sopnd);
  	  }
 	break;
 
-      case FMT_1C:
-	    gas_assert(0);
-	    put_fmt1c (insn, daddr);
+      case FMT_1C:	/* One operand - destination.  */
+	if (!(msg = parse_addr_operand (&op_end, &dopnd, insn->scale, 0,
+					op_offset_imm7_d)))
+	  {
+	    put_fmt1c (insn, &dopnd);
+	  }
 	break;
 
       case FMT_1D:	/* Two operands.  */
 	if (!(msg = parse_addr_operand (&op_end, &dopnd,
-					(insn->flags & FLAG_LEA) ? 2 : insn->scale,
+					(insn->flags & FLAG_LEA) ? SZ_4 : insn->scale,
 					 0, op_offset_imm7_d))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_addr_operand (&op_end, &sopnd, insn->scale,
@@ -1175,65 +1301,91 @@ md_assemble (char *str)
 	break;
 
       case FMT_2:
-	if (!(msg = parse_addr (&op_end, &daddr, insn->scale, 0))
+	if (!(msg = parse_addr_operand (&op_end, &dopnd, insn->scale, 0,
+					op_offset_imm7_d))
 	    && !(msg = parse_literal (&op_end, ','))
-	    && !(msg = parse_addr (&op_end, &saddr, insn->scale, 0))
+	    && !(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
+					   op_offset_imm7_s))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_literal (&op_end, '#'))
 	    && !(msg = parse_immed (&op_end, &immed, 5)))
 	  {
-	    put_fmt2 (insn, daddr, saddr, immed);
+	    put_fmt2 (insn, &dopnd, &sopnd, immed);
 	  }
 	break;
 
       case FMT_3:
-	if (!(msg = parse_addr (&op_end, &daddr, insn->scale, 0))
+	if (!(msg = parse_addr_operand (&op_end, &dopnd, insn->scale, 0,
+					op_offset_imm7_d))
 	    && !(msg = parse_literal (&op_end, ','))
-	    && !(msg = parse_addr (&op_end, &saddr, insn->scale, 0))
+	    && !(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
+					   op_offset_imm7_s))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_dreg (&op_end, &s2)))
 	  {
-	    put_fmt3 (insn, daddr, saddr, s2);
+	    put_fmt3 (insn, &dopnd, &sopnd, s2);
 	  }
 	break;
 
-      case FMT_4:
+      case FMT_4A:
 	if (!(msg = parse_dreg (&op_end, &d))
 	    && !(msg = parse_literal (&op_end, ','))
-	    && !(msg = parse_addr (&op_end, &saddr, insn->scale, 0))
+	    && !(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
+					   op_offset_imm7_s))
 	    && !(msg = parse_literal (&op_end, ',')))
 	  {
 	    if (!(msg = parse_literal (&op_end, '#'))
 		&& !(msg = parse_immed (&op_end, &immed, 5)))
 	      {
 	        /* immediate value.  */
-		put_fmt4 (insn, d, 0, immed, saddr);
+		put_fmt4 (insn, d, 0, immed, &sopnd);
 	      }
 	    else if (!(msg = parse_dreg (&op_end, &s2)))
 	      {
 		/* register value. */
-		put_fmt4 (insn, d, 1, s2, saddr);
+		put_fmt4 (insn, d, 1, s2, &sopnd);
+	      }
+	  }
+	break;
+
+      case FMT_4B:
+	if (!(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
+					   op_offset_imm7_s))
+	    && !(msg = parse_literal (&op_end, ',')))
+	  {
+	    if (!(msg = parse_literal (&op_end, '#'))
+		&& !(msg = parse_immed (&op_end, &immed, 5)))
+	      {
+	        /* immediate value.  */
+		put_fmt4 (insn, 0, 0, immed, &sopnd);
+	      }
+	    else if (!(msg = parse_dreg (&op_end, &s2)))
+	      {
+		/* register value. */
+		put_fmt4 (insn, 0, 1, s2, &sopnd);
 	      }
 	  }
 	break;
 
       case FMT_5:
-	if (!(msg = parse_addr (&op_end, &saddr, insn->scale, 0))
+	if (!(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
+					   op_offset_imm7_s))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_literal (&op_end, '#'))
-	    && !(msg = parse_offset (&op_end, &value, 16)))
+	    && !(msg = parse_offset_operand (&op_end, &s2opnd, 0, SZ_2, op_offset_imm16)))
 	  {
-	    put_fmt5 (insn, value, saddr);
+	    put_fmt5 (insn, &s2opnd, &sopnd);
           }
 	break;
 
       case FMT_6:
-	if (!(msg = parse_addr (&op_end, &daddr, insn->scale, 0))
+	if (!(msg = parse_addr_operand (&op_end, &dopnd, insn->scale, 0, op_offset_imm7_d))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_literal (&op_end, '#'))
-	    && !(msg = parse_offset (&op_end, &offset, 16)))
+	    && !(msg = parse_offset_operand (&op_end, &sopnd, 2, SZ_0, op_offset_imm16)))
 	  {
-	    put_fmt6 (insn, daddr, offset);
+	    /* FIXME -- movei scale for dest reg/imm is 4, not 2. */
+	    put_fmt6 (insn, &dopnd, &sopnd);
 	  }
 	break;
 
@@ -1261,16 +1413,20 @@ md_assemble (char *str)
 	break;
 
       case FMT_8:
-	if (!(msg = parse_areg (&op_end, &an))
-	    && !(msg = parse_literal (&op_end, ','))
-	    && !(msg = parse_literal (&op_end, '#'))
-	    && !(msg = parse_offset_operand (&op_end, &offset_op, 24,
-					     op_offset_imm25)))
+	if ((!(msg = parse_areg (&op_end, &an))
+	    && !(msg = parse_literal (&op_end, ',')))
+	    && (
+		(!(msg = parse_literal (&op_end, '#'))	/* Immediate value */
+	        && !(msg = parse_offset_operand (&op_end, &offset_op, 24, insn->scale,
+					         op_offset_imm25)))
+	      ||
+		(!(msg = parse_address_operand (&op_end, &offset_op,	/* Address */
+						  BFD_RELOC_UBI32_24_PCREL)))))
 	  {
 	    if (insn->flags & FLAG_MOVEAI)
 	      {
 		/* If operand has bit 31 set, generate MOVAIH. */
-		if (offset_op.value & 0x80000000)
+		if (offset_op.value & 0x1000000)
 		  insn++;	/* MOVAIH must follow MOVAI.  */
 	      }
 	    put_fmt8 (insn, an, &offset_op);
@@ -1280,25 +1436,26 @@ md_assemble (char *str)
       case FMT_9:
 	if (!(msg = parse_areg (&op_end, &an))
 	    && !(msg = parse_literal (&op_end, ','))
-	    && !(msg = parse_offset (&op_end, &offset, 16))
+	    && !(msg = parse_offset (&op_end, &offset, insn->scale, 16))
 	    && !(msg = parse_literal (&op_end, '('))
 	    && !(msg = parse_areg (&op_end, &am))
 	    && !(msg = parse_literal (&op_end, ')')))
 	  {
-	    put_fmt9 (insn, an, am, offset >> insn->scale);
+	    put_fmt9 (insn, an, am, offset);
 	  }
 	break;
 
       case FMT_10:
-	acc = saddr = s2 = 0;
+	acc = s2 = 0;
 	/* FIXME -- parse immediate value */
 	if (!(msg = parse_accreg (&op_end, &acc))
 	    && !(msg = parse_literal (&op_end, ','))
-	    && !(msg = parse_addr (&op_end, &saddr, insn->scale, 0))
+	    && !(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
+					   op_offset_imm7_s))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_dreg (&op_end, &s2)))
 	  {
-	    put_fmt10 (insn, acc, saddr, s2);
+	    put_fmt10 (insn, acc, &sopnd, s2);
 	  }
 	break;
 
