@@ -519,18 +519,21 @@ print_insn_fmt8 (bfd_vma pc, unsigned int insn, int major,
 
   if (major == 0x1b)		/* call*/
     {
-      (*info->fprintf_func) (info->stream, "call %s,0x", areg_names[areg]);
       offset = pc + (offset << 2);
+      (*info->fprintf_func) (info->stream, "call %s,#%%hi(0x%08x)  0x",
+			     areg_names[areg], offset);
     }
   else if (major == 0x1c)	/* moveai */
     {
-      (*info->fprintf_func) (info->stream, "moveai %s,0x", areg_names[areg]);
       offset = offset << 7;
+      (*info->fprintf_func) (info->stream, "moveai %s,#%%hi(0x%08x)  0x",
+			     areg_names[areg], offset);
     }
   else if (major == 0x1d)	/* moveaih */
     {
-      (*info->fprintf_func) (info->stream, "moveai %s,0x", areg_names[areg]);
-      offset =  (offset << 7 | 0x1000000);
+      offset =  (offset << 7 | 0x80000000);
+      (*info->fprintf_func) (info->stream, "moveai %s,#%%hi(0x%08x)  0x",
+			     areg_names[areg], offset);
     }
   else
     (*info->fprintf_func) (info->stream, "*unknown* ");
