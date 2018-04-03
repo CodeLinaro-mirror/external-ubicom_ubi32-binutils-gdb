@@ -63,6 +63,7 @@ extern struct op_table_t op_table[];
 #define FLAG_PDEC 0x04	  /* Opcode is PDEX, special offset calc. 	*/
 #define FLAG_LEA  0x08	  /* Opcode is LEA, special dest offset calc. 	*/
 #define FLAG_MOVEAI 0x10  /* Opcode is either MOVEAI or MOVEAIH. 	*/
+#define FLAG_SCSR 0x20	  /* Opcode is SETCSR, force dest to CSR.	*/
 
 /* Describe registers.  */
 struct reg_table_t
@@ -83,6 +84,7 @@ struct reg_table_t
 extern struct reg_table_t reg_table[];
 
 #define REGNO_A0	0x20
+#define REGNO_CSR	0x2d
 
 /* reg_table_t.rw flags.  */
 #define REG_R 0x01	/* Readable register.    */
