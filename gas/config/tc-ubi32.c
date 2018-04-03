@@ -401,13 +401,19 @@ parse_literal (char **strp, char lit)
 static const char *
 parse_register_1 (char **strp, int *regno, enum reg_class class)
 {
-  int len = 0;
+  unsigned len = 0;
   struct reg_table_t *reg;
+  char regname[20];
 
-  while (ISALNUM((*strp)[len]) || (*strp)[len] == '_')
-    len++;
+  while (len < sizeof (regname)
+         && (ISALNUM((*strp)[len]) || (*strp)[len] == '_'))
+    {
+      regname[len] = TOLOWER ((*strp)[len]);
+      len++;
+    }
+  regname[len] = '\0';
 
-  reg = hash_find_n (reg_hash, *strp, len);
+  reg = hash_find_n (reg_hash, regname, len);
   if (reg && (class == NONE || class == reg->class))
     {
       *regno = reg->num;
@@ -688,7 +694,7 @@ parse_offset (char **strp, int *offset, enum op_scale_t scale, int size ATTRIBUT
 
 /* FIXME -- offset signed?  unsigned?  */
 static const char *
-parse_offset_operand (char **strp, struct operand_t *offset, int size,
+parse_offset_operand (char **strp, struct operand_t *offset, int size ATTRIBUTE_UNUSED,
 		      enum op_scale_t scale, struct op_offset_tab_t *op)
 {
   const char *errmsg = NULL;
@@ -718,7 +724,85 @@ parse_offset_operand (char **strp, struct operand_t *offset, int size,
 
   offset->reloc = 0;
 /* FIXME -- scale value?  */
-  return parse_immed (strp, &offset->value, size);
+  return parse_address (strp, &offset->value);
+}
+
+struct bitops_t
+{
+  const char *operator;
+  enum bt_mode_t { BT_NONE, BT_BIT, BT_LSB, BT_MSB } mode;
+};
+
+static struct bitops_t bitops[] =
+{
+  { "%bit(",    BT_BIT  },	/* Convert bit patern to bit number.  */
+  { "%lsbbit(", BT_LSB  },	/* Find Least Significant Bit set.    */
+  { "%msbbit(", BT_MSB  },	/* Find Most Significant Bit set.    */
+  { NULL,       BT_NONE }
+};
+
+static const char *
+parse_bitcnt (char **strp, int *immed)
+{
+  char *endptr;
+  struct bitops_t *op;
+  enum bt_mode_t mode = BT_NONE;
+  int value;
+  int retval;
+
+  for (op = bitops; op->operator; op++)
+    {
+      if (strncasecmp (*strp, op->operator, strlen (op->operator)) == 0)
+	{
+	  *strp += strlen (op->operator);
+	  mode = op->mode;
+	  break;
+	}
+    }
+
+  value = strtol (*strp, &endptr, 0);
+  if (*strp == endptr)
+    return _("invalid bit number");
+
+  if (mode != BT_NONE && *endptr++ != ')')
+    return _("missing ')'");
+
+  switch (mode)
+    {
+      case BT_NONE:		/* Bit position */
+	retval = value;
+	if (value < 0 || value > 32)
+	  return _("number not in range 0-31");
+	break;
+
+      case BT_BIT:		/* Convert bitmask to bit position */
+	if (value == 0)
+	  return _("attempt to find bit index of 0");
+	/* FALLTHROUGH */
+      case BT_MSB:		/* Find Most Significant Bit in pattern. */
+	retval = 31;
+	while ((value & 0x80000000) == 0)
+	  {
+	    retval--;
+	    value <<= 1;
+	  }
+	if (mode == BT_BIT && (value & 0x7FFFFFFF) != 0)
+	  return _("more than one bit set in bitmask");
+	break;
+
+      case BT_LSB:		/* Find Least Significant Bit in pattern. */
+	retval = 0;
+	while ((value & 0x00000001) == 0)
+	  {
+	    retval++;
+	    value >>= 1;
+	  }
+	break;
+    }
+
+    *strp = endptr;
+    *immed = retval;
+    return NULL;
 }
 
 #if 0
@@ -845,27 +929,18 @@ parse_addr_operand (char **strp, struct operand_t *opnd, enum op_scale_t scale, 
 
   memset (opnd, 0, sizeof (struct operand_t));
 
-/* FIXME -- look at first char to decide which to test.  */
-
-  if (!parse_offset_operand (strp, &temp, 7, scale, optab)	/* 1xx <ofs>(<areg>)	*/
-      && !parse_literal (strp, '(')
-      && !parse_areg (strp, &areg)
-      && !parse_literal (strp, ')')
-      && (**strp == '\0' || **strp == ','))			/* FIXME -- is this valid?  */
+  if (!parse_literal (strp, '#')				/* 000 #<8-bit signed immed>	*/
+      && !parse_address (strp, &opnd->value))
     {
-      value = temp.value;
-      if (pdec_encoding)
-	{
-	  /* Special encoding for PDEC.  */
-	  value = -value;
-	}
-      value >>= scale;
-      opnd->value = 0x400;
-      insert_bits (&opnd->value, areg, 5, 3);
-      insert_bits (&opnd->value, value & 0x1f, 0, 5);
-      insert_bits (&opnd->value, (value >> 5) & 0x3, 8, 2);
-      opnd->reloc = temp.reloc;
-      opnd->exp = temp.exp;
+      opnd->value &= 0xff;
+      return NULL;
+    }
+
+  *strp = save_str;
+  if (!parse_register (strp, &reg))				/* 001 <reg>			*/
+    {
+      opnd->value = 0x100;
+      insert_bits (&opnd->value, reg, 0, 8);
       return NULL;
     }
 
@@ -911,6 +986,29 @@ parse_addr_operand (char **strp, struct operand_t *opnd, enum op_scale_t scale, 
     }
 
   *strp = save_str;
+  if (!parse_offset_operand (strp, &temp, 7, scale, optab)	/* 1xx <ofs>(<areg>)	*/
+      && !parse_literal (strp, '(')
+      && !parse_areg (strp, &areg)
+      && !parse_literal (strp, ')')
+      && (**strp == '\0' || **strp == ','))			/* FIXME -- is this valid?  */
+    {
+      value = temp.value;
+      if (pdec_encoding)
+	{
+	  /* Special encoding for PDEC.  */
+	  value = -value;
+	}
+      value >>= scale;
+      opnd->value = 0x400;
+      insert_bits (&opnd->value, areg, 5, 3);
+      insert_bits (&opnd->value, value & 0x1f, 0, 5);
+      insert_bits (&opnd->value, (value >> 5) & 0x3, 8, 2);
+      opnd->reloc = temp.reloc;
+      opnd->exp = temp.exp;
+      return NULL;
+    }
+
+  *strp = save_str;
   if (!parse_immed (strp, &value, 4)				/* 010 <ofs>(<areg>)++  M=1	*/
       && !parse_literal (strp, '(')
       && !parse_areg (strp, &areg)
@@ -923,22 +1021,6 @@ parse_addr_operand (char **strp, struct operand_t *opnd, enum op_scale_t scale, 
       value >>= scale;
       insert_bits (&opnd->value, areg, 5, 3);
       insert_bits (&opnd->value, value, 0, 4);
-      return NULL;
-    }
-
-  *strp = save_str;
-  if (!parse_register (strp, &reg))				/* 001 <reg>			*/
-    {
-      opnd->value = 0x100;
-      insert_bits (&opnd->value, reg, 0, 8);
-      return NULL;
-    }
-
-  *strp = save_str;
-  if (!parse_literal (strp, '#')				/* 000 #<8-bit signed immed>	*/
-      && !parse_immed (strp, &opnd->value, 8))
-    {
-      opnd->value &= 0xff;
       return NULL;
     }
 
@@ -1049,6 +1131,8 @@ put_fmt1b (struct op_table_t *insn, struct operand_t *sopnd)
   char *frag;
 
   insert_bits (&buf, sopnd->value, 0, 11);
+  if (insn->flags == FLAG_SCSR)
+    insert_bits (&buf, 0x100 + REGNO_CSR, 16, 11);
   frag = finish_insn (buf);
   add_fixup (frag, sopnd);
 }
@@ -1268,6 +1352,7 @@ md_assemble (char *str)
     {
       case FMT_1A:	/* No operands.  */
 	    put_fmt1a (insn);
+	    msg = NULL;
 	break;
 
       case FMT_1B:	/* One operand - source.  */
@@ -1307,7 +1392,7 @@ md_assemble (char *str)
 					   op_offset_imm7_s))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_literal (&op_end, '#'))
-	    && !(msg = parse_immed (&op_end, &immed, 5)))
+	    && !(msg = parse_bitcnt (&op_end, &immed)))
 	  {
 	    put_fmt2 (insn, &dopnd, &sopnd, immed);
 	  }
@@ -1334,7 +1419,7 @@ md_assemble (char *str)
 	    && !(msg = parse_literal (&op_end, ',')))
 	  {
 	    if (!(msg = parse_literal (&op_end, '#'))
-		&& !(msg = parse_immed (&op_end, &immed, 5)))
+		&& !(msg = parse_bitcnt (&op_end, &immed)))
 	      {
 	        /* immediate value.  */
 		put_fmt4 (insn, d, 0, immed, &sopnd);
