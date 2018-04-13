@@ -1,4 +1,4 @@
-/* Print Qualcomm Ubi32 instructions. 
+/* Print Qualcomm Ubi32 instructions.
 
    Copyright (C) 2017 Free Software Foundation, Inc.
    Contributed by Michael J. Eager (eager@eagercon.com)
@@ -21,16 +21,16 @@
    MA 02110-1301, USA.  */
 
 
-/* 
-   Print all Ubi32 instructions without verifying that they are valid 
-   for the current processor variant. 
+/*
+   Print all Ubi32 instructions without verifying that they are valid
+   for the current processor variant.
 
-   Format 11 & 12 (Floating Point) instructions are not printed. 
+   Format 11 & 12 (Floating Point) instructions are not printed.
 */
 
 
-// #include <stdio.h>
 #include "config.h"
+#include <string.h>
 #include "bfd.h"
 #include "dis-asm.h"
 #include "opintl.h"
@@ -97,18 +97,6 @@ static char *op_fmt4[32] =
      "bfrvrs",    0,           "shftd",     0,
      "merge",     0,           "shmrg.2",   "shmrg.1" };
 
-#if 0
-static char *op_fmt5_8[32] =
-  {  0,           0,           0,           0,
-     0,           0,           0,	    0,
-     0,           0,           0,           0,
-     0,           0,           0,	    0,
-     0,           0,           0,           0,
-     0,           0,           0,	    0,
-     "cmpi",      "movei",     "jmp",       "call",
-     "movei",     "moveaih",   0,	    0 };
-#endif
-
 static char *op_fmt10[32] =
   {  "muls",      "macs",      "mulu",      "macu",
      "mulf",      "macf",      "macs.4",    "macus",
@@ -119,17 +107,24 @@ static char *op_fmt10[32] =
      0,           0,           0,           0,
      0,           0,           0,           0 };
 
-#if 0
 static char *op_fmt11_12[32] =
   {  "fadds",     "fsubs",     "fmuls",     "fdivs",
      "fi2d",      "fs2d",      "fs2l",      "fsqrts",
      "fnegs",     "fabss",     "fi2s",      "fs2i",
      "fcmps",     0,           0,           0,
-    "fadd",      "fsubd",      "fmuld",     "fdivd",
-    "fl2s",      "fd2s",       "fd2i",      "fsqrtd"
-    "fnegd",     "fabsd",      "fl2d",      "fd2l",
-    "fcmpd",     0,            0,           0, };
-#endif
+     "faddd",     "fsubd",     "fmuld",     "fdivd",
+     "fl2s",      "fd2s",      "fd2i",      "fsqrtd",
+     "fnegd",     "fabsd",     "fl2d",      "fd2l",
+     "fcmpd",     0,           0,           0, };
+
+enum fmt_t { FMT_11A, FMT_11B, FMT_11C, FMT_11D,
+	     FMT_12A, FMT_12B, FMT_12C, FMT_12D };
+static int op_fmt11_12_sub[32] =
+  { FMT_11A, FMT_11A, FMT_11A, FMT_11A, FMT_11B, FMT_11B, FMT_11B, FMT_11C,
+    FMT_11C, FMT_11C, FMT_11C, FMT_11C, FMT_11D, 0,	  0,	   0,
+    FMT_12A, FMT_12A, FMT_12A, FMT_12A, FMT_12B, FMT_12B, FMT_12B, FMT_12C,
+    FMT_12C, FMT_12C, FMT_12C, FMT_12C, FMT_12D, 0,	  0,	   0
+  };
 
 static char *areg_names[8] =
   { "a0", "a1", "a2", "a3", "a4", "a5", "a6", "sp" };
@@ -602,32 +597,111 @@ print_insn_fmt10 (bfd_vma pc ATTRIBUTE_UNUSED,
 			   dest, accx, sbuf, src2, sreg);
 }
 
+static char * acc32_regs[] = { "acc0_lo", "acc0_hi", "acc1_lo", "acc1_hi" };
+static char * acc64_regs[] = { "acc0", "acc1" };
+
 static void
-print_insn_fmt11 (bfd_vma pc ATTRIBUTE_UNUSED,
-		  unsigned int insn ATTRIBUTE_UNUSED,
-		  int major ATTRIBUTE_UNUSED, int ext ATTRIBUTE_UNUSED,
-		  disassemble_info *info)
+put_fps32 (char *buf, unsigned int fps32)
 {
-  (*info->fprintf_func) (info->stream, "format11");
+  if (fps32 & 0x10)
+    strcpy (buf, acc32_regs[fps32 & 0x03]);
+  else
+    sprintf (buf, "d%d", fps32 & 0xf);
 }
 
 static void
-print_insn_fmt12 (bfd_vma pc ATTRIBUTE_UNUSED,
-		  unsigned int insn ATTRIBUTE_UNUSED,
-		  int major ATTRIBUTE_UNUSED, int ext ATTRIBUTE_UNUSED,
-		  disassemble_info *info)
+put_fps64 (char *buf, unsigned int fps64)
 {
-  (*info->fprintf_func) (info->stream, "format12");
+  if (fps64 & 0x8)
+    strcpy (buf, acc64_regs[fps64 & 0x1]);
+  else
+    sprintf (buf, "d%d", (fps64 & 0x7) << 1);
+}
+
+static void
+print_insn_fmt11_12 (bfd_vma pc ATTRIBUTE_UNUSED,
+		     unsigned int insn ATTRIBUTE_UNUSED,
+		     int major ATTRIBUTE_UNUSED, int ext ATTRIBUTE_UNUSED,
+		     disassemble_info *info)
+{
+  unsigned int d = (insn >> 16) & 0x3;
+  unsigned int s2 = (insn >> 11) & 0x1f;
+  unsigned int source = insn & 0x7ff;
+  unsigned int s1 = (insn >> 1) & 0xf;
+  char *op = op_fmt11_12[ext];
+  unsigned int fmt = op_fmt11_12_sub[ext];
+  char *dest;
+  char sbuf[30];
+  char s1buf[10];
+  char s2buf[10];
+
+
+  switch (fmt)
+    {
+      case FMT_11A:
+	dest = acc32_regs[d];
+	operand (source, 4, sbuf);
+	put_fps32 (s2buf, s2);
+	(*info->fprintf_func) (info->stream, "%s %s,%s,%s", op, dest, sbuf, s2buf);
+	break;
+
+      case FMT_11B:
+	dest = acc64_regs[d >> 1];
+	operand (source, 4, sbuf);
+	(*info->fprintf_func) (info->stream, "%s %s,%s", op, dest, sbuf);
+	break;
+
+      case FMT_11C:
+	dest = acc32_regs[d];
+	operand (source, 4, sbuf);
+	(*info->fprintf_func) (info->stream, "%s %s,%s", op, dest, sbuf);
+	break;
+
+      case FMT_11D:
+	operand (source, 4, sbuf);
+	put_fps32 (s2buf, s2);
+	(*info->fprintf_func) (info->stream, "%s %s,%s", op, sbuf, s2buf);
+	break;
+
+      case FMT_12A:
+	dest = acc64_regs[d >> 1];
+	put_fps64 (s2buf, s2 >> 1);
+	put_fps64 (s1buf, s1);
+	(*info->fprintf_func) (info->stream, "%s %s,%s,%s", op, dest, s1buf, s2buf);
+	break;
+
+      case FMT_12B:
+	dest = acc32_regs[d];
+	put_fps64 (s1buf, s1);
+	(*info->fprintf_func) (info->stream, "%s %s,%s", op, dest, s1buf);
+	break;
+
+      case FMT_12C:
+	dest = acc64_regs[d >> 1];
+	put_fps64 (s1buf, s1);
+	(*info->fprintf_func) (info->stream, "%s %s,%s", op, dest, s1buf);
+	break;
+
+      case FMT_12D:
+	put_fps64 (s2buf, s2 >> 1);
+	put_fps64 (s1buf, s1);
+	(*info->fprintf_func) (info->stream, "%s %s,%s", op, s1buf, s2buf);
+	break;
+
+      default:
+	 (*info->fprintf_func) (info->stream, "*unknown*");
+	 break;
+    }
 }
 
 typedef void (*print_format_t)(bfd_vma pc, unsigned int insn,
 			       int major, int ext,
 			       disassemble_info *info);
-static print_format_t print_format[13] =
+static print_format_t print_format[12] =
   { NULL, print_insn_fmt1, print_insn_fmt2, print_insn_fmt3,
     print_insn_fmt4, print_insn_fmt5, print_insn_fmt6,
     print_insn_fmt7, print_insn_fmt8, print_insn_fmt9,
-    print_insn_fmt10, print_insn_fmt11, print_insn_fmt12 };
+    print_insn_fmt10, print_insn_fmt11_12 };
 
 int
 print_insn_ubi32 (bfd_vma pc, disassemble_info *info)
