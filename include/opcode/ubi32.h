@@ -72,19 +72,27 @@ struct reg_table_t
   uint32_t num;
   uint32_t rw;
   enum reg_class {
-      NONE = 0x00,
-      DREG = 0x01,
-      AREG = 0x02,
-      PRIV = 0x04,
-      ACC  = 0x08
+      NONE  = 0x00,
+      DREG  = 0x01,
+      AREG  = 0x02,
+      PRIV  = 0x04,
+      ACC32 = 0x08,
+      ACC64 = 0x10
     } class;
   uint32_t version;
 };
 
 extern struct reg_table_t reg_table[];
 
+/* Register number definitions.  */
 #define REGNO_A0	0x20
+#define REGNO_ACC0	0x28
+#define REGNO_ACC0_HI	0x28
+#define REGNO_ACC0_LO	0x29
 #define REGNO_CSR	0x2d
+#define REGNO_ACC1	0x36
+#define REGNO_ACC1_HI	0x36
+#define REGNO_ACC1_LO	0x37
 
 /* reg_table_t.rw flags.  */
 #define REG_R 0x01	/* Readable register.    */
