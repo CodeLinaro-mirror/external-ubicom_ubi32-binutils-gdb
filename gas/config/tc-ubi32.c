@@ -770,7 +770,7 @@ parse_bitcnt (char **strp, int *immed)
   struct bitops_t *op;
   enum bt_mode_t mode = BT_NONE;
   int value;
-  int retval;
+  int retval = 0;
 
   for (op = bitops; op->operator; op++)
     {
