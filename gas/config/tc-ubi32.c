@@ -1,5 +1,5 @@
 /* tc-ubi32.c -- Assembler for the Qualcomm Ubi32
-   Copyright (C) Eager Consulting.
+   Copyright (C) 2017-2018 Eager Consulting.
 
    This file is part of GAS, the GNU Assembler.
    Written by Michael Eager <eager@eagercon.com>.
@@ -22,8 +22,10 @@
 #include "as.h"
 #include "config.h"
 #include "subsegs.h"
+#include "dw2gencfi.h"
 #include "safe-ctype.h"
 #include "dwarf2dbg.h"
+
 
 #include "opcode/ubi32.h"
 
@@ -46,7 +48,6 @@ enum options
 struct option md_longopts[] =
 {
 /* Define BFD_UBI32_OLD_NAME to use old ubicom32 names.  */
-#ifdef BFD_UBI32_OLD_NAME
   { "mubicom32v1", no_argument, NULL, OPTION_UBI32V2 },
   { "mubicom32v2", no_argument, NULL, OPTION_UBI32V2 },
   { "mubicom32v3", no_argument, NULL, OPTION_UBI32V3 },
@@ -54,7 +55,6 @@ struct option md_longopts[] =
   { "mubicom32v5", no_argument, NULL, OPTION_UBI32V5 },
   { "mubicom32v6", no_argument, NULL, OPTION_UBI32V6 },
   { "mubicom32v61", no_argument, NULL, OPTION_UBI32V61 },
-#else
   { "mubi32v1", no_argument, NULL, OPTION_UBI32V2 },
   { "mubi32v2", no_argument, NULL, OPTION_UBI32V2 },
   { "mubi32v3", no_argument, NULL, OPTION_UBI32V3 },
@@ -62,7 +62,6 @@ struct option md_longopts[] =
   { "mubi32v5", no_argument, NULL, OPTION_UBI32V5 },
   { "mubi32v6", no_argument, NULL, OPTION_UBI32V6 },
   { "mubi32v61", no_argument, NULL, OPTION_UBI32V61 },
-#endif
   { "mfdpic", no_argument, NULL, OPTION_UBI32_FDPIC },
   { "EB", no_argument, NULL, OPTION_EB},
   { "EL", no_argument, NULL, OPTION_EL},
@@ -149,45 +148,73 @@ md_apply_fix (fixS *fixP, valueT *valP, segT seg ATTRIBUTE_UNUSED)
   if (fixP->fx_addsy == 0 && !fixP->fx_pcrel)
     fixP->fx_done = 1;
 
+  /* On a 64-bit host, silently truncate 'value' to 32 bits for
+     consistency with the behaviour on 32-bit hosts.  Remember value
+     for emit_reloc.  */
+  value &= 0xffffffff;
+  value ^= 0x80000000;
+  value -= 0x80000000;
+
+  *valP = value;
+  fixP->fx_addnumber = value;
+
+  /* Same treatment for fixP->fx_offset.  */
+  fixP->fx_offset &= 0xffffffff;
+  fixP->fx_offset ^= 0x80000000;
+  fixP->fx_offset -= 0x80000000;
+
   switch (fixP->fx_r_type)
     {
-      case BFD_RELOC_UBI32_21_PCREL:
-	/* where should always be word offset. */
-	gas_assert (((long)where & 0x3) == 0);
-	value >>= 2;
-	insert_bits ((int *)where, value, 0, 21);
-	fixP->fx_offset = *valP;
-	break;
+    case BFD_RELOC_UBI32_21_PCREL:
+      /* where should always be word offset. */
+      gas_assert (((long)where & 0x3) == 0);
+      value >>= 2;
+      insert_bits ((int *)where, value, 0, 21);
+      fixP->fx_offset = *valP;
+      break;
 
-      case BFD_RELOC_UBI32_24_PCREL:
-	/* where should always be word offset. */
-	gas_assert (((long)where & 0x3) == 0);
-	value >>= 2;
-	insert_bits ((int *)where, value, 0, 21);
-	insert_bits ((int *)where, value >> 21, 24, 3);
-	fixP->fx_offset = *valP;
-	break;
+    case BFD_RELOC_UBI32_24_PCREL:
+      /* where should always be word offset. */
+      gas_assert (((long)where & 0x3) == 0);
+      value >>= 2;
+      insert_bits ((int *)where, value, 0, 21);
+      insert_bits ((int *)where, value >> 21, 24, 3);
+      fixP->fx_offset = *valP;
+      break;
 
-      case BFD_RELOC_UBI32_HI24:
-      case BFD_RELOC_UBI32_LO7_S:
-      case BFD_RELOC_UBI32_LO7_2_S:
-      case BFD_RELOC_UBI32_LO7_4_S:
-      case BFD_RELOC_UBI32_LO7_D:
-      case BFD_RELOC_UBI32_LO7_2_D:
-      case BFD_RELOC_UBI32_LO7_4_D:
-	fixP->fx_offset = *valP;
-	break;
+    case BFD_RELOC_UBI32_HI24:
+    case BFD_RELOC_UBI32_LO7_S:
+    case BFD_RELOC_UBI32_LO7_2_S:
+    case BFD_RELOC_UBI32_LO7_4_S:
+    case BFD_RELOC_UBI32_LO7_D:
+    case BFD_RELOC_UBI32_LO7_2_D:
+    case BFD_RELOC_UBI32_LO7_4_D:
+      fixP->fx_offset = *valP;
+      break;
 
-      case BFD_RELOC_8:
-      case BFD_RELOC_16:
-      case BFD_RELOC_24:
-      case BFD_RELOC_32:
-      case BFD_RELOC_64:
-        break;
+    case BFD_RELOC_8:
+      if (fixP->fx_done || !seg->use_rela_p)
+	*where = value;
+      break;
 
-      default:
-	/* FIXME */ gas_assert(0);
-	break;
+    case BFD_RELOC_16:
+      if (fixP->fx_done || !seg->use_rela_p)
+	md_number_to_chars (where, value, 2);
+      break;
+
+    case BFD_RELOC_32:
+      if (fixP->fx_done || !seg->use_rela_p)
+	md_number_to_chars (where, value, 4);
+      break;
+
+    case BFD_RELOC_24:
+    case BFD_RELOC_64:
+    case BFD_RELOC_UNUSED:
+    default:
+      as_bad_where (fixP->fx_file, fixP->fx_line,
+		    _("bad relocation fixup type (%d)"), fixP->fx_r_type);
+
+      break;
     }
 }
 
@@ -268,12 +295,17 @@ struct operand_t
   expressionS exp;
 };
 
+/* Ubi32 architectural register numbers.  */
 static struct hash_control *reg_hash;
+
+/* Ubi32 GDB register numbers.  */
+static struct hash_control *gdb_reg_hash;
 
 void
 md_begin (void)
 {
   struct reg_table_t *reg = reg_table;
+  const char **gdb_reg = ubi32_gdb_register_names;
 
   /* Record the specific machine in the elf header flags area */
   bfd_set_private_flags (stdoutput, ubi32_mach);
@@ -281,11 +313,20 @@ md_begin (void)
   /* Set the machine type */
   bfd_default_set_arch_mach (stdoutput, bfd_arch_ubi32, ubi32_mach & 0xffff);
 
+  /* Initialize arch register table.  */
   reg_hash = hash_new_sized (511);   /* Pick arbitrary size for hash table.  */
   while (reg->name)
   {
     hash_insert (reg_hash, reg->name, (void *) reg);
     reg++;
+  }
+
+  /* Initialize GDB register table.  */
+  gdb_reg_hash = hash_new_sized (511);   /* Pick arbitrary size for hash table.  */
+  while (*gdb_reg)
+  {
+    hash_insert (gdb_reg_hash, *gdb_reg, (void *) gdb_reg);
+    gdb_reg++;
   }
 }
 
@@ -1744,7 +1785,31 @@ md_assemble (char *str)
     }
 
   if (msg)
-    as_bad (msg);
+    as_bad ("%s", msg);
+}
+
+/* Initialize the DWARF-2 unwind information for this procedure.  */
+
+void
+tc_ubi32_frame_initial_instructions (void)
+{
+  cfi_add_CFA_def_cfa (SP_REGNUM, 0);
+}
+
+int
+tc_ubi32_regname_to_dw2regnum (char *regname)
+{
+  struct symbol *sym;
+  const char **sym_val;
+
+  sym = hash_find (gdb_reg_hash, regname);
+  if (sym)
+    {
+      sym_val = (const char **) S_GET_VALUE (sym);
+      return (sym_val - ubi32_gdb_register_names);
+    }
+
+  return -1;
 }
 
 /* FIXME -- handle macros. */

@@ -400,3 +400,91 @@ struct cc_t cc_tab[] =
   {"vs", 0xf},
   {NULL, 0}
 };
+
+/* Ubi32 GDB register numbering for Ubi32 V6/V6.1 processors.
+   This should match GDB ubi32_register_names[] in ubi32-tdep.c  */
+const char *ubi32_gdb_register_names[] =
+{
+  /* General data registers.  */
+  "d0", "d1", "d2",  "d3",  "d4",  "d5",  "d6",  "d7",	/*  0- 7 */
+  "d8", "d9", "d10", "d11", "d12", "d13", "d14", "d15",	/*  8-15 */
+  /* Address registers.  */
+  "a0", "a1", "a2",  "a3",  "a4",  "a5",  "a6",  "a7",	/* 16-23 */
+  /* Accumulator 0.  */
+  "acc0_hi", "acc0_lo", "mac_rc16", "source3",	 	/* 24-27 */
+  /* Context & Control.  */
+  "inst_cnt", "csr", "rosr", "iread_data",		/* 28-31 */
+  /* Interrupt mask registers.  */
+  "int_mask0", "int_mask1", "int_mask2", "int_mask3", 	/* 32-35 */
+  /* Program counter & trap.  */
+  "pc", "trap_cause",					/* 36-37 */
+  /* Accumulator 1.  */
+  "acc1_hi", "acc1_lo", 				/* 38-39 */
+  /* Previous PC & Control register.  */
+  "previous_pc", "ucsr",				/* 40-41 */
+  /* Chip ID.  */
+  "chip_id",						/* 42    */
+  /* Interrupt status, set, and clear.  */
+  "int_stat0", "int_stat1", "int_stat2", "int_stat3",	/* 43-46 */
+  "int_set0", "int_set1", "int_set2", "int_set3",	/* 47-50 */
+  "int_clr0", "int_clr1", "int_clr2", "int_clr3",	/* 51-54 */
+  /* Global control.  */
+  "global_ctrl",					/* 55	 */
+  /* Threads active status, set, and clear.  */
+  "mt_active", "mt_active_set", "mt_active_clr",	/* 56-58 */
+  /* Debugging treads active status and set.  */
+  "mt_dbg_active", "mt_dbg_active_set",			/* 59-60 */
+  /* Thread control enable, priority, scheduling.  */
+  "mt_en", "mt_hpri", "mt_hrt", 			/* 61-63 */
+  /* Thread stopped in break and clear.  */
+  "mt_break", "mt_break_clr",				/* 64-65 */
+  /* Single-step threads.  */
+  "mt_single_step",					/* 66	 */
+  /* Threads delay scheduling.  */
+  "mt_min_del_en",					/* 67	 */
+  /* Thread break set.  */
+  "mt_break_set",					/* 68	 */
+  /* Data capture address.  */
+  "dcapt",						/* 69	 */
+  /* Debugging threads active status clear.  */
+  "mt_dbg_active_clr",					/* 70	 */
+  /* Scratchpad registers.  */
+  "scratchpad0", "scratchpad1", "scratchpad2",		/* 71-73 */
+  "scratchpad3", "scratchpad4", "scratchpad5",		/* 74-76 */
+  "scratchpad6",					/* 77	 */
+  /* Chip configuration.  */
+  "cfg",						/* 78	 */
+  /* Thread status and trap control.  */
+  "mt_i_blocked", "mt_d_blocked", 			/* 79-80 */
+  "mt_i_blocked_set", "mt_d_blocked_set",		/* 81-82 */
+  "mt_blocked_clr", "mt_trap_en",			/* 83-84 */
+  "mt_trap", "mt_trap_set", "mt_trap_clr",		/* 85-87 */
+  /* Supervisor Call Entry Point.  */
+  "sep",						/* 88	 */
+  /* Valid instruction address ranges high, low, enable.  */
+  "i_range0_hi", "i_range1_hi", "i_range2_hi", "i_range3_hi", /* 89-92 */
+  "i_range4_hi", "i_range5_hi", "i_range6_hi", "i_range7_hi", /* 93-96 */
+  "i_range0_lo", "i_range1_lo", "i_range2_lo", "i_range3_lo", /* 97-100 */
+  "i_range4_lo", "i_range5_lo", "i_range6_lo", "i_range7_lo", /* 101-104 */
+  "i_range0_en", "i_range1_en", "i_range2_en", "i_range3_en", /* 105-108 */
+  "i_range4_en", "i_range5_en", "i_range6_en", "i_range7_en", /* 109-112 */
+  /* Valid data address ranges high, low, enable.  */
+  "d_range0_hi", "d_range1_hi", "d_range2_hi", "d_range3_hi", /* 113-116 */
+  "d_range4_hi", "d_range5_hi", "d_range6_hi", "d_range7_hi", /* 117-120 */
+  "d_range0_lo", "d_range1_lo", "d_range2_lo", "d_range3_lo", /* 121-124 */
+  "d_range4_lo", "d_range5_lo", "d_range6_lo", "d_range7_lo", /* 125-128 */
+  "d_range0_en", "d_range1_en", "d_range2_en", "d_range3_en", /* 129-132 */
+  "d_range4_en", "d_range5_en", "d_range6_en", "d_range7_en", /* 133-136 */
+  /* Valid user instruction address ranges enable.  */
+  "i_range0_user_en", "i_range1_user_en",
+  "i_range2_user_en", "i_range3_user_en",
+  "i_range4_user_en", "i_range5_user_en",
+  "i_range6_user_en", "i_range7_user_en",		/* 137-144 */
+  /* Valid user data address ranges enable.  */
+  "d_range0_user_en", "d_range1_user_en",
+  "d_range2_user_en", "d_range3_user_en",
+  "d_range4_user_en", "d_range5_user_en",
+  "d_range6_user_en", "d_range7_user_en",		/* 145-152 */
+  /* FP control registers.  */
+  NULL
+};

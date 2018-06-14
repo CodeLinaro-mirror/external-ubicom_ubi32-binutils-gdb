@@ -1562,16 +1562,10 @@ ubi32_elf_relocate_section (bfd *output_bfd ATTRIBUTE_UNUSED,
 	    }
 	  else
 	    {
-#ifdef FIXME
-	      if (! ((*info->callbacks->undefined_symbol)
-		     (info, h->root.root.string, input_bfd,
-		      input_section, rel->r_offset,
-		      (!info->shared ))))
-		return FALSE;
+	      (*info->callbacks->undefined_symbol)
+		(info, h->root.root.string, input_bfd,
+		 input_section, rel->r_offset, TRUE);
 	      relocation = 0;
-#else
-assert(0);
-#endif
 	    }
 	}
 

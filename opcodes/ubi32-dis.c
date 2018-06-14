@@ -135,7 +135,7 @@ static char *reg_names[256] =					/*  Reg No */
     "res", "res", "res", "res", "res", "res", "res", "res",	/* 10 - 17 */
     "res", "res", "res", "res", "res", "res", "res", "res",	/* 18 - 1f */
     "a0", "a1", "a2", "a3", "a4", "a5", "a6", "sp",		/* 20 - 27 */
-    "mac_hi", "mac_lo", "mac_rc15", "source3",			/* 28 - 2b */
+    "acc0_hi", "acc0_lo", "mac_rc15", "source3",		/* 28 - 2b */
     "inst_cnt", "csr", "rosr", "iread_data",			/* 2c - 2f */
     "int_mask0", "int_mask1", "int_mask2", "int_mask3",		/* 30 - 33 */
     "pc", "trap_cause", "acc1_hi", "acc1_lo",			/* 34 - 37 */
@@ -569,7 +569,7 @@ print_insn_fmt9 (bfd_vma pc ATTRIBUTE_UNUSED,
 static void
 print_insn_fmt10 (bfd_vma pc ATTRIBUTE_UNUSED,
 		  unsigned int insn ATTRIBUTE_UNUSED,
-		  int major ATTRIBUTE_UNUSED, int ext ATTRIBUTE_UNUSED,
+		  int major ATTRIBUTE_UNUSED, int ext,
 		  disassemble_info *info)
 {
   unsigned int imm_flag = (insn & 0x04000000) >> 26;

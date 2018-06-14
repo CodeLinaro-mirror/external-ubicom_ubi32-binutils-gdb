@@ -1,5 +1,5 @@
 /* tc-ubi32.h -- Header file for tc-ubi32.c.
-   Copyright (C) 2017 Free Software Foundation, Inc.
+   Copyright (C) 2017-2018 Eager Consulting.
 
    This file is part of GAS, the GNU Assembler.
 
@@ -74,5 +74,26 @@ extern int ubi32_force_relocation (struct fix *);
 
 #define md_undefined_symbol(name)	(0)
 #define md_operand(x)
+
+extern int tc_ubi32_regname_to_dw2regnum (char *regname);
+extern void tc_ubi32_frame_initial_instructions (void);
+
+/* The link register is a5.  */
+#define DWARF2_DEFAULT_RETURN_COLUMN	0x15
+
+/* Registers are generally saved at negative offsets to the CFA.  */
+#define DWARF2_CIE_DATA_ALIGNMENT	(-4)
+
+/* We want .cfi_* pseudo-ops for generating unwind info.  */
+#define TARGET_USE_CFIPOP   (ubi32_mach == bfd_mach_ubi32v6 || ubi32_mach == bfd_mach_ubi32v61)
+
+/* CFI hooks.  */
+#define tc_regname_to_dw2regnum            tc_ubi32_regname_to_dw2regnum
+#define tc_cfi_frame_initial_instructions  tc_ubi32_frame_initial_instructions
+
+/* GDB Stack Register number.  */
+#define SP_REGNUM 	23
+
+extern const char *ubi32_gdb_register_names[];
 
 #endif
