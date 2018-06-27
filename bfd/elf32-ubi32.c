@@ -1924,33 +1924,40 @@ ubi32_elf_merge_private_bfd_data (bfd *ibfd, struct bfd_link_info *info)
       if (new_flags != old_flags)
 	{
 	  /* Mismatched flags. */
-	  char *output_cpu_version = ((old_flags &0xffff) == 1) ? "V3" : (((old_flags &0xffff) == 2) ? "V4" : "unknown");
-	  char *input_cpu_version = ((new_flags &0xffff) == 1) ? "V3" : (((new_flags &0xffff) == 2) ? "V4" : "unknown");
+	  char *output_cpu_version;
+	  char *input_cpu_version;
 	  char *output_filename = bfd_get_filename (obfd);
 	  char *input_filename = bfd_get_filename (ibfd);
-	  char *output_pic = (old_flags & EF_UBI32_PIC_FLAGS) ? ((old_flags & EF_UBI32_PIC) ? "FPIC" : "FDPIC") : NULL;
-	  char *input_pic = (new_flags & EF_UBI32_PIC_FLAGS) ? ((new_flags & EF_UBI32_PIC) ? "FPIC" : "FDPIC") : NULL;
+	  char *output_pic = (old_flags & EF_UBI32_PIC_FLAGS) ? ((old_flags & EF_UBI32_PIC) ? "FPIC" : "FDPIC") : "";
+	  char *input_pic = (new_flags & EF_UBI32_PIC_FLAGS) ? ((new_flags & EF_UBI32_PIC) ? "FPIC" : "FDPIC") : "";
 
-	  (*_bfd_error_handler) ("Linking mismatched file types. Output file = %s file type 0x%.8lx, input file = %s file type 0x%.8lx",
-				 output_filename, old_flags, input_filename, new_flags);
+	  switch (old_flags & 0xffff)
+	    {
+	      case 1:  output_cpu_version = "ubi32v2"; break;
+	      case 2:  output_cpu_version = "ubi32v3"; break;
+	      case 3:  output_cpu_version = "ubi32v4"; break;
+	      case 4:  output_cpu_version = "ubi32v5"; break;
+	      case 5:  output_cpu_version = "ubi32v6"; break;
+	      case 6:  output_cpu_version = "ubi32v61"; break;
+	      default: output_cpu_version = "unknown"; break;
+	    }
 
-	  if (output_pic)
+	  switch (new_flags & 0xffff)
 	    {
-	      (*_bfd_error_handler)("Output file %s %s for cpu version %s", output_filename, output_pic, output_cpu_version);
-	    }
-	  else
-	    {
-	      (*_bfd_error_handler)("Output file %s for cpu version %s", output_filename, output_cpu_version);
+	      case 1:  input_cpu_version = "ubi32v2"; break;
+	      case 2:  input_cpu_version = "ubi32v3"; break;
+	      case 3:  input_cpu_version = "ubi32v4"; break;
+	      case 4:  input_cpu_version = "ubi32v5"; break;
+	      case 5:  input_cpu_version = "ubi32v6"; break;
+	      case 6:  input_cpu_version = "ubi32v61"; break;
+	      default: input_cpu_version = "unknown"; break;
 	    }
 
-	  if (input_pic)
-	    {
-	      (*_bfd_error_handler)("Input file %s %s for cpu version %s", input_filename, input_pic, input_cpu_version);
-	    }
-	  else
-	    {
-	      (*_bfd_error_handler)("Input file %s for cpu version %s", input_filename, input_cpu_version);
-	    }
+	  (*_bfd_error_handler) ("Linking mismatched file types.\n"
+				 "\tOutput file = %s file type 0x%.4x (%s%s)\n"
+				 "\tInput file = %s file type 0x%.4x (%s%s)",
+				 output_filename, old_flags & 0xffff, output_cpu_version, output_pic, 
+				 input_filename, new_flags & 0xffff, input_cpu_version, input_pic);
 
 	  (*_bfd_error_handler) ("Link ABORTED.");
 	  _exit(EXIT_FAILURE);
