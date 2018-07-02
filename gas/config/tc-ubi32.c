@@ -575,6 +575,8 @@ parse_address (char **strp, int *addr)
 	break;
       default:
 	// FIXME:	queue_fixup (exp);
+	// FIXME: Are expressions allowed?
+        gas_assert (0);
 	break;
     }
 
@@ -786,7 +788,7 @@ parse_offset_operand (char **strp, struct operand_t *offset, int size ATTRIBUTE_
     }
 
   offset->reloc = 0;
-/* FIXME -- scale value?  */
+  /* FIXME -- scale value?  */
   return parse_address (strp, &offset->value);
 }
 
@@ -1049,6 +1051,7 @@ parse_addr_operand (char **strp, struct operand_t *opnd, enum op_scale_t scale, 
     }
 
   *strp = save_str;
+  /* FIXME -- unsigned value.  */
   if (!parse_offset_operand (strp, &temp, 7, scale, optab)	/* 1xx <ofs>(<areg>)	*/
       && !parse_literal (strp, '(')
       && !parse_areg (strp, &areg)
