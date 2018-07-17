@@ -23,7 +23,6 @@
 #include "target-descriptions.h"
 #include "ubi32-tdep.h"
 #include "dis-asm.h"
-#include "opcodes/ubi32-dis.h"
 #include "frame-base.h"
 #include "frame-unwind.h"
 #include "trad-frame.h"

@@ -1,12 +1,9 @@
-/* Disassembler interface for targets using CGEN. -*- C -*-
-   CGEN: Cpu tools GENerator
+/* Print Qualcomm Ubi32 instructions.
 
-   THIS FILE IS MACHINE GENERATED WITH CGEN.
-   - the resultant file is machine generated, cgen-dis.in isn't
+   Copyright (C) 2017 Free Software Foundation, Inc.
+   Contributed by Michael J. Eager (eager@eagercon.com)
 
-   Copyright (C) 1996-2017 Free Software Foundation, Inc.
-
-   This file is part of libopcodes.
+   This file is part of the GNU opcodes library.
 
    This library is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -19,769 +16,728 @@
    License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software Foundation, Inc.,
-   51 Franklin Street - Fifth Floor, Boston, MA 02110-1301, USA.  */
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston,
+   MA 02110-1301, USA.  */
 
-/* ??? Eventually more and more of this stuff can go to cpu-independent files.
-   Keep that in mind.  */
 
-#include "sysdep.h"
-#include <stdio.h>
-#include "ansidecl.h"
-#include "dis-asm.h"
+/*
+   Print all Ubi32 instructions without verifying that they are valid
+   for the current processor variant.
+
+   Format 11 & 12 (Floating Point) instructions are not printed.
+*/
+
+
+#include "config.h"
+#include <string.h>
 #include "bfd.h"
-#include "symcat.h"
-#include "libiberty.h"
-#include "ubi32-desc.h"
-#include "ubi32-opc.h"
+#include "dis-asm.h"
 #include "opintl.h"
 
-/* Default text to print if an instruction isn't recognized.  */
-#define UNKNOWN_INSN_MSG _("*unknown*")
-
-static void print_normal
-  (CGEN_CPU_DESC, void *, long, unsigned int, bfd_vma, int);
-static void print_address
-  (CGEN_CPU_DESC, void *, bfd_vma, unsigned int, bfd_vma, int) ATTRIBUTE_UNUSED;
-static void print_keyword
-  (CGEN_CPU_DESC, void *, CGEN_KEYWORD *, long, unsigned int) ATTRIBUTE_UNUSED;
-static void print_insn_normal
-  (CGEN_CPU_DESC, void *, const CGEN_INSN *, CGEN_FIELDS *, bfd_vma, int);
-static int print_insn
-  (CGEN_CPU_DESC, bfd_vma,  disassemble_info *, bfd_byte *, unsigned);
-static int default_print_insn
-  (CGEN_CPU_DESC, bfd_vma, disassemble_info *) ATTRIBUTE_UNUSED;
-static int read_insn
-  (CGEN_CPU_DESC, bfd_vma, disassemble_info *, bfd_byte *, int, CGEN_EXTRACT_INFO *,
-   unsigned long *);
-int print_insn_ubi32 (bfd_vma pc, disassemble_info *info);
-
-/* -- disassembler routines inserted here.  */
-
-/* -- dis.c */
-
-static int
-ubi32_internal_print_insn (CGEN_CPU_DESC cd, bfd_vma pc, disassemble_info *info)
+/* Opcode description.  */
+static struct
 {
-  return default_print_insn (cd, pc, info);
-}
-
-
-#define CGEN_PRINT_INSN  ubi32_internal_print_insn
-
-/* Output a signed 4 bit integer */
-static void
-print_imm4 (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
-	    PTR dis_info,
-	    long value,
-	    unsigned int attrs ATTRIBUTE_UNUSED,
-	    bfd_vma pc ATTRIBUTE_UNUSED,
-	    int length ATTRIBUTE_UNUSED)
+   int format;		/* Instruction format.  */
+   int offset;		/* Op extension offset. */
+   int size;		/* Op extension size.   */
+} translate_opcode_to_format[32] =
 {
-  disassemble_info *info = (disassemble_info *) dis_info;
-  (*info->fprintf_func) (info->stream, "%d", (int)value);
-}
-
-/* Output an unsigned 7-bit integer */
-static void
-print_imm7 (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
-	    PTR dis_info,
-	    long value,
-	    unsigned int attrs ATTRIBUTE_UNUSED,
-	    bfd_vma pc ATTRIBUTE_UNUSED,
-	    int length ATTRIBUTE_UNUSED)
-{
-  disassemble_info *info = (disassemble_info *) dis_info;
-  if (value != 0)
-    (*info->fprintf_func) (info->stream, "%ld", value);
-}
-
-/* Output an unsigned 7-bit integer */
-static void
-print_pdec_imm7 (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
-		 PTR dis_info,
-		 long value,
-		 unsigned int attrs ATTRIBUTE_UNUSED,
-		 bfd_vma pc ATTRIBUTE_UNUSED,
-		 int length ATTRIBUTE_UNUSED)
-{
-  disassemble_info *info = (disassemble_info *) dis_info;
-  if (value != 0)
-    {
-      value = ~value;
-      value ++;
-      value &= 0x1fc;
-      (*info->fprintf_func) (info->stream, "%ld", value);
-    }
-  else
-    {
-      (*info->fprintf_func) (info->stream, "%d", 512);
-    }
-}
-
-/* Output either a register or a 11bit literal immediate value */
-static void
-print_direct_addr (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
-		   PTR dis_info,
-		   long value,
-		   unsigned int attrs ATTRIBUTE_UNUSED,
-		   bfd_vma pc ATTRIBUTE_UNUSED,
-		   int length ATTRIBUTE_UNUSED)
-{
-  disassemble_info *info = (disassemble_info *) dis_info;
-  struct ubi32_cgen_data_space_map *cur = NULL;
-
-  if ((cd->machs & (1<<MACH_UBI32_VER6)) || (cd->machs & (1<<MACH_UBI32_VER61)))
-    {
-      /* Cpu is IPQ806x or IPQ807x.  */
-      cur = ubi32_cgen_data_space_map_IPQ806x;
-    }
-
-  assert (cur);
-
-  //if (value > 0x3ff)
-    /* XXX: some warning? */ ;
-  value &= 0x3ff;
-  for (; cur->name; cur++)
-    if (value == cur->address)
-      {
-        (*info->fprintf_func) (info->stream, "%s", cur->name);
-        return;
-      }
-  (*info->fprintf_func) (info->stream, "#%lx", value);
-}
-
-#if 0
-static void
-print_imm24 (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
-	     PTR dis_info,
-	     long value,
-	     unsigned int attrs ATTRIBUTE_UNUSED,
-	     bfd_vma pc ATTRIBUTE_UNUSED,
-	     int length ATTRIBUTE_UNUSED)
-{
-  disassemble_info *info = (disassemble_info *) dis_info;
-  (*info->fprintf_func) (info->stream, "%%hi(0x%08lx)", value << 7);
-}
-#endif
-
-static void
-print_imm25 (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
-	     PTR dis_info,
-	     long value,
-	     unsigned int attrs ATTRIBUTE_UNUSED,
-	     bfd_vma pc ATTRIBUTE_UNUSED,
-	     int length ATTRIBUTE_UNUSED)
-{
-  disassemble_info *info = (disassemble_info *) dis_info;
-  (*info->fprintf_func) (info->stream, "%%hi(0x%08lx)", value << 7);
-}
-
-/* -- */
-
-void ubi32_cgen_print_operand
-  (CGEN_CPU_DESC, int, PTR, CGEN_FIELDS *, void const *, bfd_vma, int);
-
-/* Main entry point for printing operands.
-   XINFO is a `void *' and not a `disassemble_info *' to not put a requirement
-   of dis-asm.h on cgen.h.
-
-   This function is basically just a big switch statement.  Earlier versions
-   used tables to look up the function to use, but
-   - if the table contains both assembler and disassembler functions then
-     the disassembler contains much of the assembler and vice-versa,
-   - there's a lot of inlining possibilities as things grow,
-   - using a switch statement avoids the function call overhead.
-
-   This function could be moved into `print_insn_normal', but keeping it
-   separate makes clear the interface between `print_insn_normal' and each of
-   the handlers.  */
-
-void
-ubi32_cgen_print_operand (CGEN_CPU_DESC cd,
-			   int opindex,
-			   void * xinfo,
-			   CGEN_FIELDS *fields,
-			   void const *attrs ATTRIBUTE_UNUSED,
-			   bfd_vma pc,
-			   int length)
-{
-  disassemble_info *info = (disassemble_info *) xinfo;
-
-  switch (opindex)
-    {
-    case UBI32_OPERAND_AM :
-      print_keyword (cd, info, & ubi32_cgen_opval_addr_names, fields->f_Am, 0);
-      break;
-    case UBI32_OPERAND_AN :
-      print_keyword (cd, info, & ubi32_cgen_opval_addr_names, fields->f_An, 0);
-      break;
-    case UBI32_OPERAND_C :
-      print_keyword (cd, info, & ubi32_cgen_opval_h_C, fields->f_C, 0);
-      break;
-    case UBI32_OPERAND_DN :
-      print_keyword (cd, info, & ubi32_cgen_opval_data_names, fields->f_Dn, 0);
-      break;
-    case UBI32_OPERAND_P :
-      print_keyword (cd, info, & ubi32_cgen_opval_h_P, fields->f_P, 0);
-      break;
-    case UBI32_OPERAND_BIT5 :
-      print_normal (cd, info, fields->f_bit5, 0, pc, length);
-      break;
-    case UBI32_OPERAND_CC :
-      print_keyword (cd, info, & ubi32_cgen_opval_h_cc, fields->f_cond, 0);
-      break;
-    case UBI32_OPERAND_D_AN :
-      print_keyword (cd, info, & ubi32_cgen_opval_addr_names, fields->f_d_An, 0);
-      break;
-    case UBI32_OPERAND_D_DIRECT_ADDR :
-      print_direct_addr (cd, info, fields->f_d_direct, 0, pc, length);
-      break;
-    case UBI32_OPERAND_D_I4_1 :
-      print_imm4 (cd, info, fields->f_d_i4_1, 0|(1<<CGEN_OPERAND_SIGNED), pc, length);
-      break;
-    case UBI32_OPERAND_D_I4_2 :
-      print_imm4 (cd, info, fields->f_d_i4_2, 0|(1<<CGEN_OPERAND_SIGNED), pc, length);
-      break;
-    case UBI32_OPERAND_D_I4_4 :
-      print_imm4 (cd, info, fields->f_d_i4_4, 0|(1<<CGEN_OPERAND_SIGNED), pc, length);
-      break;
-    case UBI32_OPERAND_D_IMM7_1 :
-      print_imm7 (cd, info, fields->f_d_imm7_1, 0|(1<<CGEN_OPERAND_VIRTUAL), pc, length);
-      break;
-    case UBI32_OPERAND_D_IMM7_2 :
-      print_imm7 (cd, info, fields->f_d_imm7_2, 0|(1<<CGEN_OPERAND_VIRTUAL), pc, length);
-      break;
-    case UBI32_OPERAND_D_IMM7_4 :
-      print_imm7 (cd, info, fields->f_d_imm7_4, 0|(1<<CGEN_OPERAND_VIRTUAL), pc, length);
-      break;
-    case UBI32_OPERAND_D_IMM8 :
-      print_normal (cd, info, fields->f_d_imm8, 0|(1<<CGEN_OPERAND_SIGNED), pc, length);
-      break;
-    case UBI32_OPERAND_D_R :
-      print_keyword (cd, info, & ubi32_cgen_opval_data_names, fields->f_d_r, 0);
-      break;
-    case UBI32_OPERAND_IMM16_1 :
-      print_normal (cd, info, fields->f_imm16_1, 0|(1<<CGEN_OPERAND_SIGNED), pc, length);
-      break;
-    case UBI32_OPERAND_IMM16_2 :
-      print_normal (cd, info, fields->f_imm16_2, 0|(1<<CGEN_OPERAND_SIGNED), pc, length);
-      break;
-    case UBI32_OPERAND_IMM25 :
-      print_imm25 (cd, info, fields->f_imm25, 0|(1<<CGEN_OPERAND_VIRTUAL), pc, length);
-      break;
-    case UBI32_OPERAND_INTERRUPT :
-      print_normal (cd, info, fields->f_int, 0, pc, length);
-      break;
-    case UBI32_OPERAND_IREAD :
-      print_normal (cd, info, 0, 0, pc, length);
-      break;
-    case UBI32_OPERAND_IRQ_0 :
-      print_normal (cd, info, 0, 0, pc, length);
-      break;
-    case UBI32_OPERAND_IRQ_1 :
-      print_normal (cd, info, 0, 0, pc, length);
-      break;
-    case UBI32_OPERAND_LEAI_OFFSET16 :
-      print_normal (cd, info, fields->f_leai_o16, 0|(1<<CGEN_OPERAND_SIGNED)|(1<<CGEN_OPERAND_VIRTUAL), pc, length);
-      break;
-    case UBI32_OPERAND_MACHI :
-      print_normal (cd, info, 0, 0, pc, length);
-      break;
-    case UBI32_OPERAND_MACLO :
-      print_normal (cd, info, 0, 0, pc, length);
-      break;
-    case UBI32_OPERAND_OFFSET16 :
-      print_normal (cd, info, fields->f_o16, 0|(1<<CGEN_OPERAND_SIGNED)|(1<<CGEN_OPERAND_VIRTUAL), pc, length);
-      break;
-    case UBI32_OPERAND_OFFSET21 :
-      print_address (cd, info, fields->f_o21, 0|(1<<CGEN_OPERAND_PCREL_ADDR), pc, length);
-      break;
-    case UBI32_OPERAND_OFFSET24 :
-      print_address (cd, info, fields->f_o24, 0|(1<<CGEN_OPERAND_PCREL_ADDR)|(1<<CGEN_OPERAND_VIRTUAL), pc, length);
-      break;
-    case UBI32_OPERAND_OPC1 :
-      print_normal (cd, info, fields->f_op1, 0, pc, length);
-      break;
-    case UBI32_OPERAND_OPC2 :
-      print_normal (cd, info, fields->f_op2, 0, pc, length);
-      break;
-    case UBI32_OPERAND_PDEC_S1_IMM7_4 :
-      print_pdec_imm7 (cd, info, fields->f_s1_imm7_4, 0|(1<<CGEN_OPERAND_VIRTUAL), pc, length);
-      break;
-    case UBI32_OPERAND_S1_AN :
-      print_keyword (cd, info, & ubi32_cgen_opval_addr_names, fields->f_s1_An, 0);
-      break;
-    case UBI32_OPERAND_S1_DIRECT_ADDR :
-      print_direct_addr (cd, info, fields->f_s1_direct, 0, pc, length);
-      break;
-    case UBI32_OPERAND_S1_I4_1 :
-      print_imm4 (cd, info, fields->f_s1_i4_1, 0|(1<<CGEN_OPERAND_SIGNED), pc, length);
-      break;
-    case UBI32_OPERAND_S1_I4_2 :
-      print_imm4 (cd, info, fields->f_s1_i4_2, 0|(1<<CGEN_OPERAND_SIGNED), pc, length);
-      break;
-    case UBI32_OPERAND_S1_I4_4 :
-      print_imm4 (cd, info, fields->f_s1_i4_4, 0|(1<<CGEN_OPERAND_SIGNED), pc, length);
-      break;
-    case UBI32_OPERAND_S1_IMM7_1 :
-      print_imm7 (cd, info, fields->f_s1_imm7_1, 0|(1<<CGEN_OPERAND_VIRTUAL), pc, length);
-      break;
-    case UBI32_OPERAND_S1_IMM7_2 :
-      print_imm7 (cd, info, fields->f_s1_imm7_2, 0|(1<<CGEN_OPERAND_VIRTUAL), pc, length);
-      break;
-    case UBI32_OPERAND_S1_IMM7_4 :
-      print_imm7 (cd, info, fields->f_s1_imm7_4, 0|(1<<CGEN_OPERAND_VIRTUAL), pc, length);
-      break;
-    case UBI32_OPERAND_S1_IMM8 :
-      print_normal (cd, info, fields->f_s1_imm8, 0|(1<<CGEN_OPERAND_SIGNED), pc, length);
-      break;
-    case UBI32_OPERAND_S1_R :
-      print_keyword (cd, info, & ubi32_cgen_opval_data_names, fields->f_s1_r, 0);
-      break;
-    case UBI32_OPERAND_S2 :
-      print_keyword (cd, info, & ubi32_cgen_opval_data_names, fields->f_s2, 0);
-      break;
-    case UBI32_OPERAND_SRC3 :
-      print_normal (cd, info, 0, 0, pc, length);
-      break;
-    case UBI32_OPERAND_X_BIT26 :
-      print_normal (cd, info, fields->f_bit26, 0, pc, length);
-      break;
-    case UBI32_OPERAND_X_D :
-      print_normal (cd, info, fields->f_d, 0, pc, length);
-      break;
-    case UBI32_OPERAND_X_DN :
-      print_normal (cd, info, fields->f_Dn, 0, pc, length);
-      break;
-    case UBI32_OPERAND_X_OP2 :
-      print_normal (cd, info, fields->f_op2, 0, pc, length);
-      break;
-    case UBI32_OPERAND_X_S1 :
-      print_normal (cd, info, fields->f_s1, 0, pc, length);
-      break;
-
-    default :
-      /* xgettext:c-format */
-      fprintf (stderr, _("Unrecognized field %d while printing insn.\n"),
-	       opindex);
-    abort ();
-  }
-}
-
-cgen_print_fn * const ubi32_cgen_print_handlers[] =
-{
-  print_insn_normal,
+ /* fm of sz  fm  of sz   fm  of sz   fm  of sz   */
+  {1, 11, 5}, {1, 11, 5}, {4, 21, 5},{11, 21, 5}, /* op 00 - 03 */
+  {2,  0, 0}, {2,  0, 0},{10, 21, 5}, {2,  0, 0}, /* op 04 - 07 */
+  {3, 15, 1}, {3, 15, 1}, {3, 15, 1}, {3, 15, 1}, /* op 08 - 0b */
+  {3, 15, 1}, {3, 15, 1}, {3, 15, 1}, {3, 15, 1}, /* op 0c - 0f */
+  {3, 15, 1}, {3, 15, 1}, {3, 15, 1}, {3, 15, 1}, /* op 10 - 13 */
+  {3, 15, 1}, {3, 15, 1}, {3, 15, 1}, {3, 15, 1}, /* op 14 - 17 */
+  {5,  0, 0}, {6,  0, 0}, {7,  0, 0}, {8,  0, 0}, /* op 18 - 1b */
+  {8,  0, 0}, {8,  0, 0}, {9, 11, 5}, {9, 11, 5}, /* op 1c - 1f */
 };
 
+static char *op_fmt1[2][32] =
+  {{ 0,           "suspend",   "flush",     "sync",
+     "ret",       "prefetch",  "tbtst",     "bkpt",
+     "sysret",    "syscall",   "not.4",     "not.2",
+     "move.4",    "move.2",    "movea",     "move.1",
+     "tbrest",    "flushni",   "setcsr",    "tbset",
+     "tbclr",     "ext.2",     "inval",     "ext.1",
+     "swapb.2",   "swapb.4",   "fxcnv",     "fxcnv.t",
+     "lea.4",     "lea.2",     "pdec",      "lea.1" },
+   { "moveio.4",  "moveio.2",  "moveio.1",  "moveiop.4",
+     "moveiop.2", "moveiop.1" } };
 
-void
-ubi32_cgen_init_dis (CGEN_CPU_DESC cd)
-{
-  ubi32_cgen_init_opcode_table (cd);
-  ubi32_cgen_init_ibld_table (cd);
-  cd->print_handlers = & ubi32_cgen_print_handlers[0];
-  cd->print_operand = ubi32_cgen_print_operand;
-}
+static char *op_fmt2[32] =
+  { 0, 0, 0, 0, "bset", "bclr", 0, 0 };
 
-
-/* Default print handler.  */
+static char *op_fmt3[2][32] =
+  {{ 0,           0,           0,           0,
+     0,           0,           0,           0,
+     "and.2",     "and.4",     "or.2",      "or.4",
+     "xor.2",     "xor.4",     "add.2",     "add.4",
+     "addc",      "sub.2",     "sub.4",     "subc",
+     "pxblend",   "pxvi",      0,           0,
+     0,           0,           0,           0,
+     0,           0,           0,           0	},
+   { 0,           0,           0,           0,
+     0,           0,           0,           0,
+     "and.1",     "and.4",     "or.1",      "or.4",
+     "xor.1",     "xor.4",     "add.1",     "add.4",
+     "addc",      "sub.1",     "sub.4",     "subc",
+     "pxblend.t", "pxvi",      0,           0,
+     0,           0,           0,           0,
+     0,           0,           0,           0	} };
+
+static char *op_fmt4[32] =
+  {  "fxhi",      "muls",      "fxhi.s",    "mulu",
+     0,           "mulf",      "btst",      0,
+     "crcgen",    "mac",       "lsl.1",     "lsr.1",
+     "asr.1",     0,           0,           0,
+     "lsl.4",     "lsl.2",     "lsr.4",     "lsr.2",
+     "asr.4",     "asr.2",     "bfextu",    0,
+     "bfrvrs",    0,           "shftd",     0,
+     "merge",     0,           "shmrg.2",   "shmrg.1" };
+
+static char *op_fmt10[32] =
+  {  "muls",      "macs",      "mulu",      "macu",
+     "mulf",      "macf",      "macs.4",    "macus",
+     "muls.4",    "msuf",      "mulu.4",    "macu.4",
+     0,           0,           0,           0,
+     "madd.4",    "madd.2",    "msub.4",    "msub.2",
+     0,		  0,           0,           0,
+     0,           0,           0,           0,
+     0,           0,           0,           0 };
+
+static char *op_fmt11_12[32] =
+  {  "fadds",     "fsubs",     "fmuls",     "fdivs",
+     "fi2d",      "fs2d",      "fs2l",      "fsqrts",
+     "fnegs",     "fabss",     "fi2s",      "fs2i",
+     "fcmps",     0,           0,           0,
+     "faddd",     "fsubd",     "fmuld",     "fdivd",
+     "fl2s",      "fd2s",      "fd2i",      "fsqrtd",
+     "fnegd",     "fabsd",     "fl2d",      "fd2l",
+     "fcmpd",     0,           0,           0, };
+
+enum fmt_t { FMT_11A, FMT_11B, FMT_11C, FMT_11D,
+	     FMT_12A, FMT_12B, FMT_12C, FMT_12D };
+static int op_fmt11_12_sub[32] =
+  { FMT_11A, FMT_11A, FMT_11A, FMT_11A, FMT_11B, FMT_11B, FMT_11B, FMT_11C,
+    FMT_11C, FMT_11C, FMT_11C, FMT_11C, FMT_11D, 0,	  0,	   0,
+    FMT_12A, FMT_12A, FMT_12A, FMT_12A, FMT_12B, FMT_12B, FMT_12B, FMT_12C,
+    FMT_12C, FMT_12C, FMT_12C, FMT_12C, FMT_12D, 0,	  0,	   0
+  };
+
+static char *areg_names[8] =
+  { "a0", "a1", "a2", "a3", "a4", "a5", "a6", "sp" };
+
+static char *reg_names[256] =					/*  Reg No */
+  { "d0", "d1", "d2", "d3", "d4", "d5", "d6", "d7",		/* 00 - 07 */
+    "d8", "d9", "d10", "d11", "d12", "d13", "d14", "d15",	/* 08 - 0f */
+    "res", "res", "res", "res", "res", "res", "res", "res",	/* 10 - 17 */
+    "res", "res", "res", "res", "res", "res", "res", "res",	/* 18 - 1f */
+    "a0", "a1", "a2", "a3", "a4", "a5", "a6", "sp",		/* 20 - 27 */
+    "acc0_hi", "acc0_lo", "mac_rc15", "source3",		/* 28 - 2b */
+    "inst_cnt", "csr", "rosr", "iread_data",			/* 2c - 2f */
+    "int_mask0", "int_mask1", "int_mask2", "int_mask3",		/* 30 - 33 */
+    "pc", "trap_cause", "acc1_hi", "acc1_lo",			/* 34 - 37 */
+    "previous_pc", "ucsr", "spsr0", "res",			/* 38 - 3b */
+    "res", "res", "res", "res",					/* 3c - 3f */
+    "chip_id", "int_stat0", "int_stat1", "int_stat2",		/* 40 - 43 */
+    "int_stat3", "int_set0", "int_set1", "int_set2",		/* 44 - 47 */
+    "int_set3", "int_clr0", "int_clr1", "int_clr2",		/* 48 - 4b */
+    "int_clr3", "global_ctrl", "mt_active", "mt_active_set",	/* 4c - 4f */
+    "mt_active_clr", "mt_dbg_active",				/* 50 - 51 */
+    "mt_dbg_active_set", "mt_en",				/* 52 - 53 */
+    "mt_hpri", "mt_hrt", "mt_break", "mt_break_clr",		/* 54 - 57 */
+    "mt_single_step", "mt_min_delay_en",			/* 58 - 59 */
+    "mt_break_set", "perr_addr",				/* 5a - 5b */
+    "dcapt", "dcapt_pc", "dcapt_tnum", "mt_dgb_active_clr",	/* 5c - 5f */
+    "scratchpad0", "scratchpad1",				/* 60 - 61 */
+    "scratchpad2", "scratchpad3",				/* 62 - 63 */
+    "scratchpad4", "scratchpad5",				/* 64 - 65 */
+    "scratchpad6", "scratchpad7",				/* 66 - 67 */
+    "cfg", "mt_i_blocked",					/* 68 - 69 */
+    "mt_d_blocked", "mt_i_blocked_set",				/* 6a - 6b */
+    "mt_d_blocked_set", "mt_blocked_clr",			/* 6c - 6d */
+    "mt_trap_en", "mt_trap",					/* 6e - 6f */
+    "mt_trap_set", "mt_trap_clr", "sep", "mt_btb_en",		/* 70 - 73 */
+    "btb_ctrl", "tnum", "res", "res",				/* 74 - 77 */
+    "res", "res", "res", "res",					/* 78 - 7b */
+    "res", "res", "res", "res",					/* 7c - 7f */
+    "i_range0_hi", "i_range1_hi", "i_range2_hi", "i_range3_hi",	/* 80 - 83 */
+    "i_range4_hi", "i_range5_hi", "i_range6_hi", "i_range7_hi",	/* 84 - 87 */
+    "i_range0_lo", "i_range1_lo", "i_range2_lo", "i_range3_lo",	/* 88 - 8b */
+    "i_range4_lo", "i_range5_lo", "i_range6_lo", "i_range7_lo",	/* 8c - 8f */
+    "i_range0_en", "i_range1_en", "i_range2_en", "i_range3_en",	/* 90 - 93 */
+    "i_range4_en", "i_range5_en", "i_range6_en", "i_range7_en",	/* 94 - 97 */
+    "d_range0_hi", "d_range1_hi", "d_range2_hi", "d_range3_hi",	/* 98 - 9b */
+    "d_range4_hi", "d_range5_hi", "d_range6_hi", "d_range7_hi",	/* 9c - 9f */
+    "d_range0_lo", "d_range1_lo", "d_range2_lo", "d_range3_lo",	/* a0 - a3 */
+    "d_range4_lo", "d_range5_lo", "d_range6_lo", "d_range7_lo",	/* a4 - a7 */
+    "d_range0_en", "d_range1_en", "d_range2_en", "d_range3_en",	/* a8 - ab */
+    "d_range4_en", "d_range5_en", "d_range6_en", "d_range7_en",	/* ac - af */
+    "i_range0_user_en", "i_range1_user_en",			/* b0 - b1 */
+    "i_range2_user_en", "i_range3_user_en",			/* b2 - b3 */
+    "i_range4_user_en", "i_range5_user_en",			/* b4 - b5 */
+    "i_range6_user_en", "i_range7_user_en",			/* b6 - b7 */
+    "d_range0_user_en", "d_range1_user_en",			/* b8 - b9 */
+    "d_range2_user_en", "d_range3_user_en",			/* ba - bb */
+    "d_range4_user_en", "d_range5_user_en",			/* bc - bd */
+    "d_range6_user_en", "d_range7_user_en",			/* be - bf */
+  };
+
 
 static void
-print_normal (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
-	      void *dis_info,
-	      long value,
-	      unsigned int attrs,
-	      bfd_vma pc ATTRIBUTE_UNUSED,
-	      int length ATTRIBUTE_UNUSED)
+operand_internal (unsigned int opnd, int opnd_sz, char *buf,
+		  int pdec_flag)
 {
-  disassemble_info *info = (disassemble_info *) dis_info;
+  int code = (opnd & 0x700) >> 8;
 
-  /* Print the operand as directed by the attributes.  */
-  if (CGEN_BOOL_ATTR (attrs, CGEN_OPERAND_SEM_ONLY))
-    ; /* nothing to do */
-  else if (CGEN_BOOL_ATTR (attrs, CGEN_OPERAND_SIGNED))
-    (*info->fprintf_func) (info->stream, "%ld", value);
-  else
-    (*info->fprintf_func) (info->stream, "0x%lx", value);
-}
-
-/* Default address handler.  */
-
-static void
-print_address (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
-	       void *dis_info,
-	       bfd_vma value,
-	       unsigned int attrs,
-	       bfd_vma pc ATTRIBUTE_UNUSED,
-	       int length ATTRIBUTE_UNUSED)
-{
-  disassemble_info *info = (disassemble_info *) dis_info;
-
-  /* Print the operand as directed by the attributes.  */
-  if (CGEN_BOOL_ATTR (attrs, CGEN_OPERAND_SEM_ONLY))
-    ; /* Nothing to do.  */
-  else if (CGEN_BOOL_ATTR (attrs, CGEN_OPERAND_PCREL_ADDR))
-    (*info->print_address_func) (value, info);
-  else if (CGEN_BOOL_ATTR (attrs, CGEN_OPERAND_ABS_ADDR))
-    (*info->print_address_func) (value, info);
-  else if (CGEN_BOOL_ATTR (attrs, CGEN_OPERAND_SIGNED))
-    (*info->fprintf_func) (info->stream, "%ld", (long) value);
-  else
-    (*info->fprintf_func) (info->stream, "0x%lx", (long) value);
-}
-
-/* Keyword print handler.  */
-
-static void
-print_keyword (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
-	       void *dis_info,
-	       CGEN_KEYWORD *keyword_table,
-	       long value,
-	       unsigned int attrs ATTRIBUTE_UNUSED)
-{
-  disassemble_info *info = (disassemble_info *) dis_info;
-  const CGEN_KEYWORD_ENTRY *ke;
-
-  ke = cgen_keyword_lookup_value (keyword_table, value);
-  if (ke != NULL)
-    (*info->fprintf_func) (info->stream, "%s", ke->name);
-  else
-    (*info->fprintf_func) (info->stream, "???");
-}
-
-/* Default insn printer.
-
-   DIS_INFO is defined as `void *' so the disassembler needn't know anything
-   about disassemble_info.  */
-
-static void
-print_insn_normal (CGEN_CPU_DESC cd,
-		   void *dis_info,
-		   const CGEN_INSN *insn,
-		   CGEN_FIELDS *fields,
-		   bfd_vma pc,
-		   int length)
-{
-  const CGEN_SYNTAX *syntax = CGEN_INSN_SYNTAX (insn);
-  disassemble_info *info = (disassemble_info *) dis_info;
-  const CGEN_SYNTAX_CHAR_TYPE *syn;
-
-  CGEN_INIT_PRINT (cd);
-
-  for (syn = CGEN_SYNTAX_STRING (syntax); *syn; ++syn)
+  switch (code)
     {
-      if (CGEN_SYNTAX_MNEMONIC_P (*syn))
+      case 0:
 	{
-	  (*info->fprintf_func) (info->stream, "%s", CGEN_INSN_MNEMONIC (insn));
-	  continue;
+	  int simm = opnd & 0x0ff;
+	  if (simm & 0x80)
+	    simm |= -0x100;
+
+	  sprintf (buf, "#%d", simm);
+	  break;
 	}
-      if (CGEN_SYNTAX_CHAR_P (*syn))
+
+      case 1:
 	{
-	  (*info->fprintf_func) (info->stream, "%c", CGEN_SYNTAX_CHAR (*syn));
-	  continue;
-	}
+	  unsigned int reg  = opnd & 0x0ff;
 
-      /* We have an operand.  */
-      ubi32_cgen_print_operand (cd, CGEN_SYNTAX_FIELD (*syn), info,
-				 fields, CGEN_INSN_ATTRS (insn), pc, length);
-    }
-}
-
-/* Subroutine of print_insn. Reads an insn into the given buffers and updates
-   the extract info.
-   Returns 0 if all is well, non-zero otherwise.  */
-
-static int
-read_insn (CGEN_CPU_DESC cd ATTRIBUTE_UNUSED,
-	   bfd_vma pc,
-	   disassemble_info *info,
-	   bfd_byte *buf,
-	   int buflen,
-	   CGEN_EXTRACT_INFO *ex_info,
-	   unsigned long *insn_value)
-{
-  int status = (*info->read_memory_func) (pc, buf, buflen, info);
-
-  if (status != 0)
-    {
-      (*info->memory_error_func) (status, pc, info);
-      return -1;
-    }
-
-  ex_info->dis_info = info;
-  ex_info->valid = (1 << buflen) - 1;
-  ex_info->insn_bytes = buf;
-
-  *insn_value = bfd_get_bits (buf, buflen * 8, info->endian == BFD_ENDIAN_BIG);
-  return 0;
-}
-
-/* Utility to print an insn.
-   BUF is the base part of the insn, target byte order, BUFLEN bytes long.
-   The result is the size of the insn in bytes or zero for an unknown insn
-   or -1 if an error occurs fetching data (memory_error_func will have
-   been called).  */
-
-static int
-print_insn (CGEN_CPU_DESC cd,
-	    bfd_vma pc,
-	    disassemble_info *info,
-	    bfd_byte *buf,
-	    unsigned int buflen)
-{
-  CGEN_INSN_INT insn_value;
-  const CGEN_INSN_LIST *insn_list;
-  CGEN_EXTRACT_INFO ex_info;
-  int basesize;
-
-  /* Extract base part of instruction, just in case CGEN_DIS_* uses it. */
-  basesize = cd->base_insn_bitsize < buflen * 8 ?
-                                     cd->base_insn_bitsize : buflen * 8;
-  insn_value = cgen_get_insn_value (cd, buf, basesize);
-
-
-  /* Fill in ex_info fields like read_insn would.  Don't actually call
-     read_insn, since the incoming buffer is already read (and possibly
-     modified a la m32r).  */
-  ex_info.valid = (1 << buflen) - 1;
-  ex_info.dis_info = info;
-  ex_info.insn_bytes = buf;
-
-  /* The instructions are stored in hash lists.
-     Pick the first one and keep trying until we find the right one.  */
-
-  insn_list = CGEN_DIS_LOOKUP_INSN (cd, (char *) buf, insn_value);
-  while (insn_list != NULL)
-    {
-      const CGEN_INSN *insn = insn_list->insn;
-      CGEN_FIELDS fields;
-      int length;
-      unsigned long insn_value_cropped;
-
-#ifdef CGEN_VALIDATE_INSN_SUPPORTED
-      /* Not needed as insn shouldn't be in hash lists if not supported.  */
-      /* Supported by this cpu?  */
-      if (! ubi32_cgen_insn_supported (cd, insn))
-        {
-          insn_list = CGEN_DIS_NEXT_INSN (insn_list);
-	  continue;
-        }
-#endif
-
-      /* Basic bit mask must be correct.  */
-      /* ??? May wish to allow target to defer this check until the extract
-	 handler.  */
-
-      /* Base size may exceed this instruction's size.  Extract the
-         relevant part from the buffer. */
-      if ((unsigned) (CGEN_INSN_BITSIZE (insn) / 8) < buflen &&
-	  (unsigned) (CGEN_INSN_BITSIZE (insn) / 8) <= sizeof (unsigned long))
-	insn_value_cropped = bfd_get_bits (buf, CGEN_INSN_BITSIZE (insn),
-					   info->endian == BFD_ENDIAN_BIG);
-      else
-	insn_value_cropped = insn_value;
-
-      if ((insn_value_cropped & CGEN_INSN_BASE_MASK (insn))
-	  == CGEN_INSN_BASE_VALUE (insn))
-	{
-	  /* Printing is handled in two passes.  The first pass parses the
-	     machine insn and extracts the fields.  The second pass prints
-	     them.  */
-
-	  /* Make sure the entire insn is loaded into insn_value, if it
-	     can fit.  */
-	  if (((unsigned) CGEN_INSN_BITSIZE (insn) > cd->base_insn_bitsize) &&
-	      (unsigned) (CGEN_INSN_BITSIZE (insn) / 8) <= sizeof (unsigned long))
-	    {
-	      unsigned long full_insn_value;
-	      int rc = read_insn (cd, pc, info, buf,
-				  CGEN_INSN_BITSIZE (insn) / 8,
-				  & ex_info, & full_insn_value);
-	      if (rc != 0)
-		return rc;
-	      length = CGEN_EXTRACT_FN (cd, insn)
-		(cd, insn, &ex_info, full_insn_value, &fields, pc);
-	    }
+	  if (reg_names[reg] == 0)
+	    sprintf (buf, "#0x%x", reg);
 	  else
-	    length = CGEN_EXTRACT_FN (cd, insn)
-	      (cd, insn, &ex_info, insn_value_cropped, &fields, pc);
-
-	  /* Length < 0 -> error.  */
-	  if (length < 0)
-	    return length;
-	  if (length > 0)
-	    {
-	      CGEN_PRINT_FN (cd, insn) (cd, info, insn, &fields, pc, length);
-	      /* Length is in bits, result is in bytes.  */
-	      return length / 8;
-	    }
+	    sprintf (buf, "%s", reg_names[reg]);
+	  break;
 	}
 
-      insn_list = CGEN_DIS_NEXT_INSN (insn_list);
-    }
+      case 2:
+	{
+	  unsigned int areg = (opnd & 0x0e0) >> 5;
+	  unsigned int m    = (opnd >> 4) & 0x1;
+	  int imm  = opnd & 0x00f;
 
-  return 0;
+	  if (imm & 0x8)
+	    imm |= -0x10;
+	  imm *= opnd_sz;
+
+	  if (m)
+	    sprintf (buf, "%d(%s)++", imm, areg_names[areg]);
+	  else
+	    sprintf (buf, "(%s)%d++", areg_names[areg], imm);
+	  break;
+	}
+
+      case 3:
+	{
+	  unsigned int areg = (opnd & 0x0e0) >> 5;
+	  unsigned int dreg = opnd & 0x00f;
+
+	  sprintf (buf, "(%s,d%d)", areg_names[areg], dreg);
+	  break;
+	}
+
+      default:
+	{
+	  unsigned int areg = (opnd & 0x0e0) >> 5;
+	  unsigned int limm = ((opnd & 0x300) >> 3) + (opnd & 0x1f);
+
+	  limm *= opnd_sz;
+
+	  /* Convert immediate to inverse for PDEC. */
+	  if (pdec_flag)
+	    {
+	      if (limm != 0)
+		{
+		  int value = limm;
+		  value = ~value;
+		  value++;
+		  limm = value & 0x1fc;
+		}
+	      else
+		limm = 512;
+	    }
+
+	  if (limm == 0)
+	    sprintf (buf, "(%s)", areg_names[areg]);
+	  else
+	    sprintf (buf, "%d(%s)", limm, areg_names[areg]);
+	  break;
+	}
+    }
 }
 
-/* Default value for CGEN_PRINT_INSN.
-   The result is the size of the insn in bytes or zero for an unknown insn
-   or -1 if an error occured fetching bytes.  */
-
-#ifndef CGEN_PRINT_INSN
-#define CGEN_PRINT_INSN default_print_insn
-#endif
-
-static int
-default_print_insn (CGEN_CPU_DESC cd, bfd_vma pc, disassemble_info *info)
+static void
+operand (unsigned int opnd, int opnd_sz, char *buf)
 {
-  bfd_byte buf[CGEN_MAX_INSN_SIZE];
-  int buflen;
-  int status;
-
-  /* Attempt to read the base part of the insn.  */
-  buflen = cd->base_insn_bitsize / 8;
-  status = (*info->read_memory_func) (pc, buf, buflen, info);
-
-  /* Try again with the minimum part, if min < base.  */
-  if (status != 0 && (cd->min_insn_bitsize < cd->base_insn_bitsize))
-    {
-      buflen = cd->min_insn_bitsize / 8;
-      status = (*info->read_memory_func) (pc, buf, buflen, info);
-    }
-
-  if (status != 0)
-    {
-      (*info->memory_error_func) (status, pc, info);
-      return -1;
-    }
-
-  return print_insn (cd, pc, info, buf, buflen);
+  operand_internal (opnd, opnd_sz, buf, 0);
 }
 
-/* Main entry point.
-   Print one instruction from PC on INFO->STREAM.
-   Return the size of the instruction (in bytes).  */
-
-typedef struct cpu_desc_list
+static void
+pdec_operand (unsigned int opnd, int opnd_sz, char *buf)
 {
-  struct cpu_desc_list *next;
-  CGEN_BITSET *isa;
-  int mach;
-  int endian;
-  CGEN_CPU_DESC cd;
-} cpu_desc_list;
+  operand_internal (opnd, opnd_sz, buf, 1);
+}
+
+
+static void
+print_insn_fmt1 (bfd_vma pc ATTRIBUTE_UNUSED, unsigned int insn,
+		 int major, int ext, disassemble_info *info)
+{
+  enum sub_fmt_t { I, Z, S, D, B, P };  /* Inv, Zero, Src, Dest, Both S&D, PDEC */
+  static int sub_fmt[2][32] =
+    {{ I, Z, D, D, S, D, S, S,
+      B, D, B, B, B, B, B, B,
+      B, D, B, B, B, B, D, B,
+      B, B, B, B, B, B, P, B },
+     {B, B, B, B, B, B, I, I,
+      I, I, I, I, I, I, I, I,
+      I, I, I, I, I, I, I, I,
+      I, I, I, I, I, I, I, I }};
+  static int sopnd_sz_tab[2][32] =
+    {{ 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2, 4, 2, 4, 1,
+       4, 4, 4, 4, 4, 2, 4, 1, 2, 4, 4, 4, 4, 2, 4, 1 },
+     { 4, 2, 1, 4, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }};
+  static int dopnd_sz_tab[2][32] =
+    {{ 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 2, 4, 2, 4, 1,
+       4, 4, 4, 4, 4, 2, 4, 1, 2, 4, 4, 4, 4, 4, 4, 4 },
+     { 4, 2, 1, 4, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }};
+  unsigned int source = insn & 0x000007ff;
+  unsigned int dest = (insn >> 16) & 0x7ff;
+  char sbuf[30], dbuf[30];
+  int sopnd_sz = sopnd_sz_tab[major][ext];
+  int dopnd_sz = dopnd_sz_tab[major][ext];
+
+  switch (sub_fmt[major][ext])
+    {
+       case Z:		/* Zero operands */
+	 (*info->fprintf_func) (info->stream, "%s",
+				op_fmt1[major][ext]);
+	 break;
+
+       case S:		/* Source operand */
+	 operand (source, sopnd_sz, sbuf);
+	(*info->fprintf_func) (info->stream, "%s %s",
+				op_fmt1[major][ext], sbuf);
+	 break;
+
+       case D:		/* Destination operand */
+	 operand (dest, dopnd_sz, dbuf);
+	 (*info->fprintf_func) (info->stream, "%s %s",
+				op_fmt1[major][ext], dbuf);
+	 break;
+
+       case B:		/* Both source and destination operands */
+	 operand (source, sopnd_sz, sbuf);
+	 operand (dest, dopnd_sz, dbuf);
+	 (*info->fprintf_func) (info->stream, "%s %s,%s",
+				op_fmt1[major][ext], dbuf, sbuf);
+	 break;
+
+       case P:		/* PDEC operand */
+	 pdec_operand (source, sopnd_sz, sbuf);
+	 operand (dest, dopnd_sz, dbuf);
+	 (*info->fprintf_func) (info->stream, "%s %s,%s",
+				op_fmt1[major][ext], dbuf, sbuf);
+	 break;
+
+       default:
+	 (*info->fprintf_func) (info->stream, "*unknown*");
+	 break;
+    }
+}
+
+static void
+print_insn_fmt2 (bfd_vma pc ATTRIBUTE_UNUSED, unsigned int insn,
+		 int major, int ext ATTRIBUTE_UNUSED,
+		 disassemble_info *info)
+{
+  unsigned int source = insn & 0x000007ff;
+  unsigned int dest = (insn >> 16) & 0x7ff;
+  unsigned int bitn = (insn >> 11) & 0x1f;
+  char sbuf[30], dbuf[30];
+  char *op;
+
+  operand (source, 4, sbuf);
+  operand (dest, 4, dbuf);
+  op = op_fmt2[major];
+  if (op == NULL)
+    op = "*unknown*";
+
+  (*info->fprintf_func) (info->stream, "%s %s,%s,#0x%x", op, dbuf,
+			 sbuf, bitn);
+}
+
+static void
+print_insn_fmt3 (bfd_vma pc ATTRIBUTE_UNUSED, unsigned int insn,
+		 int major, int ext, disassemble_info *info)
+{
+  static int opnd_sz_tab[2][32] =
+    {{ 0, 0, 0, 0, 0, 0, 0, 0,
+       2, 4, 2, 4, 2, 4, 2, 4,
+       4, 2, 4, 4, 4, 4, 4, 0,
+       0, 0, 0, 0, 0, 0, 0, 0 },
+     { 0, 0, 0, 0, 0, 0, 0, 0,
+       1, 4, 1, 4, 1, 4, 1, 4,
+       4, 1, 4, 4, 4, 4, 4, 0,
+       0, 0, 0, 0, 0, 0, 0, 0 }};
+  unsigned int source = insn & 0x000007ff;
+  unsigned int dest = (insn >> 16) & 0x7ff;
+  unsigned int src2 = (insn >> 11) & 0x0f;
+  char sbuf[30], dbuf[30];
+  char *op;
+  int opnd_sz = opnd_sz_tab[ext][major];
+
+  operand (source, opnd_sz, sbuf);
+  operand (dest, opnd_sz, dbuf);
+  op = op_fmt3[ext][major];
+  if (op == NULL)
+    op = "*unknown*";
+
+  (*info->fprintf_func) (info->stream, "%s %s,%s,d%d", op, dbuf,
+			 sbuf, src2);
+}
+
+static void
+print_insn_fmt4 (bfd_vma pc ATTRIBUTE_UNUSED, unsigned int insn,
+		 int major ATTRIBUTE_UNUSED, int ext,
+		 disassemble_info *info)
+{
+  static int opnd_sz_tab[32] =
+    { 4, 4, 4, 4, 0, 4, 4, 0,
+      4, 4, 1, 1, 1, 0, 0, 0,
+      4, 2, 4, 2, 4, 2, 4, 0,
+      4, 0, 4, 0, 4, 0, 2, 1 };
+  unsigned int source = insn & 0x000007ff;
+  unsigned int dreg = (insn >> 16) & 0x0f;
+  unsigned int cnt  = (insn >> 11) & 0x1f;
+  unsigned int flag = (insn >> 26) & 0x01;
+  char sbuf[30];
+  char *op;
+  int opnd_sz = opnd_sz_tab[ext];
+
+  operand (source, opnd_sz, sbuf);
+  op = op_fmt4[ext];
+  if (op == NULL)
+    op = "*unknown*";
+
+  if (ext == 0x06)	/* btst */
+    {
+      if (flag)
+	(*info->fprintf_func) (info->stream, "%s %s,d%d", op,
+			       sbuf, cnt);
+      else
+	(*info->fprintf_func) (info->stream, "%s %s,#0x%x", op,
+			       sbuf, cnt);
+    }
+  else
+    {
+      if (flag)
+	(*info->fprintf_func) (info->stream, "%s d%d,%s,d%d", op,
+			       dreg, sbuf, cnt);
+      else
+	(*info->fprintf_func) (info->stream, "%s d%d,%s,#0x%x", op,
+			       dreg, sbuf, cnt);
+    }
+}
+
+static void
+print_insn_fmt5 (bfd_vma pc ATTRIBUTE_UNUSED, unsigned int insn,
+		 int major ATTRIBUTE_UNUSED, int ext ATTRIBUTE_UNUSED,
+		 disassemble_info *info)
+{
+  unsigned int source = insn & 0x000007ff;
+  int imm = (insn >> 11) & 0xffff;
+  char sbuf[30];
+
+  if (imm & 0x8000)
+    imm |= -0x10000;
+
+  operand (source, 2, sbuf);
+  (*info->fprintf_func) (info->stream, "cmpi %s,#%d", sbuf, imm);
+}
+
+static void
+print_insn_fmt6 (bfd_vma pc ATTRIBUTE_UNUSED, unsigned int insn,
+		 int major ATTRIBUTE_UNUSED, int ext ATTRIBUTE_UNUSED,
+		 disassemble_info *info)
+{
+  unsigned int dest = (insn >> 16) & 0x7ff;
+  int imm = insn & 0x0000ffff;
+  char dbuf[30];
+
+  if (imm & 0x8000)
+    imm |= -0x10000;
+
+  operand (dest, 2, dbuf);
+  if (dest == 0 && imm == 0)
+    (*info->fprintf_func) (info->stream, "nop");
+  else
+    (*info->fprintf_func) (info->stream, "movei %s,#%d", dbuf, imm);
+}
+
+static void
+print_insn_fmt7 (bfd_vma pc, unsigned int insn,
+		 int major ATTRIBUTE_UNUSED, int ext ATTRIBUTE_UNUSED,
+		 disassemble_info *info)
+{
+  static char *cond[16] =
+    { "f",  "lo", "hs", "eq", "ge", "gt", "hi", "le",
+      "ls", "lt", "mi", "ne", "pl", "t",  "vc", "vs" };
+
+  int offset = insn & 0x001fffff;
+  unsigned int c = (insn >> 21) & 0x01;
+  unsigned int p = (insn >> 22) & 0x01;
+  unsigned int cc = (insn >> 23) & 0x0f;
+
+  (*info->fprintf_func) (info->stream, "jmp%s%s%s ", cond[cc],
+			 (c ? "" : ".s"),
+			 (p ? ".t" : ".f"));
+  offset = pc + (offset << 2);
+  (*info->print_address_func) (offset, info);
+}
+
+static void
+print_insn_fmt8 (bfd_vma pc, unsigned int insn, int major,
+		 int ext ATTRIBUTE_UNUSED, disassemble_info *info)
+{
+  unsigned int ofs21 = insn & 0x001fffff;
+  unsigned int areg = (insn >> 21) & 0x07;
+  unsigned int ofs3 = (insn >> 24) & 0x07;
+  int offset = (ofs3 << 21) | ofs21;
+
+  if (major == 0x1b)		/* call*/
+    {
+      offset = pc + (offset << 2);
+      (*info->fprintf_func) (info->stream, "call %s,#%%hi(0x%08x)  0x",
+			     areg_names[areg], offset);
+    }
+  else if (major == 0x1c)	/* moveai */
+    {
+      offset = offset << 7;
+      (*info->fprintf_func) (info->stream, "moveai %s,#%%hi(0x%08x)  0x",
+			     areg_names[areg], offset);
+    }
+  else if (major == 0x1d)	/* moveaih */
+    {
+      offset =  (offset << 7 | 0x80000000);
+      (*info->fprintf_func) (info->stream, "moveai %s,#%%hi(0x%08x)  0x",
+			     areg_names[areg], offset);
+    }
+  else
+    (*info->fprintf_func) (info->stream, "*unknown* ");
+
+  (*info->print_address_func) (offset, info);
+
+}
+
+static void
+print_insn_fmt9 (bfd_vma pc ATTRIBUTE_UNUSED,
+		 unsigned int insn ATTRIBUTE_UNUSED,
+		 int major ATTRIBUTE_UNUSED, int ext,
+		 disassemble_info *info)
+{
+  char *op = "*unknown*";
+  int ofs1 = (insn & 0x07000000) >> 24;
+  unsigned int an = (insn & 0x00e00000) >> 21;
+  int ofs2 = (insn & 0x001f0000) >> 16;
+  int ofs3 = (insn & 0x00000700) >> 8;
+  unsigned int am = (insn & 0x000000e0) >> 5;
+  int ofs4 = (insn & 0x0000001f);
+  int offset = ((ofs1 << 13) | (ofs2 << 8) | (ofs3 << 5) | ofs4) << 2;
+
+  if (offset & 0x20000)
+    offset |= -0x40000;
+
+  if (ext == 0x00)
+    op = "calli";
+  else if (ext == 0x01)
+    op = "leai";
+  else if (ext == 0x02)
+    op = "calli.b";
+
+  (*info->fprintf_func) (info->stream, "%s %s,%d(%s)", op,
+			 areg_names[an], offset, areg_names[am]);
+}
+
+static void
+print_insn_fmt10 (bfd_vma pc ATTRIBUTE_UNUSED,
+		  unsigned int insn ATTRIBUTE_UNUSED,
+		  int major ATTRIBUTE_UNUSED, int ext,
+		  disassemble_info *info)
+{
+  unsigned int imm_flag = (insn & 0x04000000) >> 26;
+  unsigned int dsp_ctrl = (insn & 0x001f0000) >> 16;  /* CTS0A flags */
+  unsigned int imm = (insn & 0x0000f800) >> 11;
+  unsigned int sreg = (insn & 0x00007800) >> 11;
+  unsigned int source = insn & 0x7ff;
+  char *op = op_fmt10[ext];
+  char *dest = (dsp_ctrl & 0x01) ? "acc1" : "acc0";
+  char *src2 = (dsp_ctrl & 0x04) ? "acc" : "d";
+  char *accx = (dsp_ctrl & 0x08) ? "_lo" : "";
+  char *clip = (dsp_ctrl & 0x08) ? ".c" : "";
+  char sbuf[30];
+
+  if (op == 0)
+    op = "*unknown*";
+
+  operand (source, 4, sbuf);
+
+  if (imm_flag == 0)
+    (*info->fprintf_func) (info->stream, "%s%s %s,%s%s,#%d", op, clip,
+			   dest, accx, sbuf, imm);
+  else
+    (*info->fprintf_func) (info->stream, "%s%s %s%s,%s,%s%d", op, clip,
+			   dest, accx, sbuf, src2, sreg);
+}
+
+static char * acc32_regs[] = { "acc0_lo", "acc0_hi", "acc1_lo", "acc1_hi" };
+static char * acc64_regs[] = { "acc0", "acc1" };
+
+static void
+put_fps32 (char *buf, unsigned int fps32)
+{
+  if (fps32 & 0x10)
+    strcpy (buf, acc32_regs[fps32 & 0x03]);
+  else
+    sprintf (buf, "d%d", fps32 & 0xf);
+}
+
+static void
+put_fps64 (char *buf, unsigned int fps64)
+{
+  if (fps64 & 0x8)
+    strcpy (buf, acc64_regs[fps64 & 0x1]);
+  else
+    sprintf (buf, "d%d", (fps64 & 0x7) << 1);
+}
+
+static void
+print_insn_fmt11_12 (bfd_vma pc ATTRIBUTE_UNUSED,
+		     unsigned int insn ATTRIBUTE_UNUSED,
+		     int major ATTRIBUTE_UNUSED, int ext ATTRIBUTE_UNUSED,
+		     disassemble_info *info)
+{
+  unsigned int d = (insn >> 16) & 0x3;
+  unsigned int s2 = (insn >> 11) & 0x1f;
+  unsigned int source = insn & 0x7ff;
+  unsigned int s1 = (insn >> 1) & 0xf;
+  char *op = op_fmt11_12[ext];
+  unsigned int fmt = op_fmt11_12_sub[ext];
+  char *dest;
+  char sbuf[30];
+  char s1buf[10];
+  char s2buf[10];
+
+
+  switch (fmt)
+    {
+      case FMT_11A:
+	dest = acc32_regs[d];
+	operand (source, 4, sbuf);
+	put_fps32 (s2buf, s2);
+	(*info->fprintf_func) (info->stream, "%s %s,%s,%s", op, dest, sbuf, s2buf);
+	break;
+
+      case FMT_11B:
+	dest = acc64_regs[d >> 1];
+	operand (source, 4, sbuf);
+	(*info->fprintf_func) (info->stream, "%s %s,%s", op, dest, sbuf);
+	break;
+
+      case FMT_11C:
+	dest = acc32_regs[d];
+	operand (source, 4, sbuf);
+	(*info->fprintf_func) (info->stream, "%s %s,%s", op, dest, sbuf);
+	break;
+
+      case FMT_11D:
+	operand (source, 4, sbuf);
+	put_fps32 (s2buf, s2);
+	(*info->fprintf_func) (info->stream, "%s %s,%s", op, sbuf, s2buf);
+	break;
+
+      case FMT_12A:
+	dest = acc64_regs[d >> 1];
+	put_fps64 (s2buf, s2 >> 1);
+	put_fps64 (s1buf, s1);
+	(*info->fprintf_func) (info->stream, "%s %s,%s,%s", op, dest, s1buf, s2buf);
+	break;
+
+      case FMT_12B:
+	dest = acc32_regs[d];
+	put_fps64 (s1buf, s1);
+	(*info->fprintf_func) (info->stream, "%s %s,%s", op, dest, s1buf);
+	break;
+
+      case FMT_12C:
+	dest = acc64_regs[d >> 1];
+	put_fps64 (s1buf, s1);
+	(*info->fprintf_func) (info->stream, "%s %s,%s", op, dest, s1buf);
+	break;
+
+      case FMT_12D:
+	put_fps64 (s2buf, s2 >> 1);
+	put_fps64 (s1buf, s1);
+	(*info->fprintf_func) (info->stream, "%s %s,%s", op, s1buf, s2buf);
+	break;
+
+      default:
+	 (*info->fprintf_func) (info->stream, "*unknown*");
+	 break;
+    }
+}
+
+typedef void (*print_format_t)(bfd_vma pc, unsigned int insn,
+			       int major, int ext,
+			       disassemble_info *info);
+static print_format_t print_format[12] =
+  { NULL, print_insn_fmt1, print_insn_fmt2, print_insn_fmt3,
+    print_insn_fmt4, print_insn_fmt5, print_insn_fmt6,
+    print_insn_fmt7, print_insn_fmt8, print_insn_fmt9,
+    print_insn_fmt10, print_insn_fmt11_12 };
 
 int
 print_insn_ubi32 (bfd_vma pc, disassemble_info *info)
 {
-  static cpu_desc_list *cd_list = 0;
-  cpu_desc_list *cl = 0;
-  static CGEN_CPU_DESC cd = 0;
-  static CGEN_BITSET *prev_isa;
-  static int prev_mach;
-  static int prev_endian;
-  int length;
-  CGEN_BITSET *isa;
-  int mach;
-  int endian = (info->endian == BFD_ENDIAN_BIG
-		? CGEN_ENDIAN_BIG
-		: CGEN_ENDIAN_LITTLE);
-  enum bfd_architecture arch;
+  bfd_byte buf[4];   /* All Ubi32 instructions are 4 bytes. */
+  int status;
+  unsigned int insn;
+  int major_opcode, opcode_extension = 0;
+  int sz, ofs, format;
+  char *op ATTRIBUTE_UNUSED;
+	
+  info->bytes_per_chunk = 4;
 
-  /* ??? gdb will set mach but leave the architecture as "unknown" */
-#ifndef CGEN_BFD_ARCH
-#define CGEN_BFD_ARCH bfd_arch_ubi32
-#endif
-  arch = info->arch;
-  if (arch == bfd_arch_unknown)
-    arch = CGEN_BFD_ARCH;
+  status = (*info->read_memory_func) (pc, buf, 4, info);
 
-  /* There's no standard way to compute the machine or isa number
-     so we leave it to the target.  */
-#ifdef CGEN_COMPUTE_MACH
-  mach = CGEN_COMPUTE_MACH (info);
-#else
-  mach = info->mach;
-#endif
-
-#ifdef CGEN_COMPUTE_ISA
-  {
-    static CGEN_BITSET *permanent_isa;
-
-    if (!permanent_isa)
-      permanent_isa = cgen_bitset_create (MAX_ISAS);
-    isa = permanent_isa;
-    cgen_bitset_clear (isa);
-    cgen_bitset_add (isa, CGEN_COMPUTE_ISA (info));
-  }
-#else
-  isa = info->insn_sets;
-#endif
-
-  /* If we've switched cpu's, try to find a handle we've used before */
-  if (cd
-      && (cgen_bitset_compare (isa, prev_isa) != 0
-	  || mach != prev_mach
-	  || endian != prev_endian))
+  if (status != 0)
     {
-      cd = 0;
-      for (cl = cd_list; cl; cl = cl->next)
-	{
-	  if (cgen_bitset_compare (cl->isa, isa) == 0 &&
-	      cl->mach == mach &&
-	      cl->endian == endian)
-	    {
-	      cd = cl->cd;
- 	      prev_isa = cd->isas;
-	      break;
-	    }
-	}
+      (*info->memory_error_func) (status, pc, info);
+      return -1;
     }
 
-  /* If we haven't initialized yet, initialize the opcode table.  */
-  if (! cd)
-    {
-      const bfd_arch_info_type *arch_type = bfd_lookup_arch (arch, mach);
-      const char *mach_name;
+  insn = bfd_get_bits (buf, 32, info->endian == BFD_ENDIAN_BIG);
 
-      if (!arch_type)
-	abort ();
-      mach_name = arch_type->printable_name;
+  major_opcode = insn >> 27 & 0x1f;
 
-      prev_isa = cgen_bitset_copy (isa);
-      prev_mach = mach;
-      prev_endian = endian;
-      cd = ubi32_cgen_cpu_open (CGEN_CPU_OPEN_ISAS, prev_isa,
-				 CGEN_CPU_OPEN_BFDMACH, mach_name,
-				 CGEN_CPU_OPEN_ENDIAN, prev_endian,
-				 CGEN_CPU_OPEN_END);
-      if (!cd)
-	abort ();
+  /* Extract opcode extension or alternate format flags. */
+  format = translate_opcode_to_format[major_opcode].format;
+  ofs = translate_opcode_to_format[major_opcode].offset;
+  sz = translate_opcode_to_format[major_opcode].size;
+  if (sz != 0)
+    opcode_extension = insn >> ofs & ((1 << sz) - 1);
 
-      /* Save this away for future reference.  */
-      cl = xmalloc (sizeof (struct cpu_desc_list));
-      cl->cd = cd;
-      cl->isa = prev_isa;
-      cl->mach = mach;
-      cl->endian = endian;
-      cl->next = cd_list;
-      cd_list = cl;
+  if (format > 0 && format <= 12)
+    print_format[format](pc, insn, major_opcode, opcode_extension, info);
+  else
+    fprintf (stderr, _("Internal error decoding instruction 0x%8.8x\n"), insn);
 
-      ubi32_cgen_init_dis (cd);
-    }
-
-  /* We try to have as much common code as possible.
-     But at this point some targets need to take over.  */
-  /* ??? Some targets may need a hook elsewhere.  Try to avoid this,
-     but if not possible try to move this hook elsewhere rather than
-     have two hooks.  */
-  length = CGEN_PRINT_INSN (cd, pc, info);
-  if (length > 0)
-    return length;
-  if (length < 0)
-    return -1;
-
-  (*info->fprintf_func) (info->stream, UNKNOWN_INSN_MSG);
-  return cd->default_insn_bitsize / 8;
+  return 4;	
 }
