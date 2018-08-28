@@ -87,6 +87,9 @@ extern void tc_ubi32_frame_initial_instructions (void);
 /* We want .cfi_* pseudo-ops for generating unwind info.  */
 #define TARGET_USE_CFIPOP   (ubi32_mach == bfd_mach_ubi32v6 || ubi32_mach == bfd_mach_ubi32v61)
 
+/* Relocs are generated for .eh_frame.  */
+#define DWARF2_FDE_RELOC_ENCODING(enc) 0
+
 /* CFI hooks.  */
 #define tc_regname_to_dw2regnum            tc_ubi32_regname_to_dw2regnum
 #define tc_cfi_frame_initial_instructions  tc_ubi32_frame_initial_instructions
