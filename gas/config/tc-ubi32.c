@@ -709,9 +709,8 @@ op_offset_imm7_d[] =
   { NULL, 0, 0, 0, 0 }
 };
 
-/* FIXME -- add size limit.  */
 static const char *
-parse_immed (char **strp, int *immed, int size ATTRIBUTE_UNUSED)
+parse_immed (char **strp, int *immed)
 {
   char *endptr;
 
@@ -724,13 +723,37 @@ parse_immed (char **strp, int *immed, int size ATTRIBUTE_UNUSED)
   return _("invalid number");
 }
 
-/* FIXME -- offset signed?  unsigned?  */
-static const char *
-parse_offset (char **strp, int *offset, enum op_scale_t scale, int size ATTRIBUTE_UNUSED)
+/* Validate scaled signed or unsigned integer.
+   Returned values:
+     0 -- valid
+     1 -- out of range
+     2 -- unaligned 		*/
+static int
+validate_value (int value, int size, int scale, int sign)
 {
+  int bitmask = ~0 << (sign ? size - 1 : size);
+  int scalemask = ~(~0 << scale);
+
+  if (sign == 0 && value < 0)
+    return 1;  /* Number out of range.  */
+  if (value & scalemask)
+    return 2;  /* Number unaligned.  */
+  value >>= scale;
+  if ((value & bitmask) != 0 && (value & bitmask) != bitmask)
+    return 1;  /* Number out of range.  */
+  return 0;
+}
+
+/* FIXME -- offset signed?  unsigned?  */
+/* FIXME -- replace use with parse_offset_operand.  */
+static const char *
+parse_offset (char **strp, int *offset, enum op_scale_t scale, int size)
+{
+  static const char *error[3] = {"valid", "offset out of bounds", "offset unaligned" };
   const char *errmsg = NULL;
   int value;
   struct op_offset_tab_t *op = op_offset_tab;
+  int eno;
 
   if (**strp == '%')
     {
@@ -754,7 +777,12 @@ parse_offset (char **strp, int *offset, enum op_scale_t scale, int size ATTRIBUT
       return _("unrecognized %% operator");
     }
 
-  return parse_immed (strp, offset, size);
+  if ((errmsg = parse_immed (strp, offset)))
+    return errmsg;
+
+  if ((eno = validate_value (*offset, size, scale, 0)) == 0)
+    return NULL;
+  else return error[eno];
 }
 
 /* FIXME -- offset signed?  unsigned?  */
@@ -841,10 +869,10 @@ parse_bitcnt (char **strp, int *immed)
 	break;
 
       case BT_BIT:		/* Convert bitmask to bit position */
-	if (value == 0)
-	  return _("attempt to find bit index of 0");
 	/* FALLTHROUGH */
       case BT_MSB:		/* Find Most Significant Bit in pattern. */
+	if (value == 0)
+	  return _("attempt to find bit index of 0");
 	retval = 31;
 	while ((value & 0x80000000) == 0)
 	  {
@@ -857,6 +885,8 @@ parse_bitcnt (char **strp, int *immed)
 
       case BT_LSB:		/* Find Least Significant Bit in pattern. */
 	retval = 0;
+	if (value == 0)
+	  return _("attempt to find bit index of 0");
 	while ((value & 0x00000001) == 0)
 	  {
 	    retval++;
@@ -872,15 +902,17 @@ parse_bitcnt (char **strp, int *immed)
 
 /* FIXME -- fill in addr struct. */
 /* Parse source or destination -- "Addressing modes" in ISA doc.  */
-static char *
+static const char *
 parse_addr_operand (char **strp, struct operand_t *opnd, enum op_scale_t scale, int pdec_encoding,
 		    struct op_offset_tab_t *optab)
 {
+  static const char *error[3] = {"valid", "out of bounds increment", "unaligned increment" };
   char *save_str = *strp;
   int reg, areg, dreg;
   int value;
   int immed;
   struct operand_t temp;
+  int eno;
 
   memset (opnd, 0, sizeof (struct operand_t));
 
@@ -928,11 +960,13 @@ parse_addr_operand (char **strp, struct operand_t *opnd, enum op_scale_t scale, 
   if (!parse_literal (strp, '(')				/* 010 (<areg>)<ofs>++  M=0	*/
       && !parse_areg (strp, &areg)
       && !parse_literal (strp, ')')
-      && !parse_immed (strp, &immed, 4)
+      && !parse_immed (strp, &immed)
       && !parse_literal (strp, '+')
       && !parse_literal (strp, '+')
       && (**strp == '\0' || **strp == ','))
     {
+      if ((eno = validate_value (immed, 4, scale, 1)))
+	return error[eno];
       opnd->value = 0x200;
       immed >>= scale;
       insert_bits (&opnd->value, areg, 5, 3);
@@ -965,7 +999,7 @@ parse_addr_operand (char **strp, struct operand_t *opnd, enum op_scale_t scale, 
     }
 
   *strp = save_str;
-  if (!parse_immed (strp, &value, 4)				/* 010 <ofs>(<areg>)++  M=1	*/
+  if (!parse_immed (strp, &immed)				/* 010 <ofs>(<areg>)++  M=1	*/
       && !parse_literal (strp, '(')
       && !parse_areg (strp, &areg)
       && !parse_literal (strp, ')')
@@ -973,10 +1007,12 @@ parse_addr_operand (char **strp, struct operand_t *opnd, enum op_scale_t scale, 
       && !parse_literal (strp, '+')
       && (**strp == '\0' || **strp == ','))
     {
+      if ((eno = validate_value (immed, 4, scale, 1)))
+	return error[eno];
       opnd->value = 0x210;
-      value >>= scale;
+      immed >>= scale;
       insert_bits (&opnd->value, areg, 5, 3);
-      insert_bits (&opnd->value, value, 0, 4);
+      insert_bits (&opnd->value, immed, 0, 4);
       return NULL;
     }
 
@@ -1358,7 +1394,8 @@ void
 md_assemble (char *str)
 {
   struct op_table_t *insn;
-  char *op_start, *op_end, *op;
+  char *op_start = str;
+  char *op_end, *op;
   int len;
   int immed;
   int an, am, s1, s2, acc, d;
@@ -1369,6 +1406,7 @@ md_assemble (char *str)
   struct operand_t sopnd;
   struct operand_t s2opnd;
   const char *msg = _("unrecognized instruction");
+  int eno;
 
 /* FIXME -- not needed? */
   /* Skip leading whitespace.  */
@@ -1386,7 +1424,7 @@ md_assemble (char *str)
 
   if (!insn)
     {
-      as_bad (_("unknown opcode"));
+      as_bad (_("unknown opcode '%s'"), str);
       return;
     }
 
@@ -1458,41 +1496,35 @@ md_assemble (char *str)
 	break;
 
       case FMT_4A:
-	if (!(msg = parse_dreg (&op_end, &d))
-	    && !(msg = parse_literal (&op_end, ','))
-	    && !(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
+	if ((msg = parse_dreg (&op_end, &d))
+	    || (msg = parse_literal (&op_end, ',')))
+	  break;
+	/* FALLTHROUGH */
+      case FMT_4B:
+	/* BTST -- implicit destination.  */
+	if (insn->format == FMT_4B)
+	  d = 0;
+	if (!(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
 					   op_offset_imm7_s))
 	    && !(msg = parse_literal (&op_end, ',')))
 	  {
-	    if (!(msg = parse_literal (&op_end, '#'))
-		&& !(msg = parse_bitcnt (&op_end, &immed)))
+	    if (!(msg = parse_literal (&op_end, '#')))
 	      {
-	        /* immediate value.  */
-		put_fmt4 (insn, d, 0, immed, &sopnd);
+		if (!(msg = parse_immed (&op_end, &immed)))
+		  {
+		    /* immediate value.  */
+		    if (!(eno = validate_value (immed, 5, 0, 0)))
+		      {
+			put_fmt4 (insn, d, 0, immed, &sopnd);
+			break;
+		      }
+		  }
+		msg = _("invalid bit # or count");
 	      }
 	    else if (!(msg = parse_dreg (&op_end, &s2)))
 	      {
 		/* register value. */
 		put_fmt4 (insn, d, 1, s2, &sopnd);
-	      }
-	  }
-	break;
-
-      case FMT_4B:
-	if (!(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
-					   op_offset_imm7_s))
-	    && !(msg = parse_literal (&op_end, ',')))
-	  {
-	    if (!(msg = parse_literal (&op_end, '#'))
-		&& !(msg = parse_immed (&op_end, &immed, 5)))
-	      {
-	        /* immediate value.  */
-		put_fmt4 (insn, 0, 0, immed, &sopnd);
-	      }
-	    else if (!(msg = parse_dreg (&op_end, &s2)))
-	      {
-		/* register value. */
-		put_fmt4 (insn, 0, 1, s2, &sopnd);
 	      }
 	  }
 	break;
@@ -1678,7 +1710,7 @@ md_assemble (char *str)
     }
 
   if (msg)
-    as_bad ("%s", msg);
+    as_bad ("%s '%s'", msg, str);
 }
 
 /* Initialize the DWARF-2 unwind information for this procedure.  */
