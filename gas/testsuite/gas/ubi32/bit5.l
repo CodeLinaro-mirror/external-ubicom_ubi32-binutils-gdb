@@ -1,0 +1,12 @@
+.*bit5.s: Assembler messages:
+.*bit5.s:21: Error: invalid bit # or count 'lsl.1 d0,d1,#-1'
+.*bit5.s:22: Error: invalid bit # or count 'lsr.1 d0,d1,#-33'
+.*bit5.s:23: Error: invalid bit # or count 'lsr.2 d0,d1,#33'
+.*bit5.s:24: Error: invalid bit # or count 'lsr.4 d0,d1,#0x20'
+.*bit5.s:25: Error: invalid bit # or count 'bfrvrs d0,d1,#-0x0f'
+.*bit5.s:26: Error: invalid bit # or count 'merge d0,d1,#0x2f'
+.*bit5.s:27: Error: invalid bit # or count 'lsl.1 d0,d1,#%bit\(4\)'
+.*bit5.s:28: Error: invalid bit # or count 'lsl.1 d0,d1,#%msbbit\(4\)'
+.*bit5.s:29: Error: invalid bit # or count 'lsl.1 d0,d1,#%lsbbit\(4\)'
+.*bit5.s:30: Error: invalid bit # or count 'btst d0,#-1'
+.*bit5.s:31: Error: invalid bit # or count 'btst d0,#32'
