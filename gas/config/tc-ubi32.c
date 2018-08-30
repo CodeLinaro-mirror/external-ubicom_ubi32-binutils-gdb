@@ -636,20 +636,6 @@ struct op_offset_tab_t
 };
 
 static struct op_offset_tab_t
-op_offset_tab[] =
-{
-  { "%lo(",			BFD_RELOC_LO16, SZ_4, 0, 0xffff },
-  { "%hi(",			BFD_RELOC_HI16, SZ_4, 16, 0xffff },
-  { "%got_lo(", 		BFD_RELOC_UBI32_GOT_LO, SZ_4, 0, 0xffff },
-  { "%got_hi(", 		BFD_RELOC_UBI32_GOT_HI , SZ_4, 16, 0xffff},
-  { "%funcdesc_got_lo(",	BFD_RELOC_UBI32_FUNCDESC_GOT_LO , SZ_4, 0, 0xffff},
-  { "%funcdesc_got_hi(",	BFD_RELOC_UBI32_FUNCDESC_GOT_HI , SZ_4, 16, 0xffff},
-  { "%got_funcdesc_lo(",	BFD_RELOC_UBI32_FUNCDESC_GOT_LO , SZ_4, 0, 0xffff},
-  { "%got_funcdesc_hi(",	BFD_RELOC_UBI32_FUNCDESC_GOT_HI , SZ_4, 16, 0xffff},
-  { NULL, 0, 0, 0, 0 }
-};
-
-static struct op_offset_tab_t
 op_offset_imm16[] =
 {
   { "%lo(",			BFD_RELOC_LO16, SZ_0, 0, 0xffff },
@@ -709,6 +695,16 @@ op_offset_imm7_d[] =
   { NULL, 0, 0, 0, 0 }
 };
 
+static struct op_offset_tab_t
+op_offset_leai16[] =
+{
+  { "%lo(",			BFD_RELOC_UBI32_LO7_LEAI, SZ_0, 0, 0x7c },
+  { "%lo18(",			BFD_RELOC_UBI32_LO16_LEAI, SZ_0, 0, 0x0003fffc},
+  { "%got_lo(", 		BFD_RELOC_UBI32_GOT_LO_LEAI, SZ_0, 0, 0xffff },
+  { "%funcdesc_got_lo(",	BFD_RELOC_UBI32_FUNCDESC_GOT_LO_LEAI, SZ_0, 0, 0xffff},
+  { NULL, 0, 0, 0, 0 }
+};
+
 static const char *
 parse_immed (char **strp, int *immed)
 {
@@ -742,47 +738,6 @@ validate_value (int value, int size, int scale, int sign)
   if ((value & bitmask) != 0 && (value & bitmask) != bitmask)
     return 1;  /* Number out of range.  */
   return 0;
-}
-
-/* FIXME -- offset signed?  unsigned?  */
-/* FIXME -- replace use with parse_offset_operand.  */
-static const char *
-parse_offset (char **strp, int *offset, enum op_scale_t scale, int size)
-{
-  static const char *error[3] = {"valid", "offset out of bounds", "offset unaligned" };
-  const char *errmsg = NULL;
-  int value;
-  struct op_offset_tab_t *op = op_offset_tab;
-  int eno;
-
-  if (**strp == '%')
-    {
-      while (op->operator)
-        {
-	  if (strncasecmp (*strp, op->operator, strlen (op->operator)) == 0
-	      && op->scale == scale)
-	    {
-	      *strp += strlen (op->operator);
-	      if (!(errmsg = parse_address (strp, &value))
-		 && !(errmsg = parse_literal (strp, ')')))
-		{
-		  *offset = (value >> op->shift) & op->mask;
-		  return NULL;
-		}
-	      else
-		return errmsg;
-	    }
-	  op++;
-        }
-      return _("unrecognized %% operator");
-    }
-
-  if ((errmsg = parse_immed (strp, offset)))
-    return errmsg;
-
-  if ((eno = validate_value (*offset, size, scale, 0)) == 0)
-    return NULL;
-  else return error[eno];
 }
 
 /* FIXME -- offset signed?  unsigned?  */
@@ -1079,9 +1034,6 @@ finish_insn (unsigned int value)
 {
   char *frag;
 
-#if 0
-  printf ("finish_insn (0x%8.8x)\n", value);
-#endif
   frag = frag_more (4);
 /* FIXME -- is this needed and what does it do?
  * if (result)
@@ -1255,19 +1207,20 @@ put_fmt8 (struct op_table_t *insn, int areg, struct operand_t *offset)
 }
 
 static void
-put_fmt9 (struct op_table_t *insn, int anreg, int amreg, int offset)
+put_fmt9 (struct op_table_t *insn, int anreg, int amreg, struct operand_t *offset)
 {
   int buf = insn->instruction;
-
-  offset = offset >> insn->scale;
+  char *frag;
+  int value = offset->value >> insn->scale;
 
   insert_bits (&buf, anreg, 21, 3);
   insert_bits (&buf, amreg, 5, 3);
-  insert_bits (&buf, offset & 0x1f, 0, 5);
-  insert_bits (&buf, (offset >> 5) & 0x7, 8, 3);
-  insert_bits (&buf, (offset >> 8) & 0x1f, 16, 5);
-  insert_bits (&buf, (offset >> 13) & 0x7, 24, 3);
-  finish_insn (buf);
+  insert_bits (&buf, value & 0x1f, 0, 5);
+  insert_bits (&buf, (value >> 5) & 0x7, 8, 3);
+  insert_bits (&buf, (value >> 8) & 0x1f, 16, 5);
+  insert_bits (&buf, (value >> 13) & 0x7, 24, 3);
+  frag = finish_insn (buf);
+  add_fixup (frag, offset);
 }
 
 /* FIXME - handle immediate source. */
@@ -1400,7 +1353,6 @@ md_assemble (char *str)
   int immed;
   int an, am, s1, s2, acc, d;
   int cc, sw, pred;
-  int offset;
   struct operand_t offset_op;
   struct operand_t dopnd;
   struct operand_t sopnd;
@@ -1591,12 +1543,13 @@ md_assemble (char *str)
       case FMT_9:
 	if (!(msg = parse_areg (&op_end, &an))
 	    && !(msg = parse_literal (&op_end, ','))
-	    && !(msg = parse_offset (&op_end, &offset, insn->scale, 16))
+	    && !(msg = parse_offset_operand (&op_end, &offset_op, 16, insn->scale,
+					     op_offset_leai16))
 	    && !(msg = parse_literal (&op_end, '('))
 	    && !(msg = parse_areg (&op_end, &am))
 	    && !(msg = parse_literal (&op_end, ')')))
 	  {
-	    put_fmt9 (insn, an, am, offset);
+	    put_fmt9 (insn, an, am, &offset_op);
 	  }
 	break;
 
