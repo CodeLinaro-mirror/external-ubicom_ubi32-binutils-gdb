@@ -1408,16 +1408,9 @@ md_assemble (char *str)
   const char *msg = _("unrecognized instruction");
   int eno;
 
-/* FIXME -- not needed? */
-  /* Skip leading whitespace.  */
-  while (ISSPACE (*str))
-    str++;
-
   /* Find end of op code.  */
-  for (op_start = op_end = str;
-       *op_end && !is_end_of_line[(unsigned char) *op_end] && *op_end != ' ';
-       op_end++)
-    ;
+  if (!(op_end = strchr (str, ' ')))
+    op_end = strchr (str, 0);
 
   len = op_end - op_start;
   insn = ubi32_lookup_insn (op_start, len, ubi32_version);
