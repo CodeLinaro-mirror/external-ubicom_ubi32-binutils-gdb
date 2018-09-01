@@ -445,6 +445,8 @@ parse_register_1 (char **strp, int *regno, enum reg_class class)
   unsigned len = 0;
   struct reg_table_t *reg;
   char regname[20];
+  int value;
+  char *endp;
 
   while (len < sizeof (regname)
          && (ISALNUM((*strp)[len]) || (*strp)[len] == '_'))
@@ -462,7 +464,20 @@ parse_register_1 (char **strp, int *regno, enum reg_class class)
       return NULL;
     }
 
-  return _("invalid register name");
+  if (ISXDIGIT (**strp))
+    {
+      value = strtol (*strp, &endp, 0);
+      if (*endp == '\0')
+	{
+	  if ((value & 0x3) != 0)
+	    return _("register address invalid");
+	  *regno = value >> 2;
+	  *strp += len;
+	  return NULL;
+	}
+    }
+
+  return _("invalid register");
 }
 
 /* Parse any register.  */
@@ -576,7 +591,7 @@ parse_address (char **strp, int *addr)
       default:
 	// FIXME:	queue_fixup (exp);
 	// FIXME: Are expressions allowed?
-        gas_assert (0);
+        return _("illegal symbol");
 	break;
     }
 
@@ -868,18 +883,22 @@ parse_addr_operand (char **strp, struct operand_t *opnd, enum op_scale_t scale, 
   int immed;
   struct operand_t temp;
   int eno;
+  const char *msg = _("invalid address");
 
   memset (opnd, 0, sizeof (struct operand_t));
 
-  if (!parse_literal (strp, '#')				/* 000 #<8-bit signed immed>	*/
-      && !parse_address (strp, &opnd->value))
+  if (!parse_literal (strp, '#'))				/* 000 #<8-bit signed immed>	*/
     {
-      opnd->value &= 0xff;
-      return NULL;
+      if (!(msg = parse_address (strp, &opnd->value)))
+	{
+	  opnd->value &= 0xff;
+	  return NULL;
+	}
+      return msg;
     }
 
   *strp = save_str;
-  if (!parse_register (strp, &reg))				/* 001 <reg>			*/
+  if (!(msg = parse_register (strp, &reg)))			/* 001 <reg>			*/
     {
       opnd->value = 0x100;
       insert_bits (&opnd->value, reg, 0, 8);
@@ -888,7 +907,7 @@ parse_addr_operand (char **strp, struct operand_t *opnd, enum op_scale_t scale, 
 
   *strp = save_str;
   if (!parse_literal (strp, '(')				/* 1xx (<areg>)			*/
-      && !parse_areg (strp, &areg)
+      && !(msg = parse_areg (strp, &areg))
       && !parse_literal (strp, ')')
       && (**strp == '\0' || **strp == ','))
     {
@@ -899,9 +918,9 @@ parse_addr_operand (char **strp, struct operand_t *opnd, enum op_scale_t scale, 
 
   *strp = save_str;
   if (!parse_literal (strp, '(')				/* 011 (<areg>,<dreg>)		*/
-      && !parse_areg (strp, &areg)
+      && !(msg = parse_areg (strp, &areg))
       && !parse_literal (strp, ',')
-      && !parse_dreg (strp, &dreg)
+      && !(msg = parse_dreg (strp, &dreg))
       && !parse_literal (strp, ')')
       && (**strp == '\0' || **strp == ','))
     {
@@ -913,9 +932,9 @@ parse_addr_operand (char **strp, struct operand_t *opnd, enum op_scale_t scale, 
 
   *strp = save_str;
   if (!parse_literal (strp, '(')				/* 010 (<areg>)<ofs>++  M=0	*/
-      && !parse_areg (strp, &areg)
+      && !(msg = parse_areg (strp, &areg))
       && !parse_literal (strp, ')')
-      && !parse_immed (strp, &immed)
+      && !(msg = parse_immed (strp, &immed))
       && !parse_literal (strp, '+')
       && !parse_literal (strp, '+')
       && (**strp == '\0' || **strp == ','))
@@ -931,9 +950,9 @@ parse_addr_operand (char **strp, struct operand_t *opnd, enum op_scale_t scale, 
 
   *strp = save_str;
   /* FIXME -- unsigned value.  */
-  if (!parse_offset_operand (strp, &temp, 7, scale, optab)	/* 1xx <ofs>(<areg>)	*/
+  if (!(msg = parse_offset_operand (strp, &temp, 7, scale, optab))  /* 1xx <ofs>(<areg>)	*/
       && !parse_literal (strp, '(')
-      && !parse_areg (strp, &areg)
+      && !(msg = parse_areg (strp, &areg))
       && !parse_literal (strp, ')')
       && (**strp == '\0' || **strp == ','))			/* FIXME -- is this valid?  */
     {
@@ -956,7 +975,7 @@ parse_addr_operand (char **strp, struct operand_t *opnd, enum op_scale_t scale, 
   *strp = save_str;
   if (!parse_immed (strp, &immed)				/* 010 <ofs>(<areg>)++  M=1	*/
       && !parse_literal (strp, '(')
-      && !parse_areg (strp, &areg)
+      && !(msg = parse_areg (strp, &areg))
       && !parse_literal (strp, ')')
       && !parse_literal (strp, '+')
       && !parse_literal (strp, '+')
@@ -971,7 +990,7 @@ parse_addr_operand (char **strp, struct operand_t *opnd, enum op_scale_t scale, 
       return NULL;
     }
 
-  return _("Invalid address");
+  return msg;
 }
 
 static const char *
@@ -1025,6 +1044,15 @@ parse_pred (char **strp, int *pred)
       *pred = 0;
       return NULL;
     }
+  return NULL;
+}
+
+/* Parse end-of-line.  */
+static const char *
+parse_eol (char **strp)
+{
+  if (**strp != '\0')
+    return _("junk at end of line");
   return NULL;
 }
 
@@ -1380,13 +1408,14 @@ md_assemble (char *str)
   switch (insn->format)
     {
       case FMT_1A:	/* No operands.  */
-	    put_fmt1a (insn);
-	    msg = NULL;
+	if (!(msg = parse_eol (&op_end)))
+	  put_fmt1a (insn);
 	break;
 
       case FMT_1B:	/* One operand - source.  */
 	if (!(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
-					op_offset_imm7_s)))
+					op_offset_imm7_s))
+	    && !(msg = parse_eol (&op_end)))
  	  {
 	    put_fmt1b (insn, &sopnd);
  	  }
@@ -1394,7 +1423,8 @@ md_assemble (char *str)
 
       case FMT_1C:	/* One operand - destination.  */
 	if (!(msg = parse_addr_operand (&op_end, &dopnd, insn->scale, 0,
-					op_offset_imm7_d)))
+					op_offset_imm7_d))
+	    && !(msg = parse_eol (&op_end)))
 	  {
 	    put_fmt1c (insn, &dopnd);
 	  }
@@ -1407,7 +1437,8 @@ md_assemble (char *str)
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_addr_operand (&op_end, &sopnd, insn->scale,
 					   (insn->flags & FLAG_PDEC) ? 1 : 0,
-					   op_offset_imm7_s)))
+					   op_offset_imm7_s))
+	    && !(msg = parse_eol (&op_end)))
 	  {
 	    put_fmt1d (insn, &dopnd, &sopnd);
 	  }
@@ -1421,7 +1452,8 @@ md_assemble (char *str)
 					   op_offset_imm7_s))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_literal (&op_end, '#'))
-	    && !(msg = parse_bitcnt (&op_end, &immed)))
+	    && !(msg = parse_bitcnt (&op_end, &immed))
+	    && !(msg = parse_eol (&op_end)))
 	  {
 	    put_fmt2 (insn, &dopnd, &sopnd, immed);
 	  }
@@ -1434,7 +1466,8 @@ md_assemble (char *str)
 	    && !(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
 					   op_offset_imm7_s))
 	    && !(msg = parse_literal (&op_end, ','))
-	    && !(msg = parse_dreg (&op_end, &s2)))
+	    && !(msg = parse_dreg (&op_end, &s2))
+	    && !(msg = parse_eol (&op_end)))
 	  {
 	    put_fmt3 (insn, &dopnd, &sopnd, s2);
 	  }
@@ -1455,7 +1488,8 @@ md_assemble (char *str)
 	  {
 	    if (!(msg = parse_literal (&op_end, '#')))
 	      {
-		if (!(msg = parse_immed (&op_end, &immed)))
+		if (!(msg = parse_immed (&op_end, &immed))
+		    && !(msg = parse_eol (&op_end)))
 		  {
 		    /* immediate value.  */
 		    if (!(eno = validate_value (immed, 5, 0, 0)))
@@ -1466,7 +1500,8 @@ md_assemble (char *str)
 		  }
 		msg = _("invalid bit # or count");
 	      }
-	    else if (!(msg = parse_dreg (&op_end, &s2)))
+	    else if (!(msg = parse_dreg (&op_end, &s2))
+		     && !(msg = parse_eol (&op_end)))
 	      {
 		/* register value. */
 		put_fmt4 (insn, d, 1, s2, &sopnd);
@@ -1479,7 +1514,8 @@ md_assemble (char *str)
 					   op_offset_imm7_s))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_literal (&op_end, '#'))
-	    && !(msg = parse_offset_operand (&op_end, &s2opnd, 0, SZ_2, op_offset_imm16)))
+	    && !(msg = parse_offset_operand (&op_end, &s2opnd, 0, SZ_2, op_offset_imm16))
+	    && !(msg = parse_eol (&op_end)))
 	  {
 	    put_fmt5 (insn, &s2opnd, &sopnd);
           }
@@ -1489,7 +1525,8 @@ md_assemble (char *str)
 	if (!(msg = parse_addr_operand (&op_end, &dopnd, insn->scale, 0, op_offset_imm7_d))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_literal (&op_end, '#'))
-	    && !(msg = parse_offset_operand (&op_end, &sopnd, 2, SZ_0, op_offset_imm16)))
+	    && !(msg = parse_offset_operand (&op_end, &sopnd, 2, SZ_0, op_offset_imm16))
+	    && !(msg = parse_eol (&op_end)))
 	  {
 	    /* FIXME -- movei scale for dest reg/imm is 4, not 2. */
 	    put_fmt6 (insn, &dopnd, &sopnd);
@@ -1513,7 +1550,8 @@ md_assemble (char *str)
 	      }
 	  }
 
-	if (!(msg = parse_address_operand (&op_end, &offset_op, BFD_RELOC_UBI32_21_PCREL)))
+	if (!(msg = parse_address_operand (&op_end, &offset_op, BFD_RELOC_UBI32_21_PCREL))
+	    && !(msg = parse_eol (&op_end)))
 	  {
 	    put_fmt7 (insn, cc, sw, pred, &offset_op);
 	  }
@@ -1525,10 +1563,12 @@ md_assemble (char *str)
 	    && (
 		(!(msg = parse_literal (&op_end, '#'))	/* Immediate value */
 	        && !(msg = parse_offset_operand (&op_end, &offset_op, 24, insn->scale,
-					         op_offset_imm25)))
+					         op_offset_imm25))
+		&& !(msg = parse_eol (&op_end)))
 	      ||
 		(!(msg = parse_address_operand (&op_end, &offset_op,	/* Address */
-						  BFD_RELOC_UBI32_24_PCREL)))))
+						  BFD_RELOC_UBI32_24_PCREL))))
+		 && !(msg = parse_eol (&op_end)))
 	  {
 	    if (insn->flags & FLAG_MOVEAI)
 	      {
@@ -1547,7 +1587,8 @@ md_assemble (char *str)
 					     op_offset_leai16))
 	    && !(msg = parse_literal (&op_end, '('))
 	    && !(msg = parse_areg (&op_end, &am))
-	    && !(msg = parse_literal (&op_end, ')')))
+	    && !(msg = parse_literal (&op_end, ')'))
+	    && !(msg = parse_eol (&op_end)))
 	  {
 	    put_fmt9 (insn, an, am, &offset_op);
 	  }
@@ -1560,7 +1601,8 @@ md_assemble (char *str)
 	    && !(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
 					   op_offset_imm7_s))
 	    && !(msg = parse_literal (&op_end, ','))
-	    && !(msg = parse_dreg (&op_end, &s2)))
+	    && !(msg = parse_dreg (&op_end, &s2))
+	    && !(msg = parse_eol (&op_end)))
 	  {
 	    put_fmt10 (insn, acc, &sopnd, s2);
 	  }
@@ -1572,7 +1614,8 @@ md_assemble (char *str)
 	    && !(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
 					   op_offset_imm7_s))
 	    && !(msg = parse_literal (&op_end, ','))
-	    && !(msg = parse_accdreg (&op_end, &s2, ACC32)))
+	    && !(msg = parse_accdreg (&op_end, &s2, ACC32))
+	    && !(msg = parse_eol (&op_end)))
 	  {
 	    put_fmt11a (insn, acc, &sopnd, s2);
 	  }
@@ -1582,7 +1625,8 @@ md_assemble (char *str)
 	if (!(msg = parse_accreg (&op_end, &acc, ACC64))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
-					   op_offset_imm7_s)))
+					   op_offset_imm7_s))
+	    && !(msg = parse_eol (&op_end)))
 	  {
 	    put_fmt11b (insn, acc, &sopnd);
 	  }
@@ -1592,7 +1636,8 @@ md_assemble (char *str)
 	if (!(msg = parse_accreg (&op_end, &acc, ACC32))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
-					   op_offset_imm7_s)))
+					   op_offset_imm7_s))
+	    && !(msg = parse_eol (&op_end)))
 	  {
 	    put_fmt11c (insn, acc, &sopnd);
 	  }
@@ -1602,7 +1647,8 @@ md_assemble (char *str)
 	if (!(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
 					op_offset_imm7_s))
 	    && !(msg = parse_literal (&op_end, ','))
-	    && !(msg = parse_accdreg (&op_end, &s2, ACC32)))
+	    && !(msg = parse_accdreg (&op_end, &s2, ACC32))
+	    && !(msg = parse_eol (&op_end)))
 	  {
 	    put_fmt11d (insn, &sopnd, s2);
 	  }
@@ -1613,7 +1659,8 @@ md_assemble (char *str)
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_accdreg (&op_end, &s1, ACC64))
 	    && !(msg = parse_literal (&op_end, ','))
-	    && !(msg = parse_accdreg (&op_end, &s2, ACC64)))
+	    && !(msg = parse_accdreg (&op_end, &s2, ACC64))
+	    && !(msg = parse_eol (&op_end)))
 	  {
 	    put_fmt12a (insn, acc, s1, s2);
 	  }
@@ -1622,7 +1669,8 @@ md_assemble (char *str)
       case FMT_12B:
 	if (!(msg = parse_accreg (&op_end, &acc, ACC32))
 	    && !(msg = parse_literal (&op_end, ','))
-	    && !(msg = parse_accdreg (&op_end, &s1, ACC64)))
+	    && !(msg = parse_accdreg (&op_end, &s1, ACC64))
+	    && !(msg = parse_eol (&op_end)))
 	  {
 	    put_fmt12b (insn, acc, s1);
 	  }
@@ -1631,7 +1679,8 @@ md_assemble (char *str)
       case FMT_12C:
 	if (!(msg = parse_accreg (&op_end, &acc, ACC64))
 	    && !(msg = parse_literal (&op_end, ','))
-	    && !(msg = parse_accdreg (&op_end, &s1, ACC64)))
+	    && !(msg = parse_accdreg (&op_end, &s1, ACC64))
+	    && !(msg = parse_eol (&op_end)))
 	  {
 	    put_fmt12c (insn, acc, s1);
 	  }
@@ -1640,7 +1689,8 @@ md_assemble (char *str)
       case FMT_12D:
 	if (!(msg = parse_accdreg (&op_end, &s1, ACC64))
 	    && !(msg = parse_literal (&op_end, ','))
-	    && !(msg = parse_accdreg (&op_end, &s2, ACC64)))
+	    && !(msg = parse_accdreg (&op_end, &s2, ACC64))
+	    && !(msg = parse_eol (&op_end)))
 	  {
 	    put_fmt12d (insn, s1, s2);
 	  }
