@@ -304,7 +304,8 @@ static struct hash_control *gdb_reg_hash;
 void
 md_begin (void)
 {
-  struct reg_table_t *reg = reg_table;
+  struct reg_info_t *reg = reg_table;
+  struct reg_info_t *p;
   const char **gdb_reg = ubi32_gdb_register_names;
 
   /* Record the specific machine in the elf header flags area */
@@ -312,6 +313,10 @@ md_begin (void)
 
   /* Set the machine type */
   bfd_default_set_arch_mach (stdoutput, bfd_arch_ubi32, ubi32_mach & 0xffff);
+
+  /* Check register table order.  */
+  for (p = reg_table; (p + 1)->name; p++)
+    gas_assert (p->addr <= (p+1)->addr);
 
   /* Initialize arch register table.  */
   reg_hash = hash_new_sized (511);   /* Pick arbitrary size for hash table.  */
@@ -437,13 +442,41 @@ parse_literal (char **strp, char lit)
   return _("invalid syntax");
 }
 
+/* Search register table for matching reg address.  */
+static struct reg_info_t *
+reg_addr_search (int value)
+{
+  extern int reg_table_size;
+  int low = 0;
+  int high = reg_table_size - 1;
+  int middle;
+
+  do
+    {
+      middle = (low + high) / 2;
+      if (reg_table[middle].addr < value)
+	low = middle + 1;
+      else if (reg_table[middle].addr > value)
+	high = middle - 1;
+      else
+	{
+	  /* Return reg entry of first matching value.  */
+	  while (middle && reg_table[middle - 1].addr == value)
+	    middle--;
+	  return &reg_table[middle];
+	}
+    }
+  while (low <= high);
+
+  return 0;
+}
+
 /* Parse register by class.  */
-/* FIXME:  Allow register address. */
 static const char *
-parse_register_1 (char **strp, int *regno, enum reg_class class)
+parse_register_1 (char **strp, struct reg_info_t **reg, enum reg_class class)
 {
   unsigned len = 0;
-  struct reg_table_t *reg;
+  struct reg_info_t *treg;
   char regname[20];
   int value;
   char *endp;
@@ -456,10 +489,10 @@ parse_register_1 (char **strp, int *regno, enum reg_class class)
     }
   regname[len] = '\0';
 
-  reg = hash_find_n (reg_hash, regname, len);
-  if (reg && (class == NONE || class == reg->class))
+  treg = hash_find_n (reg_hash, regname, len);
+  if (treg && (class == NONE || class == treg->class))
     {
-      *regno = reg->num;
+      *reg = treg;
       *strp += len;
       return NULL;
     }
@@ -471,9 +504,12 @@ parse_register_1 (char **strp, int *regno, enum reg_class class)
 	{
 	  if ((value & 0x3) != 0)
 	    return _("register address invalid");
-	  *regno = value >> 2;
-	  *strp += len;
-	  return NULL;
+	  if ((treg = reg_addr_search (value)))
+	    {
+	      *reg = treg;
+	      *strp += len;
+	      return NULL;
+	    }
 	}
     }
 
@@ -482,75 +518,109 @@ parse_register_1 (char **strp, int *regno, enum reg_class class)
 
 /* Parse any register.  */
 static const char *
-parse_register (char **strp, int *regno)
+parse_register (char **strp, struct reg_info_t **reg)
 {
-  return parse_register_1 (strp, regno, NONE);
+  return parse_register_1 (strp, reg, NONE);
 }
 
 /* Parse A register.  */
 static const char *
-parse_areg (char **strp, int *regno)
+parse_areg (char **strp, struct reg_info_t **reg)
 {
   const char *err;
-  int reg;
 
-  if ((err = parse_register_1 (strp, &reg, AREG)))
+  if ((err = parse_register_1 (strp, reg, AREG)))
     return err;
-  *regno = reg - REGNO_A0;
   return NULL;
+}
+
+/* Translate register number to Dreg number.  */
+static int
+reg_to_dreg (struct reg_info_t *reg)
+{
+  gas_assert (reg->class == DREG);
+  return reg->num - REGNO_D0;
+}
+
+/* Translate register number to Areg number.  */
+static int
+reg_to_areg (struct reg_info_t *reg)
+{
+  gas_assert (reg->class == AREG);
+  return reg->num - REGNO_A0;
 }
 
 /* Parse D register.  */
 static const char *
-parse_dreg (char **strp, int *regno)
+parse_dreg (char **strp, struct reg_info_t **reg)
 {
-  return parse_register_1 (strp, regno, DREG);
+  return parse_register_1 (strp, reg, DREG);
 }
 
-/* Parse ACC register.  Return FPS32 encoding.  */
+/* Parse ACC register.  */
 static const char *
-parse_accreg (char **strp, int *regno, enum reg_class class)
+parse_accreg (char **strp, struct reg_info_t **reg, enum reg_class class)
 {
   const char *err;
-  int reg;
 
-  if ((err = parse_register_1 (strp, &reg, class)))
+  if ((err = parse_register_1 (strp, reg, class)))
     return _("invalid acc reg");
-
-  if (class == ACC64)
-    {
-      if (reg == REGNO_ACC0)
-	*regno = 0x10;
-      if (reg == REGNO_ACC1)
-	*regno = 0x12;
-    }
-  else
-    {
-      if (reg == REGNO_ACC0_LO)
-	*regno = 0x10;
-      else if (reg == REGNO_ACC0_HI)
-	*regno = 0x11;
-      else if (reg == REGNO_ACC1_LO)
-	*regno = 0x12;
-      else if (reg == REGNO_ACC1_HI)
-	*regno = 0x13;
-    }
-
   return NULL;
 }
 
-/* Parse D or ACC register.  Return FPS32 encoding. */
+/* Convert ACC reg to FPS32 encoding.  */
+static int
+reg_to_fps32 (struct reg_info_t *reg)
+{
+  if (reg->class == ACC64)
+    {
+      if (reg->num == REGNO_ACC0)
+	return 0x10;
+      if (reg->num == REGNO_ACC1)
+	return 0x12;
+    }
+  else if (reg->class == ACC32)
+    {
+      if (reg->num == REGNO_ACC0_LO)
+	return 0x10;
+      else if (reg->num == REGNO_ACC0_HI)
+	return 0x11;
+      else if (reg->num == REGNO_ACC1_LO)
+	return 0x12;
+      else if (reg->num == REGNO_ACC1_HI)
+	return 0x13;
+    }
+
+  gas_assert (0);
+}
+
+/* Convert ACC reg to FPS32 encoding.  */
+static int
+reg_to_fps64 (struct reg_info_t *reg)
+{
+  if (reg->class == ACC64)
+    {
+      if (reg->num == REGNO_ACC0)
+	return 0x1;
+      if (reg->num == REGNO_ACC1)
+	return 0x2;
+    }
+
+  gas_assert (0);
+}
+
+/* Parse D or ACC register.  */
 static const char *
-parse_accdreg (char **strp, int *regno, enum reg_class class)
+parse_accdreg (char **strp, struct reg_info_t **reg, enum reg_class class)
 {
   const char *err;
 
-  if (!parse_accreg (strp, regno, class))
+  if (!parse_accreg (strp, reg, class))
     return NULL;
 
-  if ((err = parse_dreg (strp, regno)))
+  if ((err = parse_dreg (strp, reg)))
     return err;
-  if ((class == ACC64) && (*regno & 1))
+  if ((class == ACC64) && ((*reg)->num & 1))
     return _("Even D register required");
 
   return NULL;
@@ -755,6 +825,23 @@ validate_value (int value, int size, int scale, int sign)
   return 0;
 }
 
+/* Validate register access.  */
+static char *
+validate_register (struct reg_info_t *reg, int access)
+{
+  if (!(reg->version & ubi32_version))
+    return _("register not valid for this arch version");
+  if (reg->rw & access)
+    return NULL;
+  if (access == REG_R)
+    return _("attempt to read a write-only register");
+  else if (access == REG_W)
+    return _("attempt to write to read-only register");
+  else
+    gas_assert (0);
+}
+
+
 /* FIXME -- offset signed?  unsigned?  */
 static const char *
 parse_offset_operand (char **strp, struct operand_t *offset, int size ATTRIBUTE_UNUSED,
@@ -873,12 +960,14 @@ parse_bitcnt (char **strp, int *immed)
 /* FIXME -- fill in addr struct. */
 /* Parse source or destination -- "Addressing modes" in ISA doc.  */
 static const char *
-parse_addr_operand (char **strp, struct operand_t *opnd, enum op_scale_t scale, int pdec_encoding,
-		    struct op_offset_tab_t *optab)
+parse_addr_operand (char **strp, struct operand_t *opnd,
+		    enum op_scale_t scale, int pdec_encoding,
+		    struct op_offset_tab_t *optab, int access)
 {
   static const char *error[3] = {"valid", "out of bounds increment", "unaligned increment" };
   char *save_str = *strp;
-  int reg, areg, dreg;
+  struct reg_info_t *reg, *areg, *dreg;
+  int regno;
   int value;
   int immed;
   struct operand_t temp;
@@ -900,8 +989,10 @@ parse_addr_operand (char **strp, struct operand_t *opnd, enum op_scale_t scale, 
   *strp = save_str;
   if (!(msg = parse_register (strp, &reg)))			/* 001 <reg>			*/
     {
+      if ((msg = validate_register (reg, access)))
+	return msg;
       opnd->value = 0x100;
-      insert_bits (&opnd->value, reg, 0, 8);
+      insert_bits (&opnd->value, reg->num, 0, 8);
       return NULL;
     }
 
@@ -912,7 +1003,8 @@ parse_addr_operand (char **strp, struct operand_t *opnd, enum op_scale_t scale, 
       && (**strp == '\0' || **strp == ','))
     {
       opnd->value = 0x400;
-      insert_bits (&opnd->value, areg, 5, 3);
+      regno = reg_to_areg (areg);
+      insert_bits (&opnd->value, regno, 5, 3);
       return NULL;
     }
 
@@ -925,8 +1017,9 @@ parse_addr_operand (char **strp, struct operand_t *opnd, enum op_scale_t scale, 
       && (**strp == '\0' || **strp == ','))
     {
       opnd->value = 0x300;
-      insert_bits (&opnd->value, areg, 5, 3);
-      insert_bits (&opnd->value, dreg, 0, 4);
+      regno = reg_to_areg (areg);
+      insert_bits (&opnd->value, regno, 5, 3);
+      insert_bits (&opnd->value, reg_to_dreg (dreg), 0, 4);
       return NULL;
     }
 
@@ -943,7 +1036,7 @@ parse_addr_operand (char **strp, struct operand_t *opnd, enum op_scale_t scale, 
 	return error[eno];
       opnd->value = 0x200;
       immed >>= scale;
-      insert_bits (&opnd->value, areg, 5, 3);
+      insert_bits (&opnd->value, reg_to_areg (areg), 5, 3);
       insert_bits (&opnd->value, immed, 0, 4);
       return NULL;
     }
@@ -964,7 +1057,7 @@ parse_addr_operand (char **strp, struct operand_t *opnd, enum op_scale_t scale, 
 	}
       value >>= scale;
       opnd->value = 0x400;
-      insert_bits (&opnd->value, areg, 5, 3);
+      insert_bits (&opnd->value, reg_to_areg (areg), 5, 3);
       insert_bits (&opnd->value, value & 0x1f, 0, 5);
       insert_bits (&opnd->value, (value >> 5) & 0x3, 8, 2);
       opnd->reloc = temp.reloc;
@@ -985,7 +1078,7 @@ parse_addr_operand (char **strp, struct operand_t *opnd, enum op_scale_t scale, 
 	return error[eno];
       opnd->value = 0x210;
       immed >>= scale;
-      insert_bits (&opnd->value, areg, 5, 3);
+      insert_bits (&opnd->value, reg_to_areg (areg), 5, 3);
       insert_bits (&opnd->value, immed, 0, 4);
       return NULL;
     }
@@ -1150,13 +1243,14 @@ put_fmt2 (struct op_table_t *insn, struct operand_t *dopnd,
 
 static void
 put_fmt3 (struct op_table_t *insn, struct operand_t *dopnd,
-	  struct operand_t *sopnd, int sreg)
+	  struct operand_t *sopnd, struct reg_info_t *s2)
 {
   int buf = insn->instruction;
   char *frag;
+  int s2no = reg_to_dreg (s2);
 
   insert_bits (&buf, dopnd->value, 16, 11);
-  insert_bits (&buf, sreg, 11, 4);
+  insert_bits (&buf, s2no, 11, 4);
   insert_bits (&buf, sopnd->value, 0, 11);
   frag = finish_insn (buf);
   add_fixup (frag, dopnd);
@@ -1164,7 +1258,7 @@ put_fmt3 (struct op_table_t *insn, struct operand_t *dopnd,
 }
 
 static void
-put_fmt4 (struct op_table_t *insn, unsigned int dest, int flag, int s_imm,
+put_fmt4 (struct op_table_t *insn, int dest, int flag, int s_imm,
 	  struct operand_t *sopnd)
 {
   int buf = insn->instruction;
@@ -1221,13 +1315,15 @@ put_fmt7 (struct op_table_t *insn, int cc, int sw, int pred,
 }
 
 static void
-put_fmt8 (struct op_table_t *insn, int areg, struct operand_t *offset)
+put_fmt8 (struct op_table_t *insn, struct reg_info_t *areg,
+	  struct operand_t *offset)
 {
   int buf = insn->instruction;
   char *frag;
   int value = offset->value;
+  int aregno = reg_to_areg (areg);
 
-  insert_bits (&buf, areg, 21, 3);
+  insert_bits (&buf, aregno, 21, 3);
   insert_bits (&buf, value & 0x1fffff, 0, 21);
   insert_bits (&buf, (value >> 21) & 0x7, 24, 3);
   frag = finish_insn (buf);
@@ -1235,14 +1331,17 @@ put_fmt8 (struct op_table_t *insn, int areg, struct operand_t *offset)
 }
 
 static void
-put_fmt9 (struct op_table_t *insn, int anreg, int amreg, struct operand_t *offset)
+put_fmt9 (struct op_table_t *insn, struct reg_info_t *anreg,
+	  struct reg_info_t *amreg, struct operand_t *offset)
 {
   int buf = insn->instruction;
   char *frag;
   int value = offset->value >> insn->scale;
+  int anregno = reg_to_areg (anreg);
+  int amregno = reg_to_areg (amreg);
 
-  insert_bits (&buf, anreg, 21, 3);
-  insert_bits (&buf, amreg, 5, 3);
+  insert_bits (&buf, anregno, 21, 3);
+  insert_bits (&buf, amregno, 5, 3);
   insert_bits (&buf, value & 0x1f, 0, 5);
   insert_bits (&buf, (value >> 5) & 0x7, 8, 3);
   insert_bits (&buf, (value >> 8) & 0x1f, 16, 5);
@@ -1253,111 +1352,134 @@ put_fmt9 (struct op_table_t *insn, int anreg, int amreg, struct operand_t *offse
 
 /* FIXME - handle immediate source. */
 static void
-put_fmt10 (struct op_table_t *insn, int acc, struct operand_t *sopnd, int s2)
+put_fmt10 (struct op_table_t *insn, struct reg_info_t *acc,
+	   struct operand_t *sopnd, struct reg_info_t *s2)
 {
   int buf = insn->instruction;
-  unsigned int dsp_ctrl = 0;
+  unsigned int dsp_ctrl = 0;  /* Default to ACC0.  */
   char *frag;
+  int s2no = reg_to_dreg (s2);
 
   /* Register source.  */
   insert_bits (&buf, 1, 26, 1);
-  /* Acc is in fps32 format.  DSP control.  */
-  if (acc == 0x12)
+  if (acc->num == REGNO_ACC1)
     dsp_ctrl |= DSP_CTRL_A;
   insert_bits (&buf, dsp_ctrl, 16, 5);
-  insert_bits (&buf, s2, 11, 5);
+  insert_bits (&buf, s2no, 11, 5);
   insert_bits (&buf, sopnd->value, 0, 11);
   frag = finish_insn (buf);
   add_fixup (frag, sopnd);
 }
 
 static void
-put_fmt11a (struct op_table_t *insn, int acc, struct operand_t *sopnd, int s2)
+put_fmt11a (struct op_table_t *insn, struct reg_info_t *acc,
+	    struct operand_t *sopnd, struct reg_info_t *s2)
 {
   int buf = insn->instruction;
   char *frag;
+  int accno = reg_to_fps32 (acc);
+  int s2no = reg_to_dreg (s2);
 
-  insert_bits (&buf, acc, 16, 2);
-  insert_bits (&buf, s2, 11, 5);
+  insert_bits (&buf, accno, 16, 2);
+  insert_bits (&buf, s2no, 11, 5);
   insert_bits (&buf, sopnd->value, 0, 11);
   frag = finish_insn (buf);
   add_fixup (frag, sopnd);
 }
 
 static void
-put_fmt11b (struct op_table_t *insn, int acc, struct operand_t *sopnd)
+put_fmt11b (struct op_table_t *insn, struct reg_info_t *acc,
+	    struct operand_t *sopnd)
 {
   int buf = insn->instruction;
   char *frag;
+  int accno = reg_to_fps32 (acc);
 
-  insert_bits (&buf, acc >> 1, 17, 1);
+  insert_bits (&buf, accno >> 1, 17, 1);
   insert_bits (&buf, sopnd->value, 0, 11);
   frag = finish_insn (buf);
   add_fixup (frag, sopnd);
 }
 
 static void
-put_fmt11c (struct op_table_t *insn, int acc, struct operand_t *sopnd)
+put_fmt11c (struct op_table_t *insn, struct reg_info_t *acc,
+	    struct operand_t *sopnd)
 {
   int buf = insn->instruction;
   char *frag;
+  int accno = reg_to_fps32 (acc);
 
-  insert_bits (&buf, acc, 16, 2);
+  insert_bits (&buf, accno, 16, 2);
   insert_bits (&buf, sopnd->value, 0, 11);
   frag = finish_insn (buf);
   add_fixup (frag, sopnd);
 }
 
 static void
-put_fmt11d (struct op_table_t *insn, struct operand_t *sopnd, int s2)
+put_fmt11d (struct op_table_t *insn, struct operand_t *sopnd,
+	    struct reg_info_t *s2)
 {
   int buf = insn->instruction;
   char *frag;
+  int s2no = reg_to_dreg (s2);
 
-  insert_bits (&buf, s2, 11, 5);
+  insert_bits (&buf, s2no, 11, 5);
   insert_bits (&buf, sopnd->value, 0, 11);
   frag = finish_insn (buf);
   add_fixup (frag, sopnd);
 }
 
 static void
-put_fmt12a (struct op_table_t *insn, int acc, int s1, int s2)
+put_fmt12a (struct op_table_t *insn, struct reg_info_t *acc,
+	    struct reg_info_t *s1, struct reg_info_t *s2)
 {
   int buf = insn->instruction;
+  int accno = reg_to_fps32 (acc);
+  int s1no = reg_to_fps64 (s1);
+  int s2no = reg_to_fps64 (s2);
 
-  insert_bits (&buf, (acc >> 1) & 0x1, 17, 1);
-  insert_bits (&buf, s2 >> 1, 12, 4);
-  insert_bits (&buf, s1 >> 1, 1, 4);
+  insert_bits (&buf, (accno >> 1) & 0x1, 17, 1);
+  insert_bits (&buf, s2no, 12, 4);
+  insert_bits (&buf, s1no, 1, 4);
   finish_insn (buf);
 }
 
 static void
-put_fmt12b (struct op_table_t *insn, int acc, int s1)
+put_fmt12b (struct op_table_t *insn, struct reg_info_t *acc,
+	    struct reg_info_t *s1)
 {
   int buf = insn->instruction;
+  int accno = reg_to_fps32 (acc);
+  int s1no = reg_to_fps64 (s1);
 
-  insert_bits (&buf, acc & 0x3, 16, 2);
-  insert_bits (&buf, s1 >> 1, 1, 4);
+  insert_bits (&buf, accno & 0x3, 16, 2);
+  insert_bits (&buf, s1no, 1, 4);
   finish_insn (buf);
 }
 
 static void
-put_fmt12c (struct op_table_t *insn, int acc, int s1)
+put_fmt12c (struct op_table_t *insn, struct reg_info_t *acc,
+	    struct reg_info_t *s1)
 {
   int buf = insn->instruction;
+  int accno = reg_to_fps32 (acc);
+  int s1no = reg_to_fps64 (s1);
 
-  insert_bits (&buf, (acc >> 1) & 0x1, 17, 1);
-  insert_bits (&buf, s1 >> 1, 1, 4);
+  insert_bits (&buf, (accno >> 1) & 0x1, 17, 1);
+  insert_bits (&buf, s1no, 1, 4);
   finish_insn (buf);
 }
 
 static void
-put_fmt12d (struct op_table_t *insn, int s1, int s2)
+put_fmt12d (struct op_table_t *insn, struct reg_info_t *s1,
+	    struct reg_info_t *s2)
 {
   int buf = insn->instruction;
+  int s1no = reg_to_fps64 (s1);
+  int s2no = reg_to_fps64 (s2);
 
-  insert_bits (&buf, s2 >> 1, 12, 4);
-  insert_bits (&buf, s1 >> 1, 1, 4);
+  insert_bits (&buf, s2no, 12, 4);
+  insert_bits (&buf, s1no, 1, 4);
   finish_insn (buf);
 }
 
@@ -1379,7 +1501,8 @@ md_assemble (char *str)
   char *op_end, *op;
   int len;
   int immed;
-  int an, am, s1, s2, acc, d;
+  struct reg_info_t *an, *am, *s1, *s2, *acc, *d;
+  int dest;
   int cc, sw, pred;
   struct operand_t offset_op;
   struct operand_t dopnd;
@@ -1414,7 +1537,7 @@ md_assemble (char *str)
 
       case FMT_1B:	/* One operand - source.  */
 	if (!(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
-					op_offset_imm7_s))
+					op_offset_imm7_s, REG_R))
 	    && !(msg = parse_eol (&op_end)))
  	  {
 	    put_fmt1b (insn, &sopnd);
@@ -1423,7 +1546,7 @@ md_assemble (char *str)
 
       case FMT_1C:	/* One operand - destination.  */
 	if (!(msg = parse_addr_operand (&op_end, &dopnd, insn->scale, 0,
-					op_offset_imm7_d))
+					op_offset_imm7_d, REG_W))
 	    && !(msg = parse_eol (&op_end)))
 	  {
 	    put_fmt1c (insn, &dopnd);
@@ -1433,11 +1556,11 @@ md_assemble (char *str)
       case FMT_1D:	/* Two operands.  */
 	if (!(msg = parse_addr_operand (&op_end, &dopnd,
 					(insn->flags & FLAG_LEA) ? SZ_4 : insn->scale,
-					 0, op_offset_imm7_d))
+					 0, op_offset_imm7_d, REG_W))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_addr_operand (&op_end, &sopnd, insn->scale,
 					   (insn->flags & FLAG_PDEC) ? 1 : 0,
-					   op_offset_imm7_s))
+					   op_offset_imm7_s, REG_R))
 	    && !(msg = parse_eol (&op_end)))
 	  {
 	    put_fmt1d (insn, &dopnd, &sopnd);
@@ -1446,10 +1569,10 @@ md_assemble (char *str)
 
       case FMT_2:
 	if (!(msg = parse_addr_operand (&op_end, &dopnd, insn->scale, 0,
-					op_offset_imm7_d))
+					op_offset_imm7_d, REG_W))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
-					   op_offset_imm7_s))
+					   op_offset_imm7_s, REG_R))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_literal (&op_end, '#'))
 	    && !(msg = parse_bitcnt (&op_end, &immed))
@@ -1461,10 +1584,10 @@ md_assemble (char *str)
 
       case FMT_3:
 	if (!(msg = parse_addr_operand (&op_end, &dopnd, insn->scale, 0,
-					op_offset_imm7_d))
+					op_offset_imm7_d, REG_W))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
-					   op_offset_imm7_s))
+					   op_offset_imm7_s, REG_R))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_dreg (&op_end, &s2))
 	    && !(msg = parse_eol (&op_end)))
@@ -1473,17 +1596,23 @@ md_assemble (char *str)
 	  }
 	break;
 
-      case FMT_4A:
-	if ((msg = parse_dreg (&op_end, &d))
-	    || (msg = parse_literal (&op_end, ',')))
-	  break;
-	/* FALLTHROUGH */
       case FMT_4B:
-	/* BTST -- implicit destination.  */
-	if (insn->format == FMT_4B)
-	  d = 0;
+	  /* BTST -- implicit destination.  */
+	  dest = 0;
+      case FMT_4A:
+	if (insn->format == FMT_4A)
+	  {
+	    if ((!(msg = parse_dreg (&op_end, &d)))
+	        && (!(msg = parse_literal (&op_end, ','))))
+	      {
+		dest = reg_to_dreg (d);
+	      }
+	    else
+	      break;
+	  }
+
 	if (!(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
-					   op_offset_imm7_s))
+					   op_offset_imm7_s, REG_R))
 	    && !(msg = parse_literal (&op_end, ',')))
 	  {
 	    if (!(msg = parse_literal (&op_end, '#')))
@@ -1494,7 +1623,7 @@ md_assemble (char *str)
 		    /* immediate value.  */
 		    if (!(eno = validate_value (immed, 5, 0, 0)))
 		      {
-			put_fmt4 (insn, d, 0, immed, &sopnd);
+			put_fmt4 (insn, dest, 0, immed, &sopnd);
 			break;
 		      }
 		  }
@@ -1504,14 +1633,14 @@ md_assemble (char *str)
 		     && !(msg = parse_eol (&op_end)))
 	      {
 		/* register value. */
-		put_fmt4 (insn, d, 1, s2, &sopnd);
+		put_fmt4 (insn, dest, 1, reg_to_dreg (s2), &sopnd);
 	      }
 	  }
 	break;
 
       case FMT_5:
 	if (!(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
-					   op_offset_imm7_s))
+					   op_offset_imm7_s, REG_R))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_literal (&op_end, '#'))
 	    && !(msg = parse_offset_operand (&op_end, &s2opnd, 0, SZ_2, op_offset_imm16))
@@ -1522,7 +1651,8 @@ md_assemble (char *str)
 	break;
 
       case FMT_6:
-	if (!(msg = parse_addr_operand (&op_end, &dopnd, insn->scale, 0, op_offset_imm7_d))
+	if (!(msg = parse_addr_operand (&op_end, &dopnd, insn->scale, 0,
+					op_offset_imm7_d, REG_W))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_literal (&op_end, '#'))
 	    && !(msg = parse_offset_operand (&op_end, &sopnd, 2, SZ_0, op_offset_imm16))
@@ -1599,7 +1729,7 @@ md_assemble (char *str)
 	if (!(msg = parse_accreg (&op_end, &acc, ACC64))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
-					   op_offset_imm7_s))
+					   op_offset_imm7_s, REG_R))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_dreg (&op_end, &s2))
 	    && !(msg = parse_eol (&op_end)))
@@ -1612,7 +1742,7 @@ md_assemble (char *str)
 	if (!(msg = parse_accreg (&op_end, &acc, ACC32))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
-					   op_offset_imm7_s))
+					   op_offset_imm7_s, REG_R))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_accdreg (&op_end, &s2, ACC32))
 	    && !(msg = parse_eol (&op_end)))
@@ -1625,7 +1755,7 @@ md_assemble (char *str)
 	if (!(msg = parse_accreg (&op_end, &acc, ACC64))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
-					   op_offset_imm7_s))
+					   op_offset_imm7_s, REG_R))
 	    && !(msg = parse_eol (&op_end)))
 	  {
 	    put_fmt11b (insn, acc, &sopnd);
@@ -1636,7 +1766,7 @@ md_assemble (char *str)
 	if (!(msg = parse_accreg (&op_end, &acc, ACC32))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
-					   op_offset_imm7_s))
+					   op_offset_imm7_s, REG_R))
 	    && !(msg = parse_eol (&op_end)))
 	  {
 	    put_fmt11c (insn, acc, &sopnd);
@@ -1645,7 +1775,7 @@ md_assemble (char *str)
 
       case FMT_11D:
 	if (!(msg = parse_addr_operand (&op_end, &sopnd, insn->scale, 0,
-					op_offset_imm7_s))
+					op_offset_imm7_s, REG_R))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_accdreg (&op_end, &s2, ACC32))
 	    && !(msg = parse_eol (&op_end)))

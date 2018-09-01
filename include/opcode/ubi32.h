@@ -66,11 +66,12 @@ extern struct op_table_t op_table[];
 #define FLAG_SCSR 0x20	  /* Opcode is SETCSR, force dest to CSR.	*/
 
 /* Describe registers.  */
-struct reg_table_t
+struct reg_info_t
 {
   const char *name;
-  uint32_t num;
-  uint32_t rw;
+  int num;
+  int addr;
+  int rw;
   enum reg_class {
       NONE  = 0x00,
       DREG  = 0x01,
@@ -82,9 +83,10 @@ struct reg_table_t
   uint32_t version;
 };
 
-extern struct reg_table_t reg_table[];
+extern struct reg_info_t reg_table[];
 
 /* Register number definitions.  */
+#define REGNO_D0	0x00
 #define REGNO_A0	0x20
 #define REGNO_ACC0	0x28
 #define REGNO_ACC0_HI	0x28
@@ -94,7 +96,7 @@ extern struct reg_table_t reg_table[];
 #define REGNO_ACC1_HI	0x36
 #define REGNO_ACC1_LO	0x37
 
-/* reg_table_t.rw flags.  */
+/* reg_info_t.rw flags.  */
 #define REG_R 0x01	/* Readable register.    */
 #define REG_W 0x02	/* Writeable register.   */
 #define REG_PRIV 0x04	/* Privileged register.  */
