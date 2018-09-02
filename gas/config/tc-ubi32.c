@@ -841,8 +841,18 @@ validate_register (struct reg_info_t *reg, int access)
     gas_assert (0);
 }
 
+/* Check same A register incremented.  */
+static char *
+validate_areg_incr (struct operand_t *dopnd, struct operand_t *sopnd)
+{
+  if (((dopnd->value & 0x300) == 0x200)		/* Dopnd increments A reg.  */
+      && ((sopnd->value & 0x300) == 0x200)		/* Sopnd increments A reg.  */
+      /* Registers match.  */
+      && ((dopnd->value & 0x0e0) == (sopnd->value & 0x0e0)))
+    return _("s1 and d operands update same An register");
+  return NULL;
+}
 
-/* FIXME -- offset signed?  unsigned?  */
 static const char *
 parse_offset_operand (char **strp, struct operand_t *offset,
 		      enum op_scale_t scale, struct op_offset_tab_t *op)
@@ -873,7 +883,6 @@ parse_offset_operand (char **strp, struct operand_t *offset,
     }
 
   offset->reloc = 0;
-  /* FIXME -- scale value?  */
   return parse_address (strp, &offset->value);
 }
 
@@ -1060,13 +1069,17 @@ parse_addr_operand (char **strp, struct operand_t *opnd,
       && (**strp == '\0' || **strp == ','))
     {
       value = temp.value;
-      if ((eno = validate_value (value, 7, scale, 0)))
-	return offset_error[eno];
+
       if (pdec_encoding)
 	{
+	  if (!(value >= 4 && value <=512))
+	    return _("Pdec offset out of range");
 	  /* Special encoding for PDEC.  */
 	  value = -value;
 	}
+      else if ((eno = validate_value (value, 7, scale, 0)))
+	return offset_error[eno];
+
       value >>= scale;
       opnd->value = 0x400;
       insert_bits (&opnd->value, reg_to_areg (areg), 5, 3);
@@ -1575,6 +1588,8 @@ md_assemble (char *str)
 					   op_offset_imm7_s, REG_R))
 	    && !(msg = parse_eol (&op_end)))
 	  {
+	    if ((msg = validate_areg_incr (&dopnd, &sopnd)))
+	      break;
 	    put_fmt1d (insn, &dopnd, &sopnd);
 	  }
 	break;
@@ -1590,6 +1605,8 @@ md_assemble (char *str)
 	    && !(msg = parse_bitcnt (&op_end, &immed))
 	    && !(msg = parse_eol (&op_end)))
 	  {
+	    if ((msg = validate_areg_incr (&dopnd, &sopnd)))
+	      break;
 	    put_fmt2 (insn, &dopnd, &sopnd, immed);
 	  }
 	break;
@@ -1604,6 +1621,8 @@ md_assemble (char *str)
 	    && !(msg = parse_dreg (&op_end, &s2))
 	    && !(msg = parse_eol (&op_end)))
 	  {
+	    if ((msg = validate_areg_incr (&dopnd, &sopnd)))
+	      break;
 	    put_fmt3 (insn, &dopnd, &sopnd, s2);
 	  }
 	break;
