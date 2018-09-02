@@ -272,7 +272,7 @@ struct reg_info_t reg_table[] =
   {"mt_dbg_active_set",	 82,    0x148,             REG_W, PRIV,	UBI32_ALL},
   {"mt_en",		 83,    0x14c,     REG_R | REG_W, PRIV,	UBI32_ALL},
   {"mt_hpri",		 84,    0x150,     REG_R | REG_W, PRIV,	UBI32_ALL},
-  {"mt_pri",		 85,    0x154,     REG_R | REG_W, PRIV,	UBI32_ALL},
+  {"mt_pri",		 84,    0x150,     REG_R | REG_W, PRIV,	UBI32_ALL},
   {"mt_hrt",		 85,    0x154,     REG_R | REG_W, PRIV,	UBI32_ALL},
   {"mt_sched",		 85,    0x154,     REG_R | REG_W, PRIV,	UBI32_ALL},
   {"mt_break",		 86,    0x158,     REG_R        , PRIV,	UBI32_ALL},
