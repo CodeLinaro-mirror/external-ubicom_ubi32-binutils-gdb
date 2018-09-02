@@ -1,0 +1,38 @@
+# Test imm8 bit
+
+# PASS
+	lsl.4	d0,#0,d1
+	lsl.4	d0,#12,d1
+	lsl.4	d0,#-12,d1
+	lsl.4	d0,#-1,d1
+	lsl.4	d0,#0xff,d1
+	lsl.4	d0,#127,d1
+	lsl.4	d0,#-128,d1
+	move.1	d0,#0
+	move.1	d0,#127
+	move.1	d0,#-128
+	move.1	#0,d0
+	move.1	#127,d0
+	move.1	#-128,d0
+	move.4	#0,#0
+	move.4	#0,#127
+	move.4	#127,#0
+	move.4	#-128,#0
+	move.4	#0,#-128
+# FAIL
+	lsl.4	d0,#255,d1
+	lsl.4	d0,#-129,d1
+	lsl.4	d0,#-255,d1
+	lsl.4	d0,#-0xff,d1
+	lsl.4	d0,#0x100,d1
+	lsl.4	d0,#-0x100,d1
+	lsl.4	d0,#0x1000,d1
+	lsl.4	d0,#-0x1000,d1
+	move.1	d0,#128
+	move.1	d0,#-129
+	move.1	#128,d0
+	move.1	#-129,d0
+	move.4	#0,#128
+	move.4	#128,#0
+	move.4	#-129,#0
+	move.4	#0,#-129
