@@ -1,0 +1,51 @@
+# Test 7-bit offset
+
+# PASS
+	move.1	d0,0(a0)
+	move.1	d0,127(a0)
+	move.1	d0,0x7f(a0)
+	move.1	0(a0),d0
+	move.1	127(a0),d0
+	move.1	0x7f(a0),d0
+	move.2	d0,0(a0)
+	move.2	d0,254(a0)
+	move.2	d0,0xfe(a0)
+	move.2	0(a0),d0
+	move.2	254(a0),d0
+	move.2	0xfe(a0),d0
+	move.4	d0,0(a0)
+	move.4	d0,508(a0)
+	move.4	d0,0x1fc(a0)
+	move.4	0(a0),d0
+	move.4	508(a0),d0
+	move.4	0x1fc(a0),d0
+# FAIL
+	move.1	d0,-1(a0)
+	move.1	d0,128(a0)
+	move.1	d0,0x80(a0)
+	move.1	0x80(a0),d0
+	move.1	128(a0),d0
+	move.1	d0,0xfffffff1(a0)
+	move.1	0xfffffff1(a0),d0
+	move.2	d0,-1(a0)
+	move.2	d0,255(a0)
+	move.2	d0,256(a0)
+	move.2	d0,0x100(a0)
+	move.2	0x100(a0),d0
+	move.2	255(a0),d0
+	move.2	256(a0),d0
+	move.2	d0,0xfffffff1(a0)
+	move.2	0xfffffff1(a0),d0
+	move.4	d0,-1(a0)
+	move.4	d0,509(a0)
+	move.4	d0,510(a0)
+	move.4	d0,512(a0)
+	move.4	d0,0x1fd(a0)
+	move.4	d0,0x200(a0)
+	move.4	0x200(a0),d0
+	move.4	0x1fd(a0),d0
+	move.4	509(a0),d0
+	move.4	510(a0),d0
+	move.4	512(a0),d0
+	move.4	d0,0xfffffff1(a0)
+	move.4	0xfffffff1(a0),d0

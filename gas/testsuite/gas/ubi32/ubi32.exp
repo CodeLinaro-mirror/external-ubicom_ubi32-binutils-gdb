@@ -25,5 +25,5 @@ if [istarget ubi32-*-*] then {
     run_list_test "regsv4" "-mubi32v4"
     run_list_test "regsv3" "-mubi32v3"
     run_list_test "regsv2" "-mubi32v2"
+    run_list_test "imm7" ""
 }
-
