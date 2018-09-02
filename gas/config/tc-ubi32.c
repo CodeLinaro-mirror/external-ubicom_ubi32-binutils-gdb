@@ -957,7 +957,6 @@ parse_bitcnt (char **strp, int *immed)
     return NULL;
 }
 
-/* FIXME -- fill in addr struct. */
 /* Parse source or destination -- "Addressing modes" in ISA doc.  */
 static const char *
 parse_addr_operand (char **strp, struct operand_t *opnd,
@@ -968,6 +967,8 @@ parse_addr_operand (char **strp, struct operand_t *opnd,
 	{"valid", "increment out of bounds", "increment unaligned" };
   static const char *offset_error[3] =
 	{"valid", "offset out of bounds", "offset unaligned" };
+  static const char *immed_error[3] =
+	{"valid", "8-bit immediate value out of range", "" };
   char *save_str = *strp;
   struct reg_info_t *reg, *areg, *dreg;
   int regno;
@@ -981,8 +982,15 @@ parse_addr_operand (char **strp, struct operand_t *opnd,
 
   if (!parse_literal (strp, '#'))				/* 000 #<8-bit signed immed>	*/
     {
+      int is_signed = 1;
+
+      if ((*strp)[0] == '0' && TOUPPER ((*strp)[1]) == 'X')
+	is_signed = 0;
+
       if (!(msg = parse_address (strp, &opnd->value)))
 	{
+	  if ((eno = validate_value (opnd->value, 8, 0, is_signed)))
+	    return immed_error[eno];
 	  opnd->value &= 0xff;
 	  return NULL;
 	}
