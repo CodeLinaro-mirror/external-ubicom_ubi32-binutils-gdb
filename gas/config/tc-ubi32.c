@@ -844,7 +844,7 @@ validate_register (struct reg_info_t *reg, int access)
 
 /* FIXME -- offset signed?  unsigned?  */
 static const char *
-parse_offset_operand (char **strp, struct operand_t *offset, int size ATTRIBUTE_UNUSED,
+parse_offset_operand (char **strp, struct operand_t *offset,
 		      enum op_scale_t scale, struct op_offset_tab_t *op)
 {
   const char *errmsg = NULL;
@@ -964,7 +964,10 @@ parse_addr_operand (char **strp, struct operand_t *opnd,
 		    enum op_scale_t scale, int pdec_encoding,
 		    struct op_offset_tab_t *optab, int access)
 {
-  static const char *error[3] = {"valid", "out of bounds increment", "unaligned increment" };
+  static const char *incr_error[3] =
+	{"valid", "increment out of bounds", "increment unaligned" };
+  static const char *offset_error[3] =
+	{"valid", "offset out of bounds", "offset unaligned" };
   char *save_str = *strp;
   struct reg_info_t *reg, *areg, *dreg;
   int regno;
@@ -1033,7 +1036,7 @@ parse_addr_operand (char **strp, struct operand_t *opnd,
       && (**strp == '\0' || **strp == ','))
     {
       if ((eno = validate_value (immed, 4, scale, 1)))
-	return error[eno];
+	return incr_error[eno];
       opnd->value = 0x200;
       immed >>= scale;
       insert_bits (&opnd->value, reg_to_areg (areg), 5, 3);
@@ -1042,14 +1045,15 @@ parse_addr_operand (char **strp, struct operand_t *opnd,
     }
 
   *strp = save_str;
-  /* FIXME -- unsigned value.  */
-  if (!(msg = parse_offset_operand (strp, &temp, 7, scale, optab))  /* 1xx <ofs>(<areg>)	*/
+  if (!(msg = parse_offset_operand (strp, &temp, scale, optab))  /* 1xx <ofs>(<areg>)	*/
       && !parse_literal (strp, '(')
       && !(msg = parse_areg (strp, &areg))
       && !parse_literal (strp, ')')
-      && (**strp == '\0' || **strp == ','))			/* FIXME -- is this valid?  */
+      && (**strp == '\0' || **strp == ','))
     {
       value = temp.value;
+      if ((eno = validate_value (value, 7, scale, 0)))
+	return offset_error[eno];
       if (pdec_encoding)
 	{
 	  /* Special encoding for PDEC.  */
@@ -1075,7 +1079,7 @@ parse_addr_operand (char **strp, struct operand_t *opnd,
       && (**strp == '\0' || **strp == ','))
     {
       if ((eno = validate_value (immed, 4, scale, 1)))
-	return error[eno];
+	return incr_error[eno];
       opnd->value = 0x210;
       immed >>= scale;
       insert_bits (&opnd->value, reg_to_areg (areg), 5, 3);
@@ -1643,7 +1647,7 @@ md_assemble (char *str)
 					   op_offset_imm7_s, REG_R))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_literal (&op_end, '#'))
-	    && !(msg = parse_offset_operand (&op_end, &s2opnd, 0, SZ_2, op_offset_imm16))
+	    && !(msg = parse_offset_operand (&op_end, &s2opnd, SZ_2, op_offset_imm16))
 	    && !(msg = parse_eol (&op_end)))
 	  {
 	    put_fmt5 (insn, &s2opnd, &sopnd);
@@ -1655,7 +1659,7 @@ md_assemble (char *str)
 					op_offset_imm7_d, REG_W))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_literal (&op_end, '#'))
-	    && !(msg = parse_offset_operand (&op_end, &sopnd, 2, SZ_0, op_offset_imm16))
+	    && !(msg = parse_offset_operand (&op_end, &sopnd, SZ_0, op_offset_imm16))
 	    && !(msg = parse_eol (&op_end)))
 	  {
 	    /* FIXME -- movei scale for dest reg/imm is 4, not 2. */
@@ -1692,7 +1696,7 @@ md_assemble (char *str)
 	    && !(msg = parse_literal (&op_end, ',')))
 	    && (
 		(!(msg = parse_literal (&op_end, '#'))	/* Immediate value */
-	        && !(msg = parse_offset_operand (&op_end, &offset_op, 24, insn->scale,
+	        && !(msg = parse_offset_operand (&op_end, &offset_op, insn->scale,
 					         op_offset_imm25))
 		&& !(msg = parse_eol (&op_end)))
 	      ||
@@ -1713,7 +1717,7 @@ md_assemble (char *str)
       case FMT_9:
 	if (!(msg = parse_areg (&op_end, &an))
 	    && !(msg = parse_literal (&op_end, ','))
-	    && !(msg = parse_offset_operand (&op_end, &offset_op, 16, insn->scale,
+	    && !(msg = parse_offset_operand (&op_end, &offset_op, insn->scale,
 					     op_offset_leai16))
 	    && !(msg = parse_literal (&op_end, '('))
 	    && !(msg = parse_areg (&op_end, &am))
