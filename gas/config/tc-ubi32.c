@@ -471,6 +471,9 @@ reg_addr_search (int value)
   return 0;
 }
 
+/* Reserved register -- register address number will be filled in.  */
+static struct reg_info_t reserved = {"reserved", 0, 0, REG_R | REG_W, NONE, UBI32_ALL};
+
 /* Parse register by class.  */
 static const char *
 parse_register_1 (char **strp, struct reg_info_t **reg, enum reg_class class)
@@ -480,6 +483,7 @@ parse_register_1 (char **strp, struct reg_info_t **reg, enum reg_class class)
   char regname[20];
   int value;
   char *endp;
+  int base = 0;
 
   while (len < sizeof (regname)
          && (ISALNUM((*strp)[len]) || (*strp)[len] == '_'))
@@ -497,19 +501,30 @@ parse_register_1 (char **strp, struct reg_info_t **reg, enum reg_class class)
       return NULL;
     }
 
-  if (ISXDIGIT (**strp))
+  /* Register address (regno * 4) is either xxx (decimal) or $xxx (hex).  */
+  if (ISDIGIT (**strp)
+      || ((**strp == '$' && (*strp)++) && (base = 16)))
     {
-      value = strtol (*strp, &endp, 0);
-      if (*endp == '\0')
+      if (*endp == '\0' || *endp == ',') 
 	{
+	  value = strtol (*strp, &endp, base);
 	  if ((value & 0x3) != 0)
 	    return _("register address invalid");
 	  if ((treg = reg_addr_search (value)))
 	    {
 	      *reg = treg;
-	      *strp += len;
-	      return NULL;
 	    }
+	  else
+	    {
+	      /* Register address not found, use reserved reg.  */
+	      /* FIXME -- fails if two addrs used in same instruction,
+		 for example, "move.4 0x124,0x128".  */
+	      reserved.num = value / 4;
+	      reserved.addr = value;
+	      *reg = &reserved;
+	    }
+	  *strp = endp;
+	  return NULL;
 	}
     }
 
@@ -845,8 +860,8 @@ validate_register (struct reg_info_t *reg, int access)
 static char *
 validate_areg_incr (struct operand_t *dopnd, struct operand_t *sopnd)
 {
-  if (((dopnd->value & 0x300) == 0x200)		/* Dopnd increments A reg.  */
-      && ((sopnd->value & 0x300) == 0x200)		/* Sopnd increments A reg.  */
+  if (((dopnd->value & 0x700) == 0x200)		/* Dopnd increments A reg.  */
+      && ((sopnd->value & 0x700) == 0x200)		/* Sopnd increments A reg.  */
       /* Registers match.  */
       && ((dopnd->value & 0x0e0) == (sopnd->value & 0x0e0)))
     return _("s1 and d operands update same An register");
@@ -1007,16 +1022,6 @@ parse_addr_operand (char **strp, struct operand_t *opnd,
     }
 
   *strp = save_str;
-  if (!(msg = parse_register (strp, &reg)))			/* 001 <reg>			*/
-    {
-      if ((msg = validate_register (reg, access)))
-	return msg;
-      opnd->value = 0x100;
-      insert_bits (&opnd->value, reg->num, 0, 8);
-      return NULL;
-    }
-
-  *strp = save_str;
   if (!parse_literal (strp, '(')				/* 1xx (<areg>)			*/
       && !(msg = parse_areg (strp, &areg))
       && !parse_literal (strp, ')')
@@ -1105,6 +1110,16 @@ parse_addr_operand (char **strp, struct operand_t *opnd,
       immed >>= scale;
       insert_bits (&opnd->value, reg_to_areg (areg), 5, 3);
       insert_bits (&opnd->value, immed, 0, 4);
+      return NULL;
+    }
+
+  *strp = save_str;
+  if (!(msg = parse_register (strp, &reg)))			/* 001 <reg>			*/
+    {
+      if ((msg = validate_register (reg, access)))
+	return msg;
+      opnd->value = 0x100;
+      insert_bits (&opnd->value, reg->num, 0, 8);
       return NULL;
     }
 
