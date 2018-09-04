@@ -907,7 +907,7 @@ parse_bitcnt (char **strp, int *immed)
 /* Parse source or destination -- "Addressing modes" in ISA doc.  */
 static const char *
 parse_addr_operand (char **strp, struct operand_t *opnd,
-		    enum op_scale_t scale, int pdec_encoding,
+		    enum op_scale_t scale, int flags,
 		    struct op_offset_tab_t *optab, int access)
 {
   static const char *incr_error[3] =
@@ -998,7 +998,7 @@ parse_addr_operand (char **strp, struct operand_t *opnd,
     {
       value = temp.value;
 
-      if (pdec_encoding)
+      if (flags & FLAG_PDEC)
 	{
 	  if (!(value >= 4 && value <=512))
 	    return _("Pdec offset out of range");
@@ -1037,8 +1037,10 @@ parse_addr_operand (char **strp, struct operand_t *opnd,
     }
 
   *strp = save_str;
-  if (!(msg = parse_register (strp, &reg, access)))			/* 001 <reg>			*/
+  if (!(msg = parse_register (strp, &reg, access)))		/* 001 <reg>			*/
     {
+      if (flags & FLAG_PDEC || flags & FLAG_LEA)
+	return _("register not permitted for PDEC or LEA source");
       opnd->value = 0x100;
       insert_bits (&opnd->value, reg->num, 0, 8);
       return NULL;
@@ -1528,8 +1530,7 @@ md_assemble (char *str)
 					 0, op_offset_imm7_d, REG_W))
 	    && !(msg = parse_literal (&op_end, ','))
 	    && !(msg = parse_addr_operand (&op_end, &sopnd, insn->scale,
-					   (insn->flags & FLAG_PDEC) ? 1 : 0,
-					   op_offset_imm7_s, REG_R))
+					   insn->flags, op_offset_imm7_s, REG_R))
 	    && !(msg = parse_eol (&op_end)))
 	  {
 	    if ((msg = validate_areg_incr (&dopnd, &sopnd)))
