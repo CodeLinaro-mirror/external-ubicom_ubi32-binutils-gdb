@@ -1,0 +1,34 @@
+# Test pdec & lea
+
+# PASS
+	pdec	d0,4(a0)
+	lea.4	d0,4(a0)
+	move.4	d0,4(a0)
+	move.4	4(a0),d0
+	pdec	d0,512(a0)
+	lea.4	4(a0),4(a0)
+	lea.2	4(a0),4(a0)
+	lea.1	4(a0),4(a0)
+	pdec	4(a0),4(a0)
+	pdec	#0,8(a0)
+	pdec	0,8(a0)
+	pdec	4(a1)++,8(a0)
+	pdec	8(a1)++,4(a0)
+	pdec	8(a1)++,8(a0)
+# FAIL
+	lea.4	d0,0xfffc(a0)
+	pdec	4(a0),d0
+	pdec	d0,516(a0)
+	lea.4	4(a0),d0
+	lea.4	d0,5(a0)
+	lea.4	d0,0xffff(a0)
+	lea.4	d0,0x10000(a0)
+	pdec	512(a0),d0
+	pdec	d0,0(a0)
+	pdec	d0,513(a0)
+	pdec	d0,516(a0)
+	pdec	0(a0),d0
+	pdec	513(a0),d0
+	pdec	516(a0),d0
+	lea.4	4(a0),3(a0)
+	lea.2	4(a0),1(a0)
