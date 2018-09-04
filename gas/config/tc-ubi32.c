@@ -433,33 +433,53 @@ parse_literal (char **strp, char lit)
   return _("invalid syntax");
 }
 
-/* Search register table for matching reg address.  */
-static struct reg_info_t *
-reg_addr_search (int value)
+/* Validate scaled signed or unsigned integer.
+   Returned values:
+     0 -- valid
+     1 -- out of range
+     2 -- unaligned 		*/
+static int
+validate_value (int value, int size, int scale, int sign)
 {
-  extern int reg_table_size;
-  int low = 0;
-  int high = reg_table_size - 1;
-  int middle;
+  int bitmask = ~0 << (sign ? size - 1 : size);
+  int scalemask = ~(~0 << scale);
 
-  do
-    {
-      middle = (low + high) / 2;
-      if (reg_table[middle].addr < value)
-	low = middle + 1;
-      else if (reg_table[middle].addr > value)
-	high = middle - 1;
-      else
-	{
-	  /* Return reg entry of first matching value.  */
-	  while (middle && reg_table[middle - 1].addr == value)
-	    middle--;
-	  return &reg_table[middle];
-	}
-    }
-  while (low <= high);
-
+  if (sign == 0 && value < 0)
+    return 1;  /* Number out of range.  */
+  if (value & scalemask)
+    return 2;  /* Number unaligned.  */
+  value >>= scale;
+  if ((value & bitmask) != 0 && (value & bitmask) != bitmask)
+    return 1;  /* Number out of range.  */
   return 0;
+}
+
+/* Validate register access.  */
+static char *
+validate_register (struct reg_info_t *reg, int access)
+{
+  if (!(reg->version & ubi32_version))
+    return _("register not valid for this arch version");
+  if (reg->rw & access)
+    return NULL;
+  if (access == REG_R)
+    return _("attempt to read a write-only register");
+  else if (access == REG_W)
+    return _("attempt to write to read-only register");
+  else
+    gas_assert (0);
+}
+
+/* Check same A register incremented.  */
+static char *
+validate_areg_incr (struct operand_t *dopnd, struct operand_t *sopnd)
+{
+  if (((dopnd->value & 0x700) == 0x200)		/* Dopnd increments A reg.  */
+      && ((sopnd->value & 0x700) == 0x200)		/* Sopnd increments A reg.  */
+      /* Registers match.  */
+      && ((dopnd->value & 0x0e0) == (sopnd->value & 0x0e0)))
+    return _("s1 and d operands update same An register");
+  return NULL;
 }
 
 /* Reserved register -- register address number will be filled in.  */
@@ -467,7 +487,8 @@ static struct reg_info_t reserved = {"reserved", 0, 0, REG_R | REG_W, NONE, UBI3
 
 /* Parse register by class.  */
 static const char *
-parse_register_1 (char **strp, struct reg_info_t **reg, enum reg_class class)
+parse_register_1 (char **strp, struct reg_info_t **reg,
+		  enum reg_class class, int access)
 {
   unsigned len = 0;
   struct reg_info_t *treg;
@@ -475,6 +496,7 @@ parse_register_1 (char **strp, struct reg_info_t **reg, enum reg_class class)
   int value;
   char *endp;
   int base = 0;
+  const char *msg;
 
   while (len < sizeof (regname)
          && (ISALNUM((*strp)[len]) || (*strp)[len] == '_'))
@@ -485,48 +507,47 @@ parse_register_1 (char **strp, struct reg_info_t **reg, enum reg_class class)
   regname[len] = '\0';
 
   treg = hash_find_n (reg_hash, regname, len);
-  if (treg && (class == NONE || class == treg->class))
+  if (treg)
     {
-      *reg = treg;
-      *strp += len;
-      return NULL;
+      if ((class == NONE || class == treg->class))
+	{
+	  if ((msg = validate_register (treg, access)))
+	    return msg;
+	  *reg = treg;
+	  *strp += len;
+	  return NULL;
+	}
+      return _("incorrect register class");
     }
 
   /* Register address (regno * 4) is either xxx (decimal) or $xxx (hex).  */
   if (ISDIGIT (**strp)
       || ((**strp == '$' && (*strp)++) && (base = 16)))
     {
+      value = strtol (*strp, &endp, base);
       if (*endp == '\0' || *endp == ',')
 	{
-	  value = strtol (*strp, &endp, base);
-	  if ((value & 0x3) != 0)
+	  if ((value & 0x3) != 0 || ((value >> 2) & ~0xff))
 	    return _("register address invalid");
-	  if ((treg = reg_addr_search (value)))
-	    {
-	      *reg = treg;
-	    }
-	  else
-	    {
-	      /* Register address not found, use reserved reg.  */
-	      /* FIXME -- fails if two addrs used in same instruction,
-		 for example, "move.4 0x124,0x128".  */
-	      reserved.num = value / 4;
-	      reserved.addr = value;
-	      *reg = &reserved;
-	    }
+	  /* Register address, use reserved reg.  */
+	  /* FIXME -- fails if two addrs used in same instruction,
+	     for example, "move.4 0x124,0x128".  */
+	  reserved.num = value >> 2;
+	  reserved.addr = value;
+	  *reg = &reserved;
 	  *strp = endp;
 	  return NULL;
 	}
     }
 
-  return _("invalid register");
+  return (const char *) -1;
 }
 
 /* Parse any register.  */
 static const char *
-parse_register (char **strp, struct reg_info_t **reg)
+parse_register (char **strp, struct reg_info_t **reg, int access)
 {
-  return parse_register_1 (strp, reg, NONE);
+  return parse_register_1 (strp, reg, NONE, access);
 }
 
 /* Parse A register.  */
@@ -535,7 +556,7 @@ parse_areg (char **strp, struct reg_info_t **reg)
 {
   const char *err;
 
-  if ((err = parse_register_1 (strp, reg, AREG)))
+  if ((err = parse_register_1 (strp, reg, AREG, REG_ANY)))
     return err;
   return NULL;
 }
@@ -560,7 +581,7 @@ reg_to_areg (struct reg_info_t *reg)
 static const char *
 parse_dreg (char **strp, struct reg_info_t **reg)
 {
-  return parse_register_1 (strp, reg, DREG);
+  return parse_register_1 (strp, reg, DREG, REG_ANY);
 }
 
 /* Parse ACC register.  */
@@ -569,7 +590,7 @@ parse_accreg (char **strp, struct reg_info_t **reg, enum reg_class class)
 {
   const char *err;
 
-  if ((err = parse_register_1 (strp, reg, class)))
+  if ((err = parse_register_1 (strp, reg, class, REG_ANY)))
     return _("invalid acc reg");
   return NULL;
 }
@@ -769,55 +790,6 @@ parse_immed (char **strp, int *immed)
   return _("invalid number");
 }
 
-/* Validate scaled signed or unsigned integer.
-   Returned values:
-     0 -- valid
-     1 -- out of range
-     2 -- unaligned 		*/
-static int
-validate_value (int value, int size, int scale, int sign)
-{
-  int bitmask = ~0 << (sign ? size - 1 : size);
-  int scalemask = ~(~0 << scale);
-
-  if (sign == 0 && value < 0)
-    return 1;  /* Number out of range.  */
-  if (value & scalemask)
-    return 2;  /* Number unaligned.  */
-  value >>= scale;
-  if ((value & bitmask) != 0 && (value & bitmask) != bitmask)
-    return 1;  /* Number out of range.  */
-  return 0;
-}
-
-/* Validate register access.  */
-static char *
-validate_register (struct reg_info_t *reg, int access)
-{
-  if (!(reg->version & ubi32_version))
-    return _("register not valid for this arch version");
-  if (reg->rw & access)
-    return NULL;
-  if (access == REG_R)
-    return _("attempt to read a write-only register");
-  else if (access == REG_W)
-    return _("attempt to write to read-only register");
-  else
-    gas_assert (0);
-}
-
-/* Check same A register incremented.  */
-static char *
-validate_areg_incr (struct operand_t *dopnd, struct operand_t *sopnd)
-{
-  if (((dopnd->value & 0x700) == 0x200)		/* Dopnd increments A reg.  */
-      && ((sopnd->value & 0x700) == 0x200)		/* Sopnd increments A reg.  */
-      /* Registers match.  */
-      && ((dopnd->value & 0x0e0) == (sopnd->value & 0x0e0)))
-    return _("s1 and d operands update same An register");
-  return NULL;
-}
-
 static const char *
 parse_offset_operand (char **strp, struct operand_t *offset,
 		      enum op_scale_t scale, struct op_offset_tab_t *op)
@@ -951,7 +923,7 @@ parse_addr_operand (char **strp, struct operand_t *opnd,
   int immed;
   struct operand_t temp;
   int eno;
-  const char *msg = _("invalid address");
+  const char *msg;
 
   memset (opnd, 0, sizeof (struct operand_t));
 
@@ -1065,16 +1037,17 @@ parse_addr_operand (char **strp, struct operand_t *opnd,
     }
 
   *strp = save_str;
-  if (!(msg = parse_register (strp, &reg)))			/* 001 <reg>			*/
+  if (!(msg = parse_register (strp, &reg, access)))			/* 001 <reg>			*/
     {
-      if ((msg = validate_register (reg, access)))
-	return msg;
       opnd->value = 0x100;
       insert_bits (&opnd->value, reg->num, 0, 8);
       return NULL;
     }
 
-  return msg;
+  if (msg == (const char *) -1)
+    return _("invalid adddressing mode");
+  else
+    return msg;
 }
 
 static const char *

@@ -100,6 +100,7 @@ extern struct reg_info_t reg_table[];
 #define REG_R 0x01	/* Readable register.    */
 #define REG_W 0x02	/* Writeable register.   */
 #define REG_PRIV 0x04	/* Privileged register.  */
+#define REG_ANY 0x0f	/* Any access.		 */
 
 /* Describe JMP condition codes.  */
 struct cc_t {
