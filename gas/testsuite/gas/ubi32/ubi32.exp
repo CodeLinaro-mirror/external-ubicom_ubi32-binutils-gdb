@@ -28,4 +28,5 @@ if [istarget ubi32-*-*] then {
     run_list_test "imm7" ""
     run_list_test "imm8" ""
     run_list_test "aregincr" ""
+    run_list_test "reg-err" ""
 }
