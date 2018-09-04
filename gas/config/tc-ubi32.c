@@ -81,6 +81,7 @@ const char FLT_CHARS[]            = "dD";
 /* Mach selected from command line.  */
 int ubi32_mach = bfd_mach_ubi32v61;
 
+static int ubi32_version = UBI32_V61;
 
 void
 md_show_usage (stream)
@@ -295,6 +296,9 @@ struct operand_t
   expressionS exp;
 };
 
+/* Ubi32 op codes.  */
+static struct hash_control *opcode_hash;
+
 /* Ubi32 architectural register numbers.  */
 static struct hash_control *reg_hash;
 
@@ -304,6 +308,7 @@ static struct hash_control *gdb_reg_hash;
 void
 md_begin (void)
 {
+  struct op_table_t *op = op_table;
   struct reg_info_t *reg = reg_table;
   struct reg_info_t *p;
   const char **gdb_reg = ubi32_gdb_register_names;
@@ -318,8 +323,17 @@ md_begin (void)
   for (p = reg_table; (p + 1)->name; p++)
     gas_assert (p->addr <= (p+1)->addr);
 
+  /* Initialize op code table.  */
+  opcode_hash = hash_new_sized (511);   /* Pick arbitrary size for hash table.  */
+  while (op->mnemonic)
+  {
+    if (op->version & ubi32_version)
+      hash_insert (opcode_hash, op->mnemonic, (void *) op);
+    op++;
+  }
+
   /* Initialize arch register table.  */
-  reg_hash = hash_new_sized (511);   /* Pick arbitrary size for hash table.  */
+  reg_hash = hash_new_sized (511);   	/* Pick arbitrary size for hash table.  */
   while (reg->name)
   {
     hash_insert (reg_hash, reg->name, (void *) reg);
@@ -327,7 +341,7 @@ md_begin (void)
   }
 
   /* Initialize GDB register table.  */
-  gdb_reg_hash = hash_new_sized (511);   /* Pick arbitrary size for hash table.  */
+  gdb_reg_hash = hash_new_sized (511);  /* Pick arbitrary size for hash table.  */
   while (*gdb_reg)
   {
     hash_insert (gdb_reg_hash, *gdb_reg, (void *) gdb_reg);
@@ -335,7 +349,6 @@ md_begin (void)
   }
 }
 
-static int ubi32_version = UBI32_V61;
 int
 md_parse_option (int c ATTRIBUTE_UNUSED, const char * arg ATTRIBUTE_UNUSED)
 {
@@ -408,28 +421,6 @@ md_section_align (segment, size)
   int align = bfd_get_section_alignment (stdoutput, segment);
   return ((size + (1 << align) - 1) & (0xFFFFFFFF << align));
 }
-
-
-static struct op_table_t *
-ubi32_lookup_insn (char *str, int len, int version)
-{
-  /* FIXME -- convert to binary search with duplicates. */
-  struct op_table_t *insn;
-
-  for (insn = op_table; insn->mnemonic; insn++)
-    {
-      if (insn->version & version)
-	{
-	   if ((strncasecmp (insn->mnemonic, str, len) == 0)
-	       || ((insn->flags & FLAG_EXT)
-	           && (strncasecmp (insn->mnemonic, str, strlen (insn->mnemonic)) == 0)))
-	     return insn;
-	}
-    }
-  return NULL;
-}
-
-
 
 static const char *
 parse_literal (char **strp, char lit)
@@ -505,7 +496,7 @@ parse_register_1 (char **strp, struct reg_info_t **reg, enum reg_class class)
   if (ISDIGIT (**strp)
       || ((**strp == '$' && (*strp)++) && (base = 16)))
     {
-      if (*endp == '\0' || *endp == ',') 
+      if (*endp == '\0' || *endp == ',')
 	{
 	  value = strtol (*strp, &endp, base);
 	  if ((value & 0x3) != 0)
@@ -643,52 +634,11 @@ parse_accdreg (char **strp, struct reg_info_t **reg, enum reg_class class)
 
 /* FIXME -- move to ubi32-asm.c?
  * FIXME -- pick better name -- parse_addr vs parse_address.
- * FIXME -- check required operand type (constant, symbol).
+ * FIXME -- check required operand type (constant, symbol)?
  */
 static const char *
-parse_address (char **strp, int *addr)
-{
-  expressionS exp;
-  char *errmsg;
-  char *hold = input_line_pointer;
-
-/* FIXME:  Do we need a setjmp here?  */
-  input_line_pointer = *strp;
-  expression (&exp);
-
-  *strp = input_line_pointer;
-  input_line_pointer = hold;
-
-  *addr = 0;
-  errmsg = NULL;
-  switch (exp.X_op)
-    {
-      case O_illegal:
-	errmsg = _("illegal operand");
-	break;
-      case O_absent:
-	errmsg = _("illegal operand");
-	break;
-      case O_constant:
-      case O_register:
-	*addr = exp.X_add_number;
-	break;
-      default:
-	// FIXME:	queue_fixup (exp);
-	// FIXME: Are expressions allowed?
-        return _("illegal symbol");
-	break;
-    }
-
-  return errmsg;
-}
-
-/* FIXME -- move to ubi32-asm.c?
- * FIXME -- pick better name -- parse_addr vs parse_address.
- * FIXME -- check required operand type (constant, symbol)
- */
-static const char *
-parse_address_operand (char **strp, struct operand_t *operand, bfd_reloc_code_real_type reloc)
+parse_address_operand (char **strp, struct operand_t *operand,
+		       bfd_reloc_code_real_type reloc)
 {
   char *errmsg;
   char *hold = input_line_pointer;
@@ -873,6 +823,7 @@ parse_offset_operand (char **strp, struct operand_t *offset,
 		      enum op_scale_t scale, struct op_offset_tab_t *op)
 {
   const char *errmsg = NULL;
+  enum bfd_reloc_code_real reloc = op->reloc;
 
   if (**strp == '%')
     {
@@ -897,8 +848,8 @@ parse_offset_operand (char **strp, struct operand_t *offset,
       return _("unrecognized %% operator");
     }
 
-  offset->reloc = 0;
-  return parse_address (strp, &offset->value);
+  offset->reloc = reloc;
+  return parse_address_operand (strp, offset, reloc);
 }
 
 struct bitops_t
@@ -1011,7 +962,7 @@ parse_addr_operand (char **strp, struct operand_t *opnd,
       if ((*strp)[0] == '0' && TOUPPER ((*strp)[1]) == 'X')
 	is_signed = 0;
 
-      if (!(msg = parse_address (strp, &opnd->value)))
+      if (!(msg = parse_address_operand (strp, opnd, optab[0].reloc)))
 	{
 	  if ((eno = validate_value (opnd->value, 8, 0, is_signed)))
 	    return immed_error[eno];
@@ -1556,7 +1507,12 @@ md_assemble (char *str)
     op_end = strchr (str, 0);
 
   len = op_end - op_start;
-  insn = ubi32_lookup_insn (op_start, len, ubi32_version);
+  /* Search for op code or longest prefix.  jmpeq.t ==> jmp */
+  do
+    {
+      insn = (struct op_table_t *) hash_find_n (opcode_hash, op_start, len);
+    }
+  while (!insn && --len);
 
   if (!insn)
     {
