@@ -482,21 +482,13 @@ validate_areg_incr (struct operand_t *dopnd, struct operand_t *sopnd)
   return NULL;
 }
 
-/* Reserved register -- register address number will be filled in.  */
-static struct reg_info_t reserved = {"reserved", 0, 0, REG_R | REG_W, NONE, UBI32_ALL};
-
 /* Parse register by class.  */
 static const char *
-parse_register_1 (char **strp, struct reg_info_t **reg,
-		  enum reg_class class, int access)
+parse_register_1 (char **strp, struct reg_info_t **reg, enum reg_class class)
 {
   unsigned len = 0;
   struct reg_info_t *treg;
   char regname[20];
-  int value;
-  char *endp;
-  int base = 0;
-  const char *msg;
 
   while (len < sizeof (regname)
          && (ISALNUM((*strp)[len]) || (*strp)[len] == '_'))
@@ -511,8 +503,6 @@ parse_register_1 (char **strp, struct reg_info_t **reg,
     {
       if ((class == NONE || class == treg->class))
 	{
-	  if ((msg = validate_register (treg, access)))
-	    return msg;
 	  *reg = treg;
 	  *strp += len;
 	  return NULL;
@@ -520,7 +510,17 @@ parse_register_1 (char **strp, struct reg_info_t **reg,
       return _("incorrect register class");
     }
 
-  /* Register address (regno * 4) is either xxx (decimal) or $xxx (hex).  */
+  return _("invalid register");
+}
+
+/* Register address (regno * 4) is either xxx (decimal) or $xxx (hex).  */
+static const char *
+parse_register_address (char **strp, int *regno) 
+{
+  int base = 0;
+  char *endp;
+  int value;
+
   if (ISDIGIT (**strp)
       || ((**strp == '$' && (*strp)++) && (base = 16)))
     {
@@ -529,25 +529,20 @@ parse_register_1 (char **strp, struct reg_info_t **reg,
 	{
 	  if ((value & 0x3) != 0 || ((value >> 2) & ~0xff))
 	    return _("register address invalid");
-	  /* Register address, use reserved reg.  */
-	  /* FIXME -- fails if two addrs used in same instruction,
-	     for example, "move.4 0x124,0x128".  */
-	  reserved.num = value >> 2;
-	  reserved.addr = value;
-	  *reg = &reserved;
+	  *regno = value >> 2;
 	  *strp = endp;
 	  return NULL;
 	}
     }
 
-  return (const char *) -1;
+  return _("register address invalid");
 }
 
 /* Parse any register.  */
 static const char *
-parse_register (char **strp, struct reg_info_t **reg, int access)
+parse_register (char **strp, struct reg_info_t **reg)
 {
-  return parse_register_1 (strp, reg, NONE, access);
+  return parse_register_1 (strp, reg, NONE);
 }
 
 /* Parse A register.  */
@@ -556,7 +551,7 @@ parse_areg (char **strp, struct reg_info_t **reg)
 {
   const char *err;
 
-  if ((err = parse_register_1 (strp, reg, AREG, REG_ANY)))
+  if ((err = parse_register_1 (strp, reg, AREG)))
     return err;
   return NULL;
 }
@@ -581,7 +576,7 @@ reg_to_areg (struct reg_info_t *reg)
 static const char *
 parse_dreg (char **strp, struct reg_info_t **reg)
 {
-  return parse_register_1 (strp, reg, DREG, REG_ANY);
+  return parse_register_1 (strp, reg, DREG);
 }
 
 /* Parse ACC register.  */
@@ -590,7 +585,7 @@ parse_accreg (char **strp, struct reg_info_t **reg, enum reg_class class)
 {
   const char *err;
 
-  if ((err = parse_register_1 (strp, reg, class, REG_ANY)))
+  if ((err = parse_register_1 (strp, reg, class)))
     return _("invalid acc reg");
   return NULL;
 }
@@ -945,11 +940,25 @@ parse_addr_operand (char **strp, struct operand_t *opnd,
     }
 
   *strp = save_str;
+  if (!(msg = parse_register (strp, &reg)))			/* 001 <reg>			*/
+    {
+      if ((msg = validate_register (reg, access)))
+        return msg;
+      if (flags & FLAG_PDEC || flags & FLAG_LEA)
+	return _("register not permitted for PDEC or LEA source");
+      opnd->value = 0x100;
+      insert_bits (&opnd->value, reg->num, 0, 8);
+      return NULL;
+    }
+
+  *strp = save_str;
   if (!parse_literal (strp, '(')				/* 1xx (<areg>)			*/
-      && !(msg = parse_areg (strp, &areg))
+      && !(msg = parse_register (strp, &areg))
       && !parse_literal (strp, ')')
       && (**strp == '\0' || **strp == ','))
     {
+      if (areg->class != AREG)
+	return _("address register expected");
       opnd->value = 0x400;
       regno = reg_to_areg (areg);
       insert_bits (&opnd->value, regno, 5, 3);
@@ -958,12 +967,16 @@ parse_addr_operand (char **strp, struct operand_t *opnd,
 
   *strp = save_str;
   if (!parse_literal (strp, '(')				/* 011 (<areg>,<dreg>)		*/
-      && !(msg = parse_areg (strp, &areg))
+      && !(msg = parse_register (strp, &areg))
       && !parse_literal (strp, ',')
-      && !(msg = parse_dreg (strp, &dreg))
+      && !(msg = parse_register (strp, &dreg))
       && !parse_literal (strp, ')')
       && (**strp == '\0' || **strp == ','))
     {
+      if (areg->class != AREG)
+	return _("address register expected");
+      if (dreg->class != DREG)
+	return _("data register expected");
       opnd->value = 0x300;
       regno = reg_to_areg (areg);
       insert_bits (&opnd->value, regno, 5, 3);
@@ -1037,12 +1050,12 @@ parse_addr_operand (char **strp, struct operand_t *opnd,
     }
 
   *strp = save_str;
-  if (!(msg = parse_register (strp, &reg, access)))		/* 001 <reg>			*/
+  if (!(msg = parse_register_address (strp, &regno)))		/* 001 <reg_address>		*/
     {
       if (flags & FLAG_PDEC || flags & FLAG_LEA)
 	return _("register not permitted for PDEC or LEA source");
       opnd->value = 0x100;
-      insert_bits (&opnd->value, reg->num, 0, 8);
+      insert_bits (&opnd->value, regno, 0, 8);
       return NULL;
     }
 
