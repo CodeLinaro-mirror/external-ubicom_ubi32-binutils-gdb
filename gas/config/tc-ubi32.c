@@ -919,7 +919,7 @@ parse_addr_operand (char **strp, struct operand_t *opnd,
 	{"valid", "8-bit immediate value out of range", "" };
   char *save_str = *strp;
   struct reg_info_t *reg, *areg, *dreg;
-  int regno;
+  int regno = 0;
   int value;
   int immed;
   struct operand_t temp;
