@@ -129,13 +129,13 @@ md_atof (int type, char *litP, int *sizeP)
   return ieee_md_atof (type, litP, sizeP, target_big_endian);
 }
 
-/* Insert value into buffer at offset bits for len bits.  */
+/* Insert value into integer buffer at offset bits for len bits.
+   Note:  buf and value are both in host endianity.  */
 /* FIXME -- check for overflow? */
 static void
 insert_bits (int *buf, int value, int offset, int len)
 {
   int mask = (1 << len) - 1;
-
   *buf |= (value & mask) << offset;
 }
 
@@ -145,6 +145,7 @@ md_apply_fix (fixS *fixP, valueT *valP, segT seg ATTRIBUTE_UNUSED)
 {
   char *where = fixP->fx_frag->fr_literal + fixP->fx_where;
   valueT value = *valP;
+  int insn;
 
   if (fixP->fx_addsy == 0 && !fixP->fx_pcrel)
     fixP->fx_done = 1;
@@ -167,19 +168,24 @@ md_apply_fix (fixS *fixP, valueT *valP, segT seg ATTRIBUTE_UNUSED)
   switch (fixP->fx_r_type)
     {
     case BFD_RELOC_UBI32_21_PCREL:
-      /* where should always be word offset. */
-      gas_assert (((long)where & 0x3) == 0);
-      value >>= 2;
-      insert_bits ((int *)where, value, 0, 21);
-      fixP->fx_offset = *valP;
-      break;
-
     case BFD_RELOC_UBI32_24_PCREL:
       /* where should always be word offset. */
       gas_assert (((long)where & 0x3) == 0);
       value >>= 2;
-      insert_bits ((int *)where, value, 0, 21);
-      insert_bits ((int *)where, value >> 21, 24, 3);
+      if (target_big_endian)
+	insn = bfd_getb32 ((unsigned char *) where);
+      else
+	insn = bfd_getl32 ((unsigned char *) where);
+
+      insert_bits (&insn, value, 0, 21);
+
+      if (fixP->fx_r_type == BFD_RELOC_UBI32_24_PCREL)
+	insert_bits (&insn, value >> 21, 24, 3);
+
+      if (target_big_endian)
+	bfd_putb32 ((bfd_vma) insn, (unsigned char *) where);
+      else
+	bfd_putl32 ((bfd_vma) insn, (unsigned char *) where);
       fixP->fx_offset = *valP;
       break;
 
@@ -1135,12 +1141,7 @@ finish_insn (unsigned int value)
   char *frag;
 
   frag = frag_more (4);
-/* FIXME -- is this needed and what does it do?
- * if (result)
- *   result->frag = frag_now;
- */
-  /* FIXME -- handle BigEndian/LittleEndian. */
-  bfd_put_bits ((bfd_vma) value, frag, 32, 0);
+  bfd_put_bits ((bfd_vma) value, frag, 32, target_big_endian);
 
   /* Emit DWARF2 debugging information.  */
   dwarf2_emit_insn (4);
