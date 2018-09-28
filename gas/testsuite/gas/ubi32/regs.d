@@ -1,5 +1,5 @@
 #objdump: -dr --prefix-addresses --show-raw-insn
-#name: Ubi32 registers
+#name: Ubi32 regs
 #as: -EL
 
 .*: +file format elf32-littleubicom32
