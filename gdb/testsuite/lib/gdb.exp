@@ -2986,6 +2986,28 @@ proc skip_hw_watchpoint_tests {} {
     }
 
     # These targets support hardware watchpoints natively
+    if { [istarget "i?86-*-*"]
+	 || [istarget "x86_64-*-*"]
+	 || [istarget "ia64-*-*"]
+	 || [istarget "arm*-*-*"]
+	 || [istarget "aarch64*-*-*"]
+	 || [istarget "powerpc*-*-linux*"]
+	 || [istarget "s390*-*-*"] } {
+	return 0
+    }
+
+    return 1
+}
+
+# Return a 1 if we should skip tests that require watchpoints
+
+proc skip_watchpoint_tests {} {
+    # Skip tests if requested by the board
+    if { [target_info exists gdb,no_watchpoints]} {
+	return 1
+    }
+
+    # These targets support hardware watchpoints natively
     if { [istarget "i?86-*-*"] 
 	 || [istarget "x86_64-*-*"]
 	 || [istarget "ia64-*-*"] 

@@ -15,6 +15,9 @@
 
 # This file was written by Fred Fish. (fnf@cygnus.com)
 
+if {[skip_watchpoint_tests]} {
+    return 0
+}
 
 standard_testfile
 
